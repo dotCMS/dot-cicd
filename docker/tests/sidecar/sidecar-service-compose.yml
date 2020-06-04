@@ -1,0 +1,51 @@
+# https://docs.docker.com/compose/compose-file/compose-versioning/
+version: "3.7"
+
+# https://docs.docker.com/compose/compose-file/
+
+networks:
+  db_net:
+  es_net:
+
+volumes:
+  cms-shared:
+  cms-local:
+  license:
+
+services:
+
+  sidecar:
+    image: "${SIDECAR_IMAGE_BASE_NAME}"
+    ports:
+      - "8080:8080"
+    environment:
+      databaseType:
+      CMS_HEAP_SIZE: 1g
+      CMS_JAVA_OPTS: "-XX:+PrintFlagsFinal"
+      PROVIDER_DB_DRIVER: ${databaseType}
+      PROVIDER_DB_USERNAME:
+      PROVIDER_DB_PASSWORD:
+      PROVIDER_DB_DNSNAME: database
+      PROVIDER_ELASTICSEARCH_DNSNAMES: elasticsearch
+      EXTRA_PARAMS:
+      #WAIT_DB_FOR: 60
+    depends_on:
+      - database
+      - elasticsearch
+    volumes:
+      - cms-shared:/data/shared
+      - cms-local:/data/local
+      - type: bind
+        source: ./license
+        target: /data/local/dotsecure/license
+    networks:
+      - db_net
+      - es_net
+
+  database:
+    networks:
+      - db_net
+
+  elasticsearch:
+    networks:
+      - es_net
