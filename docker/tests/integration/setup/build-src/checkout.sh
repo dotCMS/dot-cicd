@@ -7,7 +7,7 @@ build_id=$2
 echo "Build source: $build_source"
 echo "Build id: $build_id"
 
-build_by_commit() {
+function build_by_commit {
 
     mkdir -p /build/src && cd /build/src
 

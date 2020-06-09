@@ -1,8 +1,6 @@
 BASE_GOOGLE_URL="https://storage.googleapis.com/"
 
-CICD_FOLDER='dotcicd'
-LIB_FOLDER=${CICD_FOLDER}/library
-source ${LIB_FOLDER}/pipeline/common.sh
+: ${DOT_CICD_PATH:="./dotcicd"} && export DOT_CICD_PATH
 
 resolveCurrentBranch
 

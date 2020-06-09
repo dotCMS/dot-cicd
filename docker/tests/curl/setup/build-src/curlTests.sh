@@ -1,6 +1,6 @@
 export TEST_TYPE=curl
 
-function resolveLabel() {
+function resolveLabel {
   local result=$1
   if [[ $result == 0 ]]; then
     echo "PASS"

@@ -1,63 +1,18 @@
-#!/bin/bash
+: ${DOT_CICD_REPO:="https://github.com/dotCMS/dot-cicd.git"} && export DOT_CICD_REPO
+: ${DOT_CICD_LIB:="${DOT_CICD_PATH}/library"} && export DOT_CICD_LIB
+: ${DOT_CICD_VERSION:="1.0"} && export DOT_CICD_VERSION
+: ${DOT_CICD_TOOL:="travis"} && export DOT_CICD_TOOL
+: ${DOT_CICD_PERSIST:="google"} && export DOT_CICD_PERSIST
+# Remove me
+: ${DOT_CICD_TARGET:="core"} && export DOT_CICD_TARGET
 
-function bell() {
-  while true; do
-    echo -e "\a"
-    sleep 60
-  done
-}
-
-# Git clone by providing repo, destination folder and branch to check out
-function gitClone() {
-  local repo=$1
-  local dest=$2
-  local branch=$3
-
-  cloneOk=false
-  if [[ ! -z "${branch}" ]]; then
-    echo "Fetching repo from ${repo} with branch ${branch}"
-    git clone ${repo} -b ${branch} ${dest}
-    if [[ $? != 0 ]]; then
-      echo "Error checking out branch '${branch}', continuing with master"
-    else
-      cloneOk=true
-    fi
-  fi
-
-  if [[ $cloneOk == false ]]; then
-    echo "Fetching repo from ${repo}"
-    git clone ${repo} ${dest}
-
-    if [[ $? != 0 ]]; then
-      echo "Error cloning repo '${repo}'"
-      exit 1
-    fi
-  fi
-}
-
-# Fetch CI/CD github repo to consume its library
-function gitFetchRepo() {
-  local repo=$1
-  local dest=$2
-  local branch=$3
-
-  if [[ -z "${repo}" ]]; then
-    echo "Repo not provided, cannot continue"
-    exit 1
-  fi
-
-  if [[ -z "${dest}" ]]; then
-    dest=.cicd/
-  fi
-
-  gitClone $@
-}
-
-# Resolves value of current branch
-function resolveCurrentBranch() {
-  CURRENT_BRANCH=$TRAVIS_PULL_REQUEST_BRANCH
-  if [ "$TRAVIS_PULL_REQUEST" = "false" ];
-  then
-    CURRENT_BRANCH=$TRAVIS_BRANCH
-  fi
-}
+echo "dot-cicd vars"
+echo "#############"
+echo "DOT_CICD_REPO: ${DOT_CICD_REPO}"
+echo "DOT_CICD_BRANCH: ${DOT_CICD_BRANCH}"
+echo "DOT_CICD_PATH: ${DOT_CICD_PATH}"
+echo "DOT_CICD_LIB: ${DOT_CICD_LIB}"
+echo "DOT_CICD_VERSION: ${DOT_CICD_VERSION}"
+echo "DOT_CICD_TOOL: ${DOT_CICD_TOOL}"
+echo "DOT_CICD_PERSIST: ${DOT_CICD_PERSIST}"
+echo "DOT_CICD_TARGET: ${DOT_CICD_TARGET}"

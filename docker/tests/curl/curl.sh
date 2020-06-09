@@ -1,4 +1,4 @@
-printUsage () {
+function printUsage {
   echo ""
   echo "Usage:"
   echo '-d      database: (postgres as default) -> One of ["postgres", "mysql", "oracle", "mssql"]'

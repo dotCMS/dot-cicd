@@ -1,4 +1,4 @@
-printUsage () {
+function printUsage {
   echo ""
   echo "Usage:"
   echo '-b      branch: (current branch as default)'

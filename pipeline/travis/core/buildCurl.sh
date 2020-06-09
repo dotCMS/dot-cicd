@@ -1,15 +1,14 @@
 #!/bin/bash
 
-CICD_FOLDER='dotcicd'
-LIB_FOLDER=${CICD_FOLDER}/library
-DOCKER_SOURCE=${LIB_FOLDER}/docker
+: ${DOT_CICD_PATH:="./dotcicd"} && export DOT_CICD_PATH
+source ${DOT_CICD_PATH}/library/pipeline/travis/travisCommon.sh
 
-source ${LIB_FOLDER}/pipeline/common.sh
+DOCKER_SOURCE=${DOT_CICD_LIB}/docker
 
 resolveCurrentBranch
 
 bell &
 gcloud builds submit \
-  --config=${LIB_FOLDER}/pipeline/travis/core/cloudbuild-curl.yaml \
-  --substitutions=_LICENSE_KEY=$LICENSE,_CUSTOM_RUN_ID=$TRAVIS_COMMIT_SHORT,_DOCKER_SOURCE=$DOCKER_SOURCE .
+  --config=${DOT_CICD_LIB}/pipeline/travis/core/cloudbuild-curl.yaml \
+  --substitutions=_CUSTOM_RUN_ID=$TRAVIS_COMMIT_SHORT,_DOCKER_SOURCE=$DOCKER_SOURCE .
 exit $?
