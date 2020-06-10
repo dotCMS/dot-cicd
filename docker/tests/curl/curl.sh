@@ -87,14 +87,14 @@ if [ "$buildImage" = true ]; then
       --build-arg BUILD_ID=${branchOrCommit} \
       --build-arg BUILD_HASH=${gitHash} \
       --build-arg LICENSE_KEY=${LICENSE_KEY} \
-      -t ${BUILD_IMAGE_TAG} .
+      -t ${BUILD_IMAGE_TAG} ../integration/
   else
     docker build --pull --no-cache \
       --build-arg BUILD_FROM=COMMIT \
       --build-arg BUILD_ID=${branchOrCommit} \
       --build-arg BUILD_HASH=${gitHash} \
       --build-arg LICENSE_KEY=${LICENSE_KEY} \
-      -t ${BUILD_IMAGE_TAG} .
+      -t ${BUILD_IMAGE_TAG} ../integration
   fi
 
 fi
@@ -102,10 +102,10 @@ fi
 # Starting the container for the build image
 export databaseType=${database}
 export IMAGE_BASE_NAME=${BUILD_IMAGE_TAG}
-docker-compose -f curl-service.yml \
-  -f /side-docker-compose.yml \
-  -f ../integration/${database}-docker-compose.yml \
-  -f ../integration/open-distro-docker-compose.yml \
+docker-compose -f curl-service-compose.yml \
+  -f ../sidecar/sidecar-service-compose.yml \
+  -f ../shared/${database}-docker-compose.yml \
+  -f ../shared/open-distro-docker-compose.yml \
   up \
   --abort-on-container-exit
 
@@ -113,10 +113,10 @@ docker-compose -f curl-service.yml \
 testsReturnCode=$?
 
 # Cleaning up
-docker-compose -f integration-service.yml \
-  -f side-docker-compose.yml \
-  -f ../integration/${database}-docker-compose.yml \
-  -f ../integration/open-distro-docker-compose.yml \
+docker-compose -f curl-service-compose.yml \
+  -f ../sidecar/sidecar-service-compose.yml \
+  -f ../shared/${database}-docker-compose.yml \
+  -f ../shared/open-distro-docker-compose.yml \
   down
 
 echo

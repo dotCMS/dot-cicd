@@ -1,8 +1,5 @@
 #!/bin/bash
 
-: ${DOT_CICD_PATH:="./dotcicd"} && export DOT_CICD_PATH
-source ${DOT_CICD_PATH}/library/pipeline/travis/travisCommon.sh
-
 DOCKER_SOURCE=${DOT_CICD_PATH}/docker
 gitFetchRepo "https://github.com/dotCMS/docker.git" ${DOCKER_SOURCE}
 

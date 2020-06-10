@@ -97,7 +97,7 @@ fi
 
 # Starting the container for the build image
 export IMAGE_BASE_NAME=${BUILD_IMAGE_TAG}
-docker-compose -f unit-service.yml \
+docker-compose -f unit-service-compose.yml \
   up \
   --abort-on-container-exit
 
@@ -105,7 +105,7 @@ docker-compose -f unit-service.yml \
 testsReturnCode=$?
 
 # Cleaning up
-docker-compose -f unit-service.yml down
+docker-compose -f unit-service-compose.yml down
 
 echo
 echo -e "\e[36m==========================================================================================================================\e[0m"

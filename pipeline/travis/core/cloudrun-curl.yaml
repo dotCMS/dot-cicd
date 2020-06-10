@@ -3,7 +3,7 @@ steps:
   # Run the integration tests image
   - name: 'docker/compose:1.24.1'
     env:
-      - 'IMAGE_BASE_NAME=gcr.io/$PROJECT_ID/curl-tests-image:$_CUSTOM_RUN_ID'
+      - 'IMAGE_BASE_NAME=gcr.io/$PROJECT_ID/tests-base-image:$_CUSTOM_RUN_ID'
       - 'SIDECAR_IMAGE_BASE_NAME=gcr.io/$PROJECT_ID/dotcms-image:$_CUSTOM_RUN_ID'
       - 'databaseType=$_DB_TYPE'
       - 'EXPORT_REPORTS=true'
@@ -13,7 +13,8 @@ steps:
       - 'GITHUB_USER_TOKEN=$_GITHUB_USER_TOKEN'
       - 'PROVIDER_DB_USERNAME=$_PROVIDER_DB_USERNAME'
       - 'PROVIDER_DB_PASSWORD=$_PROVIDER_DB_PASSWORD'
-    args: ['-f', '$_DOCKER_SOURCE/tests/curl/travis-curl-service.yml',
+      - 'DOT_CICD_PERSIST=$_DOT_CICD_PERSIST'
+    args: ['-f', '$_DOCKER_SOURCE/tests/curl/curl-service.yml',
            '-f', '$_DOCKER_SOURCE/tests/sidecar/sidecar-service-compose.yml',
            '-f', '$_DOCKER_SOURCE/tests/shared/$_DB_TYPE-docker-compose.yml',
            '-f', '$_DOCKER_SOURCE/tests/shared/open-distro-docker-compose.yml',

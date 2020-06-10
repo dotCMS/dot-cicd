@@ -11,9 +11,14 @@ services:
     command: ["unit"]
     environment:
       EXTRA_PARAMS:
+      GOOGLE_CREDENTIALS_BASE64:
+      EXPORT_REPORTS:
+      PULL_REQUEST:
+      GITHUB_USER:
+      GITHUB_USER_TOKEN:
+      DOT_CICD_PATH:
+      DOT_CICD_CLOUD_PROVIDER:
+      DOT_CICD_PERSIST:
+      DOT_CICD_TARGET:
     ports:
       - "15005:5005"
-    volumes:
-      - type: bind
-        source: ./output
-        target: /custom/output

@@ -8,7 +8,6 @@ echo "Build source: $build_source"
 echo "Build id: $build_id"
 
 function build_by_commit {
-
     mkdir -p /build/src && cd /build/src
 
     echo "Building from source commit: $1"
@@ -19,12 +18,9 @@ function build_by_commit {
 }
 
 case "${build_source}" in
-
     "COMMIT" | "TAG" )
-
         build_by_commit "${build_id}"
         ;;
-
     *)
         echo "Invalid option"
         exit 1

@@ -1,11 +1,11 @@
 # Dot CI/CD
 
 ## Overview
-The purpose of yhis project is to store no application code but the required functionality to throw into CI (**Travis** and soon into **Github Actions**) the code found in **core** (and probably more).
+The purpose of this project is to store no application code but the required functionality to throw into CI (**Travis** and **Github Actions**) the code found in **core** (and probably more projects to come later) so it can execute some CI/CD basic stuff: build code, build docker images, publish them and run unit, integration and postman tests.
 
 It includes from bare bash scripts, initial setup files to **Docker** images. In other words everything else that is not, in this first initiaive, the **core** application code.
 
-The code and resources stored in this repo are meant to be consumed by the current CI, which in this case is **Travis**. But soon enough there should be some **Github Actions** pieces of work around.
+The code and resources stored in this repo are meant to be consumed by the current CI/CD providers: **Travis** and **Github Actions**.
 
 ## Resources
 The CI configured in the application project will import the code found in this repo to make it available to its CI workspace.
@@ -15,6 +15,9 @@ This is the current directory structure.
 dot-cicd
 └──docker
 |  └──setup
+|  |  └──build-src
+|  |  |  └──github
+|  |  |  └──google
 |  |  └──db
 |  |     └──mssql
 |  |     └──mysql
@@ -27,8 +30,12 @@ dot-cicd
 |     └──shared
 |     └──sidecar
 └──pipeline
+  └──github
+   |  └──core
+   |     ...
    └──travis
       └──core
+         ...
 ```
 
 There are 2 types of identified resources that are consequently located in two main directories.
@@ -52,6 +59,40 @@ These are actual scripts that are considered the entry points to the *pipeline*.
 This kind reources can be found at `dot-cicd/pipeline/travis` and specifically for the `core` project at `dot-cicd/pipeline/travis`. Meaning that a project can be "onboarded" to this new pattern by adding the corresponding directory here.
 
 At the same time and by convetion, projects using a different CI/CD technology, should be included in `dot-cicd/pipeline` (e.g. `dot-cicd/pipeline/github-actions`) and subsequently "onboard" the desired projects onto it.
+
+## For Developers
+All this explaining is very nice, but let's cut the chase to what develpers care, that is: *How do I configure my project to consume the pipeline*?
+
+1. Easy just create bash script called: `discover.sh` with the following content:
+```
+#!/bin/bash
+
+[[ -s .cicd/seed.source ]] && source .cicd/seed.source
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/dotCMS/dot-cicd/master/seed/install-dot-cicd.sh)"
+```
+Save it in a directory called `.cicd` at the root of your project.
+
+2. Reference `discover.sh` from your current CI/CD provider.
+In the case of **Travis** it will look something like this:
+```
+...
+before_install:
+  - chmod +x .cicd/discover.sh
+...
+install:
+  - .cicd/discover.sh
+```
+
+In the case of **Github Actions** it will look like this for every job step:
+```
+...
+      - name: Prepare dot-cicd
+        run: |
+          chmod +x .cicd/discover.sh && .cicd/discover.sh
+...
+```
+
+And that is it.
 
 ## Caveats
 This is a first initiative to satisfy the need of adding postman tests for the `core` project to the current **Travis CI**. Therefore a lot of things were implemented with `core` and **Travis** in mind.
