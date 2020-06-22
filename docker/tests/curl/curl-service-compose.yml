@@ -15,11 +15,6 @@ services:
     environment:
       databaseType:
       EXTRA_PARAMS:
-      # PROVIDER_DB_USERNAME:
-      # PROVIDER_DB_PASSWORD:
-      # PROVIDER_DB_MAXCONNS: 60
-      # PROVIDER_DB_DNSNAME: database
-      # PROVIDER_ELASTICSEARCH_DNSNAMES: elasticsearch
       WAIT_SIDECAR_FOR: 140
     depends_on:
       - sidecar
