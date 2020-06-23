@@ -28,7 +28,7 @@ services:
       PROVIDER_DB_DNSNAME: database
       PROVIDER_ELASTICSEARCH_DNSNAMES: elasticsearch
       EXTRA_PARAMS:
-      #WAIT_DB_FOR: 60
+      WAIT_DB_FOR: 60
     depends_on:
       - database
       - elasticsearch

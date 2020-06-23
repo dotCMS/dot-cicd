@@ -15,17 +15,19 @@ services:
     environment:
       databaseType:
       EXTRA_PARAMS:
-      GOOGLE_CREDENTIALS_BASE64:
-      EXPORT_REPORTS:
-      PULL_REQUEST:
-      GITHUB_USER:
-      GITHUB_USER_TOKEN:
       WAIT_DB_FOR: 2m
     depends_on:
       - database
       - elasticsearch
     ports:
       - "15005:5005"
+    volumes:
+      - type: bind
+        source: ./output
+        target: /custom/output
+#      - type: bind
+#        source: ./license/license.dat
+#        target: /custom/dotsecure/license/license.dat
     networks:
       - db_net
       - es_net

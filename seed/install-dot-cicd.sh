@@ -1,18 +1,25 @@
 #!/bin/bash
 
-: ${DOT_CICD_REPO:="https://github.com/dotCMS/dot-cicd.git"} && export DOT_CICD_REPO
 : ${DOT_CICD_PATH:="./dotcicd"} && export DOT_CICD_PATH
+: ${DOT_CICD_REPO:="https://github.com/dotCMS/dot-cicd.git"} && export DOT_CICD_REPO
+: ${DOT_CICD_BRANCH:=""} && export DOT_CICD_BRANCH
 : ${DOT_CICD_LIB:="${DOT_CICD_PATH}/library"} && export DOT_CICD_LIB
-: ${DOT_CICD_VERSION:="1.0"} && export DOT_CICD_VERSION
-: ${DOT_CICD_TOOL:="travis"} && export DOT_CICD_TOOL
-: ${DOT_CICD_PERSIST:="google"} && export DOT_CICD_PERSIST
-# Remove me
-: ${DOT_CICD_TARGET:="core"} && export DOT_CICD_TARGET
+
+echo "#############"
+echo "dot-cicd vars"
+echo "#############"
+echo "DOT_CICD_PATH: ${DOT_CICD_PATH}"
+echo "DOT_CICD_REPO: ${DOT_CICD_REPO}"
+echo "DOT_CICD_BRANCH: ${DOT_CICD_BRANCH}"
+echo "DOT_CICD_LIB: ${DOT_CICD_LIB}"
+echo
 
 # Prepares folders for CI/CD
 prepareCICD () {
   if [ ! -d ${DOT_CICD_PATH} ]; then
     mkdir ${DOT_CICD_PATH}
+  elif [ -d ${DOT_CICD_LIB} ]; then
+    rm -rf ${DOT_CICD_LIB} 
   fi
 }
 
@@ -42,6 +49,7 @@ gitCloneAndCheckout () {
       echo "Error checking out branch '${DOT_CICD_BRANCH}', continuing with master"
     else
       git branch
+      git pull origin ${DOT_CICD_BRANCH}
     fi
 
     cd ../../
@@ -58,21 +66,15 @@ prepareScripts () {
 
 # Fetch CI/CD github repo to include and use its library
 fetchCICD () {
-  if [ -z "${DOT_CICD_TARGET}" ]; then
-    echo "No CI/CD target project (DOT_CICD_TARGET variable) has been defined, aborting pipeline"
-    exit 1
-  fi
-
   prepareCICD
   gitCloneAndCheckout ${DOT_CICD_REPO} ${DOT_CICD_BRANCH}
   prepareScripts
-
   exit 0
 }
 
 fetchCICD
 
-if [[ $? != 0 ]]; then
+if [ $? -ne 0 ]; then
   echo "Aborting pipeline"
   exit 1
 fi

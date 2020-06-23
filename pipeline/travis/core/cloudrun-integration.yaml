@@ -3,7 +3,7 @@ steps:
   # Run the integration tests image
   - name: 'docker/compose:1.24.1'
     env:
-      - 'IMAGE_BASE_NAME=gcr.io/$PROJECT_ID/integration-tests-image:$_CUSTOM_RUN_ID'
+      - 'IMAGE_BASE_NAME=gcr.io/$PROJECT_ID/tests-base-image:$_CUSTOM_RUN_ID'
       - 'databaseType=$_DB_TYPE'
       - 'EXPORT_REPORTS=true'
       - 'GOOGLE_CREDENTIALS_BASE64=$_GOOGLE_CREDENTIALS_BASE64'
@@ -11,7 +11,8 @@ steps:
       - 'GITHUB_USER=$_GITHUB_USER'
       - 'GITHUB_USER_TOKEN=$_GITHUB_USER_TOKEN'
       - 'SERVICE_HOST_PORT_PREFIX=1'
-    args: ['-f', '$_DOCKER_SOURCE/tests/integration/travis-integration-service.yml',
+      - 'DOT_CICD_PERSIST=$_DOT_CICD_PERSIST'
+    args: ['-f', '$_DOCKER_SOURCE/tests/integration/integration-service.yml',
            '-f', '$_DOCKER_SOURCE/tests/shared/$_DB_TYPE-docker-compose.yml',
            '-f', '$_DOCKER_SOURCE/tests/shared/open-distro-docker-compose.yml',
            'up',

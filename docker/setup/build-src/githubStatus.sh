@@ -17,22 +17,22 @@ if [ "$PULL_REQUEST" != "false" ];
 then
 
   BASE_GOOGLE_URL="https://storage.googleapis.com/"
-  reportsIndexURL="${BASE_GOOGLE_URL}${GOOGLE_STORAGE_JOB_BRANCH_FOLDER}/reports/html/index.html"
+  reportsIndexURL="${BASE_GOOGLE_URL}${STORAGE_JOB_BRANCH_FOLDER}/reports/html/index.html"
 
   if [[ "${TEST_TYPE}" == "unit" ]]; then
     statusesContext="Travis CI - [Unit tests]"
   elif [[ "${TEST_TYPE}" == "curl" ]]; then
     statusesContext="Travis CI [Curl tests] - [${databaseType}]"
   elif [[ "${TEST_TYPE}" == "integration" ]]; then
-    statusesContext="Travis CI - [${databaseType}]"
+    statusesContext="Travis CI [Integration tests] - [${databaseType}]"
   fi
 
-#  logURL="${BASE_GOOGLE_URL}${GOOGLE_STORAGE_JOB_BRANCH_FOLDER}/logs/dotcms.log"
+#  logURL="${BASE_GOOGLE_URL}${STORAGE_JOB_BRANCH_FOLDER}/logs/dotcms.log"
 
 #  echo ""
 #  echo "================================================================================"
 #  echo "================================================================================"
-#  echo "  >>>   Storage folder for job: [${GOOGLE_STORAGE_JOB_BRANCH_FOLDER}]"
+#  echo "  >>>   Storage folder for job: [${STORAGE_JOB_BRANCH_FOLDER}]"
 #  echo "  >>>   Reports URL for job: [${reportsIndexURL}]"
 #  echo "  >>>   Log URL for job: [${logURL}]"
 #  echo "  >>>   GITHUB pull request: [https://github.com/dotCMS/core/pull/${PULL_REQUEST}]"

@@ -16,23 +16,22 @@
 set -ex
 
 if [ ! -d ${HOME}/gcloud/google-cloud-sdk/bin ]; then
-    # The install script errors if this directory already exists,
-    # but Travis already creates it when we mark it as cached.
-    rm -rf ${HOME}/gcloud;
+  # The install script errors if this directory already exists,
+  # but Travis already creates it when we mark it as cached.
+  rm -rf ${HOME}/gcloud;
 fi
 
 if [ ! -d ${HOME}/gcloud/google-cloud-sdk ]; then
-    mkdir -p ${HOME}/gcloud
-    wget https://dl.google.com/dl/cloudsdk/release/google-cloud-sdk.tar.gz \
-         --directory-prefix=${HOME}/gcloud
-    pushd "${HOME}/gcloud"
-    tar xzf google-cloud-sdk.tar.gz
-    ./google-cloud-sdk/install.sh --usage-reporting false \
-        --path-update false --command-completion false
-    popd
-
+  mkdir -p ${HOME}/gcloud
+  wget https://dl.google.com/dl/cloudsdk/release/google-cloud-sdk.tar.gz \
+       --directory-prefix=${HOME}/gcloud
+  pushd "${HOME}/gcloud"
+  tar xzf google-cloud-sdk.tar.gz
+  ./google-cloud-sdk/install.sh --usage-reporting false \
+      --path-update false --command-completion false
+  popd
 else
-    source ${HOME}/gcloud/google-cloud-sdk/path.bash.inc
+  . ${HOME}/gcloud/google-cloud-sdk/path.bash.inc
 fi
 ${HOME}/gcloud/google-cloud-sdk/bin/gcloud -q components update
 
