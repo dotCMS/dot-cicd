@@ -15,19 +15,24 @@ fi
 # https://storage.googleapis.com/cicd-246518-tests/branch-name/unit/logs/dotcms.log
 if [ "$PULL_REQUEST" != "false" ];
 then
+  reportsIndexURL="${BASE_STORAGE_URL}/${STORAGE_JOB_BRANCH_FOLDER}/reports/html/index.html"
 
-  BASE_GOOGLE_URL="https://storage.googleapis.com/"
-  reportsIndexURL="${BASE_GOOGLE_URL}${STORAGE_JOB_BRANCH_FOLDER}/reports/html/index.html"
-
-  if [[ "${TEST_TYPE}" == "unit" ]]; then
-    statusesContext="Travis CI - [Unit tests]"
-  elif [[ "${TEST_TYPE}" == "curl" ]]; then
-    statusesContext="Travis CI [Curl tests] - [${databaseType}]"
-  elif [[ "${TEST_TYPE}" == "integration" ]]; then
-    statusesContext="Travis CI [Integration tests] - [${databaseType}]"
+  statusesLabel="Unknown"
+  if [[ "${DOT_CICD_CLOUD_PROVIDER}" == "travis" ]]; then
+    statusesLabel="Travis CI"
+  elif [[ "${DOT_CICD_CLOUD_PROVIDER}" == "github" ]]; then
+    statusesLabel="Github Actions"
   fi
 
-#  logURL="${BASE_GOOGLE_URL}${STORAGE_JOB_BRANCH_FOLDER}/logs/dotcms.log"
+  if [[ "${TEST_TYPE}" == "unit" ]]; then
+    statusesContext="${statusesLabel} - [Unit tests results]"
+  elif [[ "${TEST_TYPE}" == "curl" ]]; then
+    statusesContext="${statusesLabel} - [Curl tests results] - [${databaseType}]"
+  elif [[ "${TEST_TYPE}" == "integration" ]]; then
+    statusesContext="${statusesLabel} - [Integration tests results] - [${databaseType}]"
+  fi
+
+#  logURL="${BASE_STORAGE_URL}/${STORAGE_JOB_BRANCH_FOLDER}/logs/dotcms.log"
 
 #  echo ""
 #  echo "================================================================================"

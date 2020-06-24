@@ -11,7 +11,10 @@ steps:
       - 'GITHUB_USER=$_GITHUB_USER'
       - 'GITHUB_USER_TOKEN=$_GITHUB_USER_TOKEN'
       - 'SERVICE_HOST_PORT_PREFIX=1'
+      - 'DOT_CICD_PATH=$_DOT_CICD_PATH'
+      - 'DOT_CICD_CLOUD_PROVIDER=$_DOT_CICD_CLOUD_PROVIDER'
       - 'DOT_CICD_PERSIST=$_DOT_CICD_PERSIST'
+      - 'DOT_CICD_TARGET=$_DOT_CICD_TARGET'
     args: ['-f', '$_DOCKER_SOURCE/tests/integration/integration-service.yml',
            '-f', '$_DOCKER_SOURCE/tests/shared/$_DB_TYPE-docker-compose.yml',
            '-f', '$_DOCKER_SOURCE/tests/shared/open-distro-docker-compose.yml',

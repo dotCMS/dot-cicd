@@ -1,7 +1,9 @@
-reportsCommitIndexURL="${BASE_STORAGE_URL}/${STORAGE_JOB_COMMIT_FOLDER}/reports/html/index.html"
-reportsBranchIndexURL="${BASE_STORAGE_URL}/${STORAGE_JOB_BRANCH_FOLDER}/reports/html/index.html"
-logCommitURL="${BASE_STORAGE_URL}/${STORAGE_JOB_COMMIT_FOLDER}/logs/dotcms.log"
-logBranchURL="${BASE_STORAGE_URL}/${STORAGE_JOB_BRANCH_FOLDER}/logs/dotcms.log"
+commitFolder=${BASE_STORAGE_URL}/${STORAGE_JOB_COMMIT_FOLDER}
+branchFolder=${BASE_STORAGE_URL}/${STORAGE_JOB_BRANCH_FOLDER}
+reportsCommitIndexURL="${commitFolder}/reports/html/index.html"
+reportsBranchIndexURL="${branchFolder}/reports/html/index.html"
+logCommitURL="${commitFolder}/logs/dotcms.log"
+logBranchURL="${branchFolder}/logs/dotcms.log"
 
 echo ""
 echo -e "\e[36m==========================================================================================================================\e[0m"

@@ -13,7 +13,10 @@ steps:
       - 'GITHUB_USER_TOKEN=$_GITHUB_USER_TOKEN'
       - 'PROVIDER_DB_USERNAME=$_PROVIDER_DB_USERNAME'
       - 'PROVIDER_DB_PASSWORD=$_PROVIDER_DB_PASSWORD'
+      - 'DOT_CICD_PATH=$_DOT_CICD_PATH'
+      - 'DOT_CICD_CLOUD_PROVIDER=$_DOT_CICD_CLOUD_PROVIDER'
       - 'DOT_CICD_PERSIST=$_DOT_CICD_PERSIST'
+      - 'DOT_CICD_TARGET=$_DOT_CICD_TARGET'
     args: ['-f', '$_DOCKER_SOURCE/tests/curl/curl-service.yml',
            '-f', '$_DOCKER_SOURCE/tests/sidecar/sidecar-service-compose.yml',
            '-f', '$_DOCKER_SOURCE/tests/shared/$_DB_TYPE-docker-compose.yml',
