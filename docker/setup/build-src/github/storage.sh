@@ -1,6 +1,7 @@
 #!/bin/bash
 
 export outputFolder="/custom/output"
+export reportsIndexURL="${BASE_STORAGE_URL}/${STORAGE_JOB_BRANCH_FOLDER}/reports/html/index.html"
 
 . /build/printBuildInfo.sh
 

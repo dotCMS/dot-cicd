@@ -52,11 +52,10 @@ cd /build/src/core/dotCMS \
   && ./gradlew integrationTest ${GRADLE_PARAMS}
 
 # Required code, without it gradle will exit 1 killing the docker container
-gradlewReturnCode=$?
-export CURRENT_JOB_BUILD_STATUS=${gradlewReturnCode}
+export CURRENT_JOB_BUILD_STATUS=$?
 
 echo ""
-if [[ ${gradlewReturnCode} == 0 ]]; then
+if [[ ${gradlewRCURRENT_JOB_BUILD_STATUSeturnCode} == 0 ]]; then
   echo "  >>> Integration tests executed successfully <<<"
 else
   echo "  >>> Integration tests failed <<<" >&2
@@ -69,15 +68,16 @@ echo ""
 # Copying gradle report
 cp -R /build/src/core/dotCMS/build/reports/tests/integrationTest/* /custom/output/reports/html/
 
+# Track job results
+trackJob ${CURRENT_JOB_BUILD_STATUS} /custom/output
+
 # Do we want to export the resulting reports to google storage?
-if [[ ! -z "${EXPORT_REPORTS}" ]]; then
-  if [[ $EXPORT_REPORTS ]]; then
-    . /build/${DOT_CICD_PERSIST}/storage.sh
-    ignoring_return_value=$?
-  fi
+if [[ "${EXPORT_REPORTS}" == "true" ]]; then
+  . /build/${DOT_CICD_PERSIST}/storage.sh
+  ignoring_return_value=$?
 fi
 
-if [[ ${gradlewReturnCode} == 0 ]]; then
+if [[ ${CURRENT_JOB_BUILD_STATUS} == 0 ]]; then
   exit 0
 else
   exit 1

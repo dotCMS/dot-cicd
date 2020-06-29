@@ -8,7 +8,9 @@ export GITHUB_TEST_RESULTS_HOST_PATH="${GITHUB}/${GITHUB_TEST_RESULTS_PATH}"
 export GITHUB_TEST_RESULTS_URL="https://${GITHUB_TEST_RESULTS_HOST_PATH}"
 export GITHACK_TEST_RESULTS_URL="https://${GITHACK}/${GITHUB_TEST_RESULTS_PATH}"
 export GITHUB_TEST_RESULTS_REPO="${GITHUB_TEST_RESULTS_URL}.git"
-export GITHUB_TEST_RESULTS_BROWSE_URL="${GITHACK_TEST_RESULTS_URL}/master/projects/${DOT_CICD_TARGET}"
+export GITHUB_TEST_RESULTS_BROWSE_URL="${GITHACK_TEST_RESULTS_URL}/${BUILD_ID}/projects/${DOT_CICD_TARGET}"
+export GITHUB_TEST_RESULTS_REMOTE="https://${GITHUB_USER_TOKEN}@${GITHUB_TEST_RESULTS_HOST_PATH}"
+export GITHUB_TEST_RESULTS_REMOTE_REPO="https://${GITHUB_USER_TOKEN}@${GITHUB_TEST_RESULTS_HOST_PATH}.git"
 
 function checkForToken {
   if [[ -z "${GITHUB_USER_TOKEN}" ]]; then
@@ -66,21 +68,60 @@ function addResults {
 
 function persistResults {
   TEST_RESULTS_PATH=${DOT_CICD_PATH}/${TEST_RESULTS}
+  gitConfig
+  
   echo "Cloning ${GITHUB_TEST_RESULTS_REPO} to ${TEST_RESULTS_PATH}"
   git clone ${GITHUB_TEST_RESULTS_REPO} ${TEST_RESULTS_PATH}
-  
-  gitConfig
   createAndSwitch ${TEST_RESULTS_PATH}/projects/${DOT_CICD_TARGET}
-  cleanTestFolders
+
+  git fetch --all
+  remoteBranch=$(git ls-remote --heads ${GITHUB_TEST_RESULTS_REMOTE_REPO} ${BUILD_ID} | wc -l | tr -d '[:space:]')
+
+  if [[ ${remoteBranch} == 1 ]]; then
+    echo "git checkout -b ${BUILD_ID} --track origin/${BUILD_ID}"
+    git checkout -b ${BUILD_ID} --track origin/${BUILD_ID}
+  else
+    echo "git checkout -b ${BUILD_ID}"
+    git checkout -b ${BUILD_ID}
+  fi
   
+  if [[ $? != 0 ]]; then
+    echo "Error checking out branch '${BUILD_ID}', continuing with master"
+    git pull origin master
+  else
+    git branch
+    if [[ ${remoteBranch} == 1 ]]; then
+      echo "git pull origin ${BUILD_ID}"
+      git pull origin ${BUILD_ID}
+    fi
+  fi
+
+  cleanTestFolders
   addResults ./${BUILD_HASH}
-  addResults ./${BUILD_ID}
+  addResults ./current
 
   git add .
   git commit -m "Adding ${TEST_TYPE} tests results for ${BUILD_HASH} at ${BUILD_ID}"
-  git push https://${GITHUB_USER_TOKEN}@${GITHUB_TEST_RESULTS_HOST_PATH}
+  git push ${GITHUB_TEST_RESULTS_REMOTE}
   git status
 }
 
+function trackJob {
+  local resultLabel=
+  if [[ ${1} == 0 ]]; then
+    resultLabel=SUCCESS
+  else
+    resultLabel=FAIL
+  fi
+
+  local resultFile=${2}/job_results.source
+  echo "Tracking job results in ${resultFile}"
+  touch ${resultFile}
+  echo "TEST_TYPE=${TEST_TYPE^}" >> ${resultFile}
+  echo "TEST_TYPE_RESULT=${resultLabel}" >> ${resultFile}
+  echo "COMMIT_TEST_RESULT_URL=${GITHUB_PERSIST_COMMIT_URL}" >> ${resultFile}
+  echo "BRANCH_TEST_RESULT_URL=${GITHUB_PERSIST_BRANCH_URL}" >> ${resultFile}
+}
+
 export GITHUB_PERSIST_COMMIT_URL="${GITHUB_TEST_RESULTS_BROWSE_URL}/$(resolveTestPath ${BUILD_HASH})"
-export GITHUB_PERSIST_BRANCH_URL="${GITHUB_TEST_RESULTS_BROWSE_URL}/$(resolveTestPath ${BUILD_ID})"
+export GITHUB_PERSIST_BRANCH_URL="${GITHUB_TEST_RESULTS_BROWSE_URL}/$(resolveTestPath current)"
