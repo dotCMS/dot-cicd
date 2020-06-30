@@ -24,7 +24,7 @@ if [[ "${TEST_TYPE}" == "unit" ]]; then
 else
   echo "
   ${logsLink}
-  " >> ${outputFolder}/reports/html/integrationTest/index.html
+  " >> ${outputFolder}/reports/html/index.html
 fi
 
 checkForToken
