@@ -49,7 +49,7 @@ echo "==========================================================================
 echo ""
 
 cd /build/src/core/dotCMS \
-  && ./gradlew integrationTest jacocoTestReport ${GRADLE_PARAMS}
+  && ./gradlew integrationTest ${GRADLE_PARAMS}
 
 # Required code, without it gradle will exit 1 killing the docker container
 gradlewReturnCode=$?
