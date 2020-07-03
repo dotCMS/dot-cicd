@@ -66,7 +66,7 @@ do
   curlResults[$collectionName]=$?
   resultLabel=$(resolveLabel ${curlResults[$collectionName]})
   echo "<tr><td><a href=\"./$page\">$f</a></td>
-    <td>$resultLabel</td></tr>" >> /build/resultLinks.html
+    <td>${resultLabel}</td></tr>" >> /build/resultLinks.html
 done
 
 cat /build/newmanTestResultsHeader.html /build/resultLinks.html /build/newmanTestResultsFooter.html \
@@ -85,7 +85,7 @@ done
 export CURRENT_JOB_BUILD_STATUS=${curlReturnCode}
 
 echo ""
-if [[ ${curlReturnCode} == 0 ]]; then
+if [[ ${CURRENT_JOB_BUILD_STATUS} == 0 ]]; then
   echo "  >>> Curl tests executed successfully <<<"
 else
   echo "  >>> Curl tests failed <<<" >&2
@@ -98,13 +98,16 @@ echo ""
 # Copying gradle report
 cp -R ${reportFolder}/* /custom/output/reports/html/
 
+# Track job results
+trackJob ${CURRENT_JOB_BUILD_STATUS} /custom/output
+
 # Do we want to export the resulting reports to google storage?
-if [[ ! -z "${EXPORT_REPORTS}" && $EXPORT_REPORTS ]]; then
+if [[ "${EXPORT_REPORTS}" == "true" ]]; then
   . /build/${DOT_CICD_PERSIST}/storage.sh
   ignoring_return_value=$?
 fi
 
-if [[ ${curlReturnCode} == 0 ]]; then
+if [[ ${CURRENT_JOB_BUILD_STATUS} == 0 ]]; then
   exit 0
 else
   exit 1

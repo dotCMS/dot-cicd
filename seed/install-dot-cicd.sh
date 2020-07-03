@@ -5,6 +5,10 @@
 : ${DOT_CICD_BRANCH:=""} && export DOT_CICD_BRANCH
 : ${DOT_CICD_LIB:="${DOT_CICD_PATH}/library"} && export DOT_CICD_LIB
 
+if [ "${DOT_CICD_BRANCH}" -eq "master" ]; then
+  export DOT_CICD_BRANCH=
+fi
+
 echo "#############"
 echo "dot-cicd vars"
 echo "#############"
@@ -33,6 +37,9 @@ gitCloneAndCheckout () {
     exit 1
   fi
 
+  git config --global user.email "dotcmsbuild@dotcms.com"
+  git config --global user.name "dotcmsbuild"
+  git config --global pull.rebase false
   echo "Cloning CI/CD repo from ${DOT_CICD_REPO} to ${DOT_CICD_LIB}"
   git clone ${DOT_CICD_REPO} ${DOT_CICD_LIB}
 
@@ -41,8 +48,9 @@ gitCloneAndCheckout () {
     exit 1
   fi
 
-  if [ ! -z "${DOT_CICD_BRANCH}" ]; then
+  if [ -n "${DOT_CICD_BRANCH}" ]; then
     cd ${DOT_CICD_LIB}
+    git fetch --all
     echo "Checking out branch ${DOT_CICD_BRANCH}"
     git checkout -b ${DOT_CICD_BRANCH}
     if [ $? -ne 0 ]; then

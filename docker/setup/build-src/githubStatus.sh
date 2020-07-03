@@ -2,8 +2,7 @@
 
 GITHUB_STATUS="failure"
 GITHUB_DESCRIPTION="Tests FAILED"
-if [ ${CURRENT_JOB_BUILD_STATUS} == 0 ]
-then
+if [[ ${CURRENT_JOB_BUILD_STATUS} == 0 ]]; then
   GITHUB_STATUS="success"
   GITHUB_DESCRIPTION="Tests executed SUCCESSFULLY"
 fi
@@ -13,10 +12,7 @@ fi
 # https://storage.googleapis.com/cicd-246518-tests/branch-name/integration/mysql/logs/dotcms.log
 # https://storage.googleapis.com/cicd-246518-tests/branch-name/unit/reports/html/index.html
 # https://storage.googleapis.com/cicd-246518-tests/branch-name/unit/logs/dotcms.log
-if [ "$PULL_REQUEST" != "false" ];
-then
-  reportsIndexURL="${BASE_STORAGE_URL}/${STORAGE_JOB_BRANCH_FOLDER}/reports/html/index.html"
-
+if [ "$PULL_REQUEST" != "false" ]; then
   statusesLabel="Unknown"
   if [[ "${DOT_CICD_CLOUD_PROVIDER}" == "travis" ]]; then
     statusesLabel="Travis CI"
@@ -35,16 +31,16 @@ then
 #  logURL="${BASE_STORAGE_URL}/${STORAGE_JOB_BRANCH_FOLDER}/logs/dotcms.log"
 
 #  echo ""
-#  echo "================================================================================"
-#  echo "================================================================================"
+#  echo "=================================================================================="
+#  echo "=================================================================================="
 #  echo "  >>>   Storage folder for job: [${STORAGE_JOB_BRANCH_FOLDER}]"
 #  echo "  >>>   Reports URL for job: [${reportsIndexURL}]"
 #  echo "  >>>   Log URL for job: [${logURL}]"
 #  echo "  >>>   GITHUB pull request: [https://github.com/dotCMS/core/pull/${PULL_REQUEST}]"
 #  echo "  >>>   Job build status: ${CURRENT_JOB_BUILD_STATUS}"
 #  echo "  >>>   GITHUB user: ${GITHUB_USER}/${GITHUB_USER_TOKEN}"
-#  echo "================================================================================"
-#  echo "================================================================================"
+#  echo "=================================================================================="
+#  echo "=================================================================================="
 #  echo ""
 
   jsonBaseValue="https://api.github.com/repos/dotCMS/core/statuses/"

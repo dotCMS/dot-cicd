@@ -18,15 +18,14 @@ fi
 . /build/common.sh
 
 commitPath="$(resolveTestPath ${BUILD_HASH})"
-branchPath="$(resolveTestPath ${BUILD_ID})"
 
 if [[ "${DOT_CICD_PERSIST}" == "google" ]]; then
   export STORAGE_JOB_COMMIT_FOLDER="cicd-246518-tests/${commitPath}"
-  export STORAGE_JOB_BRANCH_FOLDER="cicd-246518-tests/${branchPath}"
+  export STORAGE_JOB_BRANCH_FOLDER="cicd-246518-tests/$(resolveTestPath ${BUILD_ID})"
   export BASE_STORAGE_URL="https://storage.googleapis.com"
 elif [[ "${DOT_CICD_PERSIST}" == "github" ]]; then
   . /build/github/githubCommon.sh 
   export STORAGE_JOB_COMMIT_FOLDER="${commitPath}"
-  export STORAGE_JOB_BRANCH_FOLDER="${branchPath}"
+  export STORAGE_JOB_BRANCH_FOLDER="$(resolveTestPath current)"
   export BASE_STORAGE_URL=${GITHUB_TEST_RESULTS_BROWSE_URL}
 fi
