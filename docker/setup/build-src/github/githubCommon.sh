@@ -119,8 +119,8 @@ function trackJob {
   touch ${resultFile}
   echo "TEST_TYPE=${TEST_TYPE^}" >> ${resultFile}
   echo "TEST_TYPE_RESULT=${resultLabel}" >> ${resultFile}
-  echo "COMMIT_TEST_RESULT_URL=${GITHUB_PERSIST_COMMIT_URL}" >> ${resultFile}
-  echo "BRANCH_TEST_RESULT_URL=${GITHUB_PERSIST_BRANCH_URL}" >> ${resultFile}
+  echo "COMMIT_TEST_RESULT_URL=${GITHUB_PERSIST_COMMIT_URL}/reports/html/index.html" >> ${resultFile}
+  echo "BRANCH_TEST_RESULT_URL=${GITHUB_PERSIST_BRANCH_URL}/reports/html/index.html" >> ${resultFile}
 }
 
 export GITHUB_PERSIST_COMMIT_URL="${GITHUB_TEST_RESULTS_BROWSE_URL}/$(resolveTestPath ${BUILD_HASH})"
