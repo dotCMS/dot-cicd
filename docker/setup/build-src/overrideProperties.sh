@@ -13,12 +13,16 @@ resourcesFolder="$dotCMSFolder/src/integration-test/resources"
 sed -i "s,^# integrationTestFelixFolder=.*$,integrationTestFelixFolder=$felixFolder,g" $dotCMSFolder/gradle.properties
 
 ## ------------------
+# /build/src/core/dotCMS/src/main/resources/dotmarketing-config.properties
+sed -i "s,^DYNAMIC_CONTENT_PATH=.*$,DYNAMIC_CONTENT_PATH=$dotsecureFolder,g" $dotCMSFolder/src/main/resources/dotmarketing-config.properties
+
+## ------------------
 # /build/src/core/dotCMS/src/integration-test/resources/it-dotcms-config-cluster.properties
 sed -i "s,^es.path.home=.*$,es.path.home=$dotCMSFolder/src/main/webapp/WEB-INF/elasticsearch,g" $resourcesFolder/it-dotcms-config-cluster.properties
 sed -i "s,^ES_HOSTNAME=.*$,ES_HOSTNAME=elasticsearch,g" $resourcesFolder/it-dotcms-config-cluster.properties
 
 ## ------------------
-# /build/src/core/dotCMS/src/integration-test/resources/it-dotmarketing-seed.sh
+# /build/src/core/dotCMS/src/integration-test/resources/it-dotmarketing-config.properties
 sed -i "s,^DYNAMIC_CONTENT_PATH=.*$,DYNAMIC_CONTENT_PATH=$dotsecureFolder,g" $resourcesFolder/it-dotmarketing-config.properties
 sed -i "s,^TAIL_LOG_LOG_FOLDER=.*$,TAIL_LOG_LOG_FOLDER=$dotsecureFolder/logs/,g" $resourcesFolder/it-dotmarketing-config.properties
 sed -i "s,^ASSET_REAL_PATH =.*$,ASSET_REAL_PATH=$assetsFolder,g" $resourcesFolder/it-dotmarketing-config.properties
