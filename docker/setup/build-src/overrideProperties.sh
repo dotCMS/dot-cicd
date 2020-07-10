@@ -14,7 +14,7 @@ sed -i "s,^# integrationTestFelixFolder=.*$,integrationTestFelixFolder=$felixFol
 
 ## ------------------
 # /build/src/core/dotCMS/src/main/resources/dotmarketing-config.properties
-sed -i "s,^DYNAMIC_CONTENT_PATH=.*$,DYNAMIC_CONTENT_PATH=$dotsecureFolder,g" $dotCMSFolder/src/main/resources/dotmarketing-config.properties
+sed -i "s,^#DYNAMIC_CONTENT_PATH=.*$,DYNAMIC_CONTENT_PATH=$dotsecureFolder,g" $dotCMSFolder/src/main/resources/dotmarketing-config.properties
 
 ## ------------------
 # /build/src/core/dotCMS/src/integration-test/resources/it-dotcms-config-cluster.properties
