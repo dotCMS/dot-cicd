@@ -116,6 +116,7 @@ function trackJob {
 
   local resultFile=${2}/job_results.source
   echo "Tracking job results in ${resultFile}"
+  > ${resultFile}
   touch ${resultFile}
   echo "TEST_TYPE=${TEST_TYPE^}" >> ${resultFile}
   echo "TEST_TYPE_RESULT=${resultLabel}" >> ${resultFile}
