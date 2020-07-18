@@ -5,7 +5,7 @@
 : ${DOT_CICD_BRANCH:=""} && export DOT_CICD_BRANCH
 : ${DOT_CICD_LIB:="${DOT_CICD_PATH}/library"} && export DOT_CICD_LIB
 
-if [ "${DOT_CICD_BRANCH}" -eq "master" ]; then
+if [ "${DOT_CICD_BRANCH}" = "master" ]; then
   export DOT_CICD_BRANCH=
 fi
 
