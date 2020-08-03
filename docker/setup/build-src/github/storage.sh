@@ -14,15 +14,7 @@ echo ""
 logURL="${GITHUB_PERSIST_COMMIT_URL}/logs/dotcms.log"
 logsLink="<h2 class=\"summaryGroup infoBox\" style=\"margin: 40px; padding: 15px;\"><a href=\"${logURL}\" target=\"_blank\">dotcms.log</a></h2>"
 
-if [[ "${TEST_TYPE}" == "unit" ]]; then
-  echo "
-  ${logsLink}
-  " >> ${outputFolder}/reports/html/index.html
-# elif [[ "${TEST_TYPE}" == "curl" ]]; then
-#   echo "
-#   ${logsLink}
-#   " >> ${outputFolder}/reports/html/index.html
-else
+if [[ "${TEST_TYPE}" != "curl" ]]; then
   echo "
   ${logsLink}
   " >> ${outputFolder}/reports/html/index.html

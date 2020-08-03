@@ -15,7 +15,7 @@ services:
     environment:
       databaseType:
       EXTRA_PARAMS:
-      WAIT_DB_FOR: 2m
+      WAIT_DB_FOR: 3m
     depends_on:
       - database
       - elasticsearch

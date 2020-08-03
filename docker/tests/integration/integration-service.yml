@@ -20,7 +20,7 @@ services:
       PULL_REQUEST:
       GITHUB_USER:
       GITHUB_USER_TOKEN:
-      WAIT_DB_FOR: 2m
+      WAIT_DB_FOR: 3m
       DOT_CICD_PATH:
       DOT_CICD_CLOUD_PROVIDER:
       DOT_CICD_PERSIST:
