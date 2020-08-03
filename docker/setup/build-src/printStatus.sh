@@ -20,7 +20,7 @@ if [[ "${TEST_TYPE}" != "curl" ]]; then
   echo -e "\e[31m   ${logCommitURL}\e[0m"
 fi
 echo
-if [[ "$PULL_REQUEST" != "false" ]]; then
+if [[ -n "${PULL_REQUEST}" && "${PULL_REQUEST}" != "false" ]]; then
   echo "   GITHUB pull request: [https://github.com/dotCMS/core/pull/${PULL_REQUEST}]"
 fi
 echo
