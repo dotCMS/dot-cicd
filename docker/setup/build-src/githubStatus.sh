@@ -12,7 +12,7 @@ fi
 # https://storage.googleapis.com/cicd-246518-tests/branch-name/integration/mysql/logs/dotcms.log
 # https://storage.googleapis.com/cicd-246518-tests/branch-name/unit/reports/html/index.html
 # https://storage.googleapis.com/cicd-246518-tests/branch-name/unit/logs/dotcms.log
-if [ -n "${PULL_REQUEST}" && "${PULL_REQUEST}" != "false" ]; then
+if [[ -n "${PULL_REQUEST}" && "${PULL_REQUEST}" != "false" ]]; then
   statusesLabel="Unknown"
   if [[ "${DOT_CICD_CLOUD_PROVIDER}" == "travis" ]]; then
     statusesLabel="Travis CI"
