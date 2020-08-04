@@ -55,7 +55,7 @@ cd /build/src/core/dotCMS \
 export CURRENT_JOB_BUILD_STATUS=$?
 
 echo ""
-if [[ ${gradlewRCURRENT_JOB_BUILD_STATUSeturnCode} == 0 ]]; then
+if [[ ${CURRENT_JOB_BUILD_STATUS} == 0 ]]; then
   echo "  >>> Integration tests executed successfully <<<"
 else
   echo "  >>> Integration tests failed <<<" >&2
