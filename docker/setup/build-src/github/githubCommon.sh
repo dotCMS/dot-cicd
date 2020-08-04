@@ -71,7 +71,7 @@ function persistResults {
   gitConfig
   
   echo "Cloning ${GITHUB_TEST_RESULTS_REPO} to ${TEST_RESULTS_PATH}"
-  git clone -–depth 1 ${GITHUB_TEST_RESULTS_REPO} ${TEST_RESULTS_PATH}
+  git clone ${GITHUB_TEST_RESULTS_REPO} ${TEST_RESULTS_PATH}
   createAndSwitch ${TEST_RESULTS_PATH}/projects/${DOT_CICD_TARGET}
 
   git fetch --all
