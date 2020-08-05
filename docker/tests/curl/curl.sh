@@ -99,6 +99,8 @@ if [ "$buildImage" = true ]; then
 
 fi
 
+cp -R ../../setup .
+
 # Starting the container for the build image
 export databaseType=${database}
 export IMAGE_BASE_NAME=${BUILD_IMAGE_TAG}

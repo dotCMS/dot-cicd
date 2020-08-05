@@ -106,6 +106,8 @@ if [ ! -z "${extra}" ]; then
   export EXTRA_PARAMS=${extra}
 fi
 
+cp -R ../../setup .
+
 # Starting the container for the build image
 export databaseType=${database}
 export IMAGE_BASE_NAME=${BUILD_IMAGE_TAG}

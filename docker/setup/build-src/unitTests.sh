@@ -33,11 +33,11 @@ echo ""
 # Copying gradle report
 cp -R /build/src/core/dotCMS/build/test-results/unit-tests/html/ /custom/output/reports/
 
-# Track job results
-trackJob ${CURRENT_JOB_BUILD_STATUS} /custom/output
-
 # Do we want to export the resulting reports to google storage?
 if [[ "${EXPORT_REPORTS}" == "true" ]]; then
+  # Track job results
+  trackJob ${CURRENT_JOB_BUILD_STATUS} /custom/output
+
   . /build/${DOT_CICD_PERSIST}/storage.sh
   ignoring_return_value=$?
 fi

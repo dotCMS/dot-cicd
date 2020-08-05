@@ -1,3 +1,10 @@
 .DS_Store
 license.dat
 server_id.dat
+.vscode/
+docker/tests/unit/output
+docker/tests/unit/setup
+docker/tests/integration/output
+docker/tests/integration/setup
+docker/tests/curl/output
+docker/tests/curl/setup

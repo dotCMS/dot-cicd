@@ -3,7 +3,7 @@
 export TEST_TYPE=${1}
 
 if [[ ! -z "${EXTRA_PARAMS}" ]]; then
-  echo "Running curl tests with extra parameters [${EXTRA_PARAMS}]"
+  echo "Running tests with extra parameters [${EXTRA_PARAMS}]"
 fi
 
 #  One of ["postgres", "mysql", "oracle", "mssql"]

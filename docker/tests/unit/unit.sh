@@ -77,13 +77,13 @@ if [ "$buildImage" = true ]; then
       --build-arg BUILD_FROM=COMMIT \
       --build-arg BUILD_ID=${branchOrCommit} \
       --build-arg BUILD_HASH=${gitHash} \
-      -t ${BUILD_IMAGE_TAG} .
+      -t ${BUILD_IMAGE_TAG} ../integration
   else
     docker build --pull --no-cache \
       --build-arg BUILD_FROM=COMMIT \
       --build-arg BUILD_ID=${branchOrCommit} \
       --build-arg BUILD_HASH=${gitHash} \
-      -t ${BUILD_IMAGE_TAG} .
+      -t ${BUILD_IMAGE_TAG} ../integration
   fi
 
 fi
@@ -94,6 +94,8 @@ if [ ! -z "${extra}" ]; then
   echo ""
   export EXTRA_PARAMS=${extra}
 fi
+
+cp -R ../../setup .
 
 # Starting the container for the build image
 export IMAGE_BASE_NAME=${BUILD_IMAGE_TAG}

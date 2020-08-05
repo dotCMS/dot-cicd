@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# fists we need to do some clean up
+# first we need to do some clean up
 rm -rf /custom/output/*
 mkdir -p /custom/output/logs
 mkdir -p /custom/output/reports/html
