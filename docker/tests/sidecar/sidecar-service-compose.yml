@@ -16,6 +16,7 @@ services:
 
   sidecar:
     image: "${SIDECAR_IMAGE_BASE_NAME}"
+    command: ["dotcms", "${TEST_TYPE}"]
     ports:
       - "8080:8080"
     environment:
@@ -33,7 +34,19 @@ services:
       ASYNC_REINDEX_COMMIT_LISTENERS: "false"
       ASYNC_COMMIT_LISTENERS: "false"
       EXTRA_PARAMS:
-      WAIT_DB_FOR: 60
+      GOOGLE_CREDENTIALS_BASE64:
+      EXPORT_REPORTS:
+      PULL_REQUEST:
+      BUILD_HASH:
+      BUILD_ID:
+      GITHUB_USER:
+      GITHUB_USER_TOKEN:
+      WAIT_DB_FOR: 1m
+      WAIT_SIDECAR_FOR: 3m
+      DOT_CICD_PATH:
+      DOT_CICD_CLOUD_PROVIDER:
+      DOT_CICD_PERSIST:
+      DOT_CICD_TARGET:
     depends_on:
       - database
       - elasticsearch

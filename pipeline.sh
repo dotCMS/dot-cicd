@@ -6,7 +6,7 @@ function usage {
   echo "  operation: identified operation to perform (e.g. 'buildBase' or )"
 }
 
-DEFAULT_CLOUD_PROVIDER="travis"
+DEFAULT_CLOUD_PROVIDER="github"
 
 : ${DOT_CICD_PATH:="./dotcicd"} && export DOT_CICD_PATH
 : ${DOT_CICD_LIB:="${DOT_CICD_PATH}/library"} && export DOT_CICD_LIB
