@@ -12,7 +12,7 @@ setupTestRun sidecar
 
 runFolder=${DOCKER_SOURCE}/tests/sidecar
 licenseFolder=${runFolder}/license
-mkdir ${licenseFolder}
+mkdir -p ${licenseFolder}
 chmod 777 ${licenseFolder}
 licenseFile=${licenseFolder}/license.dat
 touch ${licenseFile}

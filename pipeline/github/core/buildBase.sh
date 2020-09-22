@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 DOCKER_SOURCE=${DOT_CICD_LIB}/docker
 setupBuildBase ${DOT_CICD_PATH}/docker
 

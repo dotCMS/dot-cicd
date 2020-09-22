@@ -79,6 +79,6 @@ function setupTestRun {
     rm -rf ${DOCKER_SOURCE}/tests/${testType}/setup
   fi
 
-  mkdir ${DOCKER_SOURCE}/tests/${testType}/setup
+  mkdir -p ${DOCKER_SOURCE}/tests/${testType}/setup
   cp -R ${DOCKER_SOURCE}/setup/db ${DOCKER_SOURCE}/tests/${testType}/setup
 }

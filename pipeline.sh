@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 function usage {
   echo "usage: ${0} <target> <operation>"
   echo "  target: only two values is accepted: 'travis' or 'github', fallbacks to ${DEFAULT_CLOUD_PROVIDER}"
