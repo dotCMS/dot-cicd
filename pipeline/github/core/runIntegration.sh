@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 DOCKER_SOURCE=${DOT_CICD_LIB}/docker
 export IMAGE_BASE_NAME=docker.pkg.github.com/dotcms/core/tests-base-image:${GITHUB_RUN_NUMBER}
 export EXPORT_REPORTS=true
@@ -14,12 +16,12 @@ docker-compose \
   up \
   --abort-on-container-exit
 
-dcResult=$?
+# dcResult=$?
 
 cleanUpTest integration
 
-if [[ ${dcResult} == 0 ]]; then
-  exit 0
-else
-  exit 1
-fi
+# if [[ ${dcResult} == 0 ]]; then
+#   exit 0
+# else
+#   exit 1
+# fi

@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 DOCKER_SOURCE=${DOT_CICD_LIB}/docker
 export IMAGE_BASE_NAME="docker.pkg.github.com/dotcms/core/tests-base-image:${GITHUB_RUN_NUMBER}"
 export SIDECAR_IMAGE_BASE_NAME="docker.pkg.github.com/dotcms/core/dotcms-image:${GITHUB_RUN_NUMBER}"
@@ -26,12 +28,12 @@ docker-compose \
   up \
   --abort-on-container-exit
 
-dcResult=$?
+# dcResult=$?
 
 cleanUpTest sidecar
 
-if [[ ${dcResult} == 0 ]]; then
-  exit 0
-else
-  exit 1
-fi
+# if [[ ${dcResult} == 0 ]]; then
+#   exit 0
+# else
+#   exit 1
+# fi

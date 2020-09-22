@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 function usage {
   echo "usage: ${0} <target> <operation>"
   echo "  target: only two values is accepted: 'travis' or 'github', fallbacks to ${DEFAULT_CLOUD_PROVIDER}"
@@ -66,8 +68,8 @@ fi
 echo "Executing ${pipelineScript}"
 . ${pipelineScript} ${2} ${3} ${4}
 
-if [[ $? == 0 ]]; then
-  exit 0
-else
-  exit 1
-fi
+# if [[ $? == 0 ]]; then
+#   exit 0
+# else
+#   exit 1
+# fi
