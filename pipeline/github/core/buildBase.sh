@@ -9,4 +9,12 @@ docker build -t docker.pkg.github.com/dotcms/core/dotcms-image:${GITHUB_RUN_NUMB
   --build-arg BUILD_HASH=${GITHUB_SHA::8} \
   ${DOCKER_SOURCE}/tests/sidecar/
 
+dcResult=$?
+
 cleanUpTest sidecar
+
+if [[ ${dcResult} == 0 ]]; then
+  exit 0
+else
+  exit 1
+fi

@@ -65,3 +65,9 @@ fi
 
 echo "Executing ${pipelineScript}"
 . ${pipelineScript} ${2} ${3} ${4}
+
+if [[ $? == 0 ]]; then
+  exit 0
+else
+  exit 1
+fi
