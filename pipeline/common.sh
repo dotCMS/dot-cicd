@@ -57,18 +57,17 @@ function cleanUpTest {
 function setupBuildBase {
   local dotcmsDockerImage=${1}
   gitFetchRepo "https://github.com/dotCMS/docker.git" ${dotcmsDockerImage}
-  mkdir ${DOCKER_SOURCE}/tests/sidecar/setup
-  mkdir ${DOCKER_SOURCE}/tests/sidecar/license
+  mkdir -p ${DOCKER_SOURCE}/tests/sidecar/setup
+  mkdir -p ${DOCKER_SOURCE}/tests/sidecar/license
   cp -R ${DOCKER_SOURCE}/setup/build-src ${DOCKER_SOURCE}/tests/sidecar/setup
-  cp -R ${dotcmsDockerImage}/images/dotcms/ROOT ${DOCKER_SOURCE}/tests/sidecar
+  cp -R ${dotcmsDockerImage}/images/dotcms/db ${DOCKER_SOURCE}/tests/sidecar/setup
   cp -R ${dotcmsDockerImage}/images/dotcms/build-src/build_dotcms.sh ${DOCKER_SOURCE}/tests/sidecar/setup/build-src
 }
 
 # Prepares resources to build integration image
 function setupBuildBaseTests {
-  mkdir ${DOCKER_SOURCE}/tests/integration/setup
-  cp -R ${DOCKER_SOURCE}/setup/build-src ${DOCKER_SOURCE}/tests/integration/setup
-  cp -R ${DOCKER_SOURCE}/setup/ROOT ${DOCKER_SOURCE}/tests/integration/setup
+  mkdir -p ${DOCKER_SOURCE}/tests/integration
+  cp -R ${DOCKER_SOURCE}/setup ${DOCKER_SOURCE}/tests/integration
 }
 
 # Prepares resources to run unit tests
