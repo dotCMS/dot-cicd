@@ -60,7 +60,7 @@ function setupBuildBase {
   mkdir -p ${DOCKER_SOURCE}/tests/sidecar/setup
   mkdir -p ${DOCKER_SOURCE}/tests/sidecar/license
   cp -R ${DOCKER_SOURCE}/setup/build-src ${DOCKER_SOURCE}/tests/sidecar/setup
-  cp -R ${dotcmsDockerImage}/images/dotcms/db ${DOCKER_SOURCE}/tests/sidecar/setup
+  cp -R ${DOCKER_SOURCE}/setup/db ${DOCKER_SOURCE}/tests/sidecar/setup
   cp -R ${dotcmsDockerImage}/images/dotcms/build-src/build_dotcms.sh ${DOCKER_SOURCE}/tests/sidecar/setup/build-src
 }
 
