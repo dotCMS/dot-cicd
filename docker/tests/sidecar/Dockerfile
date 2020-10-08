@@ -109,7 +109,7 @@ RUN wget --quiet https://github.com/jwilder/dockerize/releases/download/$DOCKERI
 
 COPY --from=build-cms /srv/ /srv/
 COPY --from=build-cms /build/ /build/
-COPY ROOT/ /
+#COPY ROOT/ /
 
 # Make scripts runable
 RUN find /srv/ -type f -name "*.sh" -exec chmod a+x {} \;
