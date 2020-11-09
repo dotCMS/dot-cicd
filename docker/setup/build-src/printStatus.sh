@@ -12,12 +12,14 @@ echo -e "\e[1;36m                                                REPORTING\e[0m"
 echo
 echo -e "\e[31m   ${reportsBranchIndexURL}\e[0m"
 if [[ "${TEST_TYPE}" != "curl" ]]; then
-  echo -e "\e[31m   ${logBranchURL}\e[0m"
+  urlEncode "${logBranchURL}"
+  echo -e "\e[31m   ${ENCODED_URL}\e[0m"
 fi
 echo
 echo -e "\e[31m   ${reportsCommitIndexURL}\e[0m"
 if [[ "${TEST_TYPE}" != "curl" ]]; then
-  echo -e "\e[31m   ${logCommitURL}\e[0m"
+  urlEncode "${logCommitURL}"
+  echo -e "\e[31m   ${ENCODED_URL}\e[0m"
 fi
 echo
 if [[ -n "${PULL_REQUEST}" && "${PULL_REQUEST}" != "false" ]]; then

@@ -125,5 +125,23 @@ function trackJob {
   echo "BRANCH_TEST_RESULT_URL=${GITHUB_PERSIST_BRANCH_URL}/reports/html/index.html" >> ${resultFile}
 }
 
+urlEncode() {
+  local string="${1}"
+  local strlen=${#string}
+  local encoded=""
+  local pos c o
+
+  for (( pos=0 ; pos<strlen ; pos++ )); do
+     c=${string:$pos:1}
+     case "$c" in
+        [-_.~a-zA-Z0-9] ) o="${c}" ;;
+        * ) printf -v o '%%%02x' "'$c"
+     esac
+     encoded+="${o}"
+  done
+  echo "${encoded}"
+  ENCODED_URL="${encoded}"
+}
+
 export GITHUB_PERSIST_COMMIT_URL="${GITHUB_TEST_RESULTS_BROWSE_URL}/$(resolveTestPath ${BUILD_HASH})"
 export GITHUB_PERSIST_BRANCH_URL="${GITHUB_TEST_RESULTS_BROWSE_URL}/$(resolveTestPath current)"
