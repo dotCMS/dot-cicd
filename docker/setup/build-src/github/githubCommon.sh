@@ -97,7 +97,9 @@ function persistResults {
   fi
 
   cleanTestFolders
-  addResults ./${BUILD_HASH}
+  if [[ "${BUILD_ID}" != "master" ]]; then
+    addResults ./${BUILD_HASH}
+  fi
   addResults ./current
 
   git add .
