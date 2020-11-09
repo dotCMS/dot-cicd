@@ -8,7 +8,7 @@ export GITHUB_TEST_RESULTS_HOST_PATH="${GITHUB}/${GITHUB_TEST_RESULTS_PATH}"
 export GITHUB_TEST_RESULTS_URL="https://${GITHUB_TEST_RESULTS_HOST_PATH}"
 export GITHACK_TEST_RESULTS_URL="https://${GITHACK}/${GITHUB_TEST_RESULTS_PATH}"
 export GITHUB_TEST_RESULTS_REPO="${GITHUB_TEST_RESULTS_URL}.git"
-export GITHUB_TEST_RESULTS_BROWSE_URL="${GITHACK_TEST_RESULTS_URL}/${BUILD_ID}/projects/${DOT_CICD_TARGET}"
+export GITHUB_TEST_RESULTS_BROWSE_URL="${GITHACK_TEST_RESULTS_URL}/$(urlEncode ${BUILD_ID})/projects/${DOT_CICD_TARGET}"
 export GITHUB_TEST_RESULTS_REMOTE="https://${GITHUB_USER_TOKEN}@${GITHUB_TEST_RESULTS_HOST_PATH}"
 export GITHUB_TEST_RESULTS_REMOTE_REPO="https://${GITHUB_USER_TOKEN}@${GITHUB_TEST_RESULTS_HOST_PATH}.git"
 
@@ -123,24 +123,6 @@ function trackJob {
   echo "TEST_TYPE_RESULT=${resultLabel}" >> ${resultFile}
   echo "COMMIT_TEST_RESULT_URL=${GITHUB_PERSIST_COMMIT_URL}/reports/html/index.html" >> ${resultFile}
   echo "BRANCH_TEST_RESULT_URL=${GITHUB_PERSIST_BRANCH_URL}/reports/html/index.html" >> ${resultFile}
-}
-
-urlEncode() {
-  local string="${1}"
-  local strlen=${#string}
-  local encoded=""
-  local pos c o
-
-  for (( pos=0 ; pos<strlen ; pos++ )); do
-     c=${string:$pos:1}
-     case "$c" in
-        [-_.~a-zA-Z0-9] ) o="${c}" ;;
-        * ) printf -v o '%%%02x' "'$c"
-     esac
-     encoded+="${o}"
-  done
-  echo "${encoded}"
-  ENCODED_URL="${encoded}"
 }
 
 export GITHUB_PERSIST_COMMIT_URL="${GITHUB_TEST_RESULTS_BROWSE_URL}/$(resolveTestPath ${BUILD_HASH})"

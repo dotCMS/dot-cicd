@@ -1,5 +1,5 @@
-commitFolder=${BASE_STORAGE_URL}/$(urlEncode ${STORAGE_JOB_COMMIT_FOLDER})
-branchFolder=${BASE_STORAGE_URL}/$(urlEncode ${STORAGE_JOB_BRANCH_FOLDER})
+commitFolder=${BASE_STORAGE_URL}/${STORAGE_JOB_COMMIT_FOLDER}
+branchFolder=${BASE_STORAGE_URL}/${STORAGE_JOB_BRANCH_FOLDER}
 reportsCommitIndexURL="${commitFolder}/reports/html/index.html"
 reportsBranchIndexURL="${branchFolder}/reports/html/index.html"
 logCommitURL="${commitFolder}/logs/dotcms.log"
