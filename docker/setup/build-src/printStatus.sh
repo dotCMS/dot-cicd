@@ -1,5 +1,5 @@
-commitFolder=${BASE_STORAGE_URL}/${STORAGE_JOB_COMMIT_FOLDER}
-branchFolder=${BASE_STORAGE_URL}/${STORAGE_JOB_BRANCH_FOLDER}
+commitFolder=${BASE_STORAGE_URL}/$(urlEncode ${STORAGE_JOB_COMMIT_FOLDER})
+branchFolder=${BASE_STORAGE_URL}/$(urlEncode ${STORAGE_JOB_BRANCH_FOLDER})
 reportsCommitIndexURL="${commitFolder}/reports/html/index.html"
 reportsBranchIndexURL="${branchFolder}/reports/html/index.html"
 logCommitURL="${commitFolder}/logs/dotcms.log"
@@ -12,14 +12,12 @@ echo -e "\e[1;36m                                                REPORTING\e[0m"
 echo
 echo -e "\e[31m   ${reportsBranchIndexURL}\e[0m"
 if [[ "${TEST_TYPE}" != "curl" ]]; then
-  urlEncode "${logBranchURL}"
-  echo -e "\e[31m   ${ENCODED_URL}\e[0m"
+  echo -e "\e[31m   ${logBranchURL}\e[0m"
 fi
 echo
 echo -e "\e[31m   ${reportsCommitIndexURL}\e[0m"
 if [[ "${TEST_TYPE}" != "curl" ]]; then
-  urlEncode "${logCommitURL}"
-  echo -e "\e[31m   ${ENCODED_URL}\e[0m"
+  echo -e "\e[31m   ${logCommitURL}\e[0m"
 fi
 echo
 if [[ -n "${PULL_REQUEST}" && "${PULL_REQUEST}" != "false" ]]; then

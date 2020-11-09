@@ -17,7 +17,7 @@ fi
 
 . /build/common.sh
 
-commitPath="$(resolveTestPath ${BUILD_HASH})"
+export commitPath="$(resolveTestPath ${BUILD_HASH})"
 
 if [[ "${DOT_CICD_PERSIST}" == "google" ]]; then
   export STORAGE_JOB_COMMIT_FOLDER="cicd-246518-tests/${commitPath}"
