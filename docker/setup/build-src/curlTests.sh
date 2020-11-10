@@ -60,7 +60,7 @@ do
   resultFile="${reportFolder}/${page}"
 
   # actual running of postman tests for current collection
-  newman run "$f" -e ${postmanEnvFile} --reporters cli,htmlextra --reporter-htmlextra-export $resultFile
+  newman run "$f" -e ${postmanEnvFile} --reporters cli,html --reporter-html-export $resultFile
 
   # handle collection results
   curlResults[$collectionName]=$?
