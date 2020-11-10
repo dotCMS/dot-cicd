@@ -86,8 +86,8 @@ function persistResults {
   fi
   
   if [[ $? != 0 ]]; then
-    echo "Error checking out branch '${BUILD_ID}', continuing with main"
-    git pull origin main
+    echo "Error checking out branch '${BUILD_ID}', continuing with master"
+    git pull origin master
   else
     git branch
     if [[ ${remoteBranch} == 1 ]]; then
@@ -98,7 +98,7 @@ function persistResults {
 
   cleanTestFolders
   
-  if [[ "${BUILD_ID}" != "main" ]]; then
+  if [[ "${BUILD_ID}" != "master" ]]; then
     addResults ./${BUILD_HASH}
   fi
   addResults ./current
