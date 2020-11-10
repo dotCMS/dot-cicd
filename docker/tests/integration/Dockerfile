@@ -32,7 +32,7 @@ RUN apk add --update nodejs
 RUN apk add --update npm
 RUN node --version
 RUN npm --version
-RUN npm install -g newman && npm install -g newman-reporter-htmlextra
+RUN npm install -g newman && npm install -g newman-reporter-html
 
 # dotCMS core distributed under GPLv3 license (https://github.com/dotCMS/core/blob/master/license.txt)
 COPY setup/build-src/checkout.sh /build/checkout.sh

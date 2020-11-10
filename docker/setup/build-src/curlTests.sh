@@ -33,7 +33,7 @@ fi
 
 echo ""
 echo "========================================================================================================"
-echo "Executing... [newman run <collection> -reporters cli,htmlextra --reporter-htmlextra-export] <report file>"
+echo "Executing... [newman run <collection> -reporters cli,html --reporter-html-export] <report file>"
 echo "========================================================================================================"
 echo ""
 
