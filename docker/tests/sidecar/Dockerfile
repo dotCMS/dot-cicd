@@ -96,7 +96,8 @@ RUN apk --no-cache add libc6-compat tomcat-native curl && apk add libsass --no-c
 
 RUN apk add --update nodejs
 RUN apk add --update npm
-RUN npm install -g newman@5.2.0 && npm install -g newman-reporter-htmlextra@1.19.4
+RUN npm install -g newman
+RUN npm install -g newman-reporter-htmlextra
 
 # This is a nasty hack for libjsass, Alpine 3.9 no longer has a deprecated symlink in /lib
 RUN [ ! -e /lib/ld-linux-x86-64.so.2 ] &&  ln -s $(readlink /lib64/ld-linux-x86-64.so.2) /lib/ld-linux-x86-64.so.2 || :
