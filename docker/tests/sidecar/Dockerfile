@@ -98,6 +98,7 @@ RUN apk add --update nodejs
 RUN apk add --update npm
 RUN npm install -g newman
 RUN npm uninstall -g har-validator
+RUN npm uninstall -g newman newman-reporter-htmlextra
 RUN npm install -g newman-reporter-htmlextra
 RUN npm install -g highlight.js@10 --save-dev
 
