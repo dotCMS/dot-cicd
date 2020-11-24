@@ -27,13 +27,6 @@ ARG LICENSE_KEY
 
 WORKDIR /srv
 
-# Installs node, npm and newman
-RUN apk add --update nodejs
-RUN apk add --update npm
-RUN node --version
-RUN npm --version
-RUN npm install -g newman && npm install -g newman-reporter-html
-
 # dotCMS core distributed under GPLv3 license (https://github.com/dotCMS/core/blob/master/license.txt)
 COPY setup/build-src/checkout.sh /build/checkout.sh
 RUN chmod 500 /build/checkout.sh && /build/checkout.sh ${BUILD_FROM} ${BUILD_ID}
@@ -96,12 +89,6 @@ RUN chmod 500 /build/printBuildInfo.sh
 
 COPY setup/build-src/curlTests.sh /build/curlTests.sh
 RUN chmod 500 /build/curlTests.sh
-
-COPY setup/build-src/newmanTestResultsHeader.html /build/newmanTestResultsHeader.html
-RUN chmod 500 /build/newmanTestResultsHeader.html
-
-COPY setup/build-src/newmanTestResultsFooter.html /build/newmanTestResultsFooter.html
-RUN chmod 500 /build/newmanTestResultsFooter.html
 
 ENTRYPOINT ["/build/entrypoint.sh"]
 CMD ["integration"]
