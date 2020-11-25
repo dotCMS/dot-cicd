@@ -94,7 +94,7 @@ RUN apk --no-cache upgrade \
 RUN apk --no-cache add libc6-compat tomcat-native curl && apk add libsass --no-cache \
     --repository http://dl-cdn.alpinelinux.org/alpine/edge/community/
 
-RUN apk --no-cache add nodejs=10.14.2-r0 npm=10.14.2-r0
+RUN apk --no-cache add nodejs=10.19.0-r0 npm=10.19.0-r0
 #RUN npm uninstall -g newman newman-reporter-htmlextra
 RUN npm install -g newman
 #RUN npm uninstall -g har-validator
