@@ -63,9 +63,6 @@ RUN chmod 500 /build/setVars.sh
 COPY setup/build-src/printBuildInfo.sh /build/printBuildInfo.sh
 RUN chmod 500 /build/printBuildInfo.sh
 
-COPY setup/build-src/installCurlDeps.sh /build/installCurlDeps.sh
-RUN chmod 500 /build/installCurlDeps.sh
-
 COPY setup/build-src/curlTests.sh /build/curlTests.sh
 RUN chmod 500 /build/curlTests.sh
 
@@ -97,8 +94,12 @@ RUN apk --no-cache upgrade \
 RUN apk --no-cache add libc6-compat tomcat-native curl && apk add libsass --no-cache \
     --repository http://dl-cdn.alpinelinux.org/alpine/edge/community/
 
-RUN apk add --update nodejs
-RUN apk add --update npm
+RUN apk --no-cache add nodejs=10.14.2-r0 npm=10.14.2-r0
+#RUN npm uninstall -g newman newman-reporter-htmlextra
+RUN npm install -g newman
+#RUN npm uninstall -g har-validator
+RUN npm install -g newman-reporter-htmlextra
+#RUN npm install -g highlight.js@10 --save-dev
 
 # This is a nasty hack for libjsass, Alpine 3.9 no longer has a deprecated symlink in /lib
 RUN [ ! -e /lib/ld-linux-x86-64.so.2 ] &&  ln -s $(readlink /lib64/ld-linux-x86-64.so.2) /lib/ld-linux-x86-64.so.2 || :

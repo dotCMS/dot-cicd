@@ -12,7 +12,6 @@ if [[ "${TEST_TYPE}" == "integration" || -z "${TEST_TYPE}" ]]; then
 elif [[ "${TEST_TYPE}" == "unit" || -z "${TEST_TYPE}" ]]; then
   . /build/unitTests.sh
 elif [[ "${TEST_TYPE}" == "curl" || -z "${TEST_TYPE}" ]]; then
-  . /build/installCurlDeps.sh
   . /build/curlTests.sh
 else
     echo "Running user CMD..."
