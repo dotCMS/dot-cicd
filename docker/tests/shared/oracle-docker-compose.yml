@@ -5,13 +5,15 @@ version: "3.7"
 
 services:
 
-  # https://github.com/oracle/docker-images/tree/master/OracleDatabase/SingleInstance#running-oracle-database-11gr2-express-edition-in-a-docker-container
   database:
-    image: "gcr.io/cicd-246518/oracle-db:11.2.0.2-xe"
+    image: "dotcms/oracle-xe-11g:latest"
     shm_size: '2gb'
     environment:
+      processes: 200
+      DATABASES: oracle
       ORACLE_PWD: oracle
     ports:
       - "${SERVICE_HOST_PORT_PREFIX}1521:1521"
+      - "15080:8080"
     volumes:
-      - ./setup/db/oracle/init-scripts:/docker-entrypoint-initdb.d/setup
+      - ./setup/db/oracle:/u01/app/oracle
