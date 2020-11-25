@@ -98,6 +98,7 @@ RUN apk --no-cache add libc6-compat tomcat-native curl && apk add libsass --no-c
     --repository http://dl-cdn.alpinelinux.org/alpine/edge/community/
 
 RUN apk --no-cache add nodejs=10.19.0-r0 npm=10.19.0-r0
+RUN npm config set unsafe-perm true
 
 # This is a nasty hack for libjsass, Alpine 3.9 no longer has a deprecated symlink in /lib
 RUN [ ! -e /lib/ld-linux-x86-64.so.2 ] &&  ln -s $(readlink /lib64/ld-linux-x86-64.so.2) /lib/ld-linux-x86-64.so.2 || :
