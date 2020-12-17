@@ -4,5 +4,6 @@ echo 'Building Distro files'
 
 cd dotCMS
 ./gradlew createDist
-ls -las ../dist-output
 cd ../
+ls -las dist-output
+

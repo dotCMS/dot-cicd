@@ -42,9 +42,10 @@ function createAndSwitch {
 function cleanTestFolders {
   if [[ -n "${BUILD_ID}" ]]; then
     removeIfExists "./${BUILD_ID}/${TEST_TYPE}"
-    git status
-    git commit -m "Cleaning ${TEST_TYPE} tests results with hash '${BUILD_HASH}' and branch '${BUILD_ID}'"
   fi
+
+  git status
+  git commit -m "Cleaning ${TEST_TYPE} tests results with hash '${BUILD_HASH}' and branch '${BUILD_ID}'"
 }
 
 function gitConfig {
