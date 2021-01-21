@@ -60,11 +60,11 @@ providerPath=${DOT_CICD_LIB}/pipeline/${DOT_CICD_CLOUD_PROVIDER}
 . ${providerPath}/${DOT_CICD_CLOUD_PROVIDER}Common.sh
 
 pipelineScript=${providerPath}/${DOT_CICD_TARGET}/${operation}.sh
+echo "Executing ${pipelineScript} $2 $3 $4 $5 $6 $7"
 
 if [[ ! -s ${pipelineScript} ]]; then
   echo "Pipeline script associated to operation cannot be found, aborting..."
   exit 1
 fi
 
-echo "Executing ${pipelineScript}"
-. ${pipelineScript} ${2} ${3} ${4} ${5} ${6}
+. ${pipelineScript} $2 $3 $4 $5 $6 $7
