@@ -11,10 +11,8 @@ services:
       - "${SERVICE_HOST_PORT_PREFIX}9200:9200"
       - "${SERVICE_HOST_PORT_PREFIX}9600:9600"
     environment:
-      "PROVIDER_ELASTICSEARCH_HEAP_SIZE": '1500m'
-      "PROVIDER_ELASTICSEARCH_DNSNAMES": 'elasticsearch'
-      "ES_ADMIN_PASSWORD": 'admin'
-      - bootstrap.memory_lock=true
+      - cluster.name=elastic-cluster
+      - discovery.type=single-node
       - data
+      - bootstrap.memory_lock=true
       - "ES_JAVA_OPTS=-Xmx1G "
-      discovery.type: single-node
