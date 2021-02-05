@@ -6,7 +6,7 @@ version: "3.7"
 services:
 
   elasticsearch:
-    image: "dotcms/es-open-distro:1.4.0"
+    image: "amazon/opendistro-for-elasticsearch:1.4.0"
     ports:
       - "${SERVICE_HOST_PORT_PREFIX}9200:9200"
       - "${SERVICE_HOST_PORT_PREFIX}9600:9600"
@@ -14,4 +14,7 @@ services:
       "PROVIDER_ELASTICSEARCH_HEAP_SIZE": '1500m'
       "PROVIDER_ELASTICSEARCH_DNSNAMES": 'elasticsearch'
       "ES_ADMIN_PASSWORD": 'admin'
+      - bootstrap.memory_lock=true
+      - data
+      - "ES_JAVA_OPTS=-Xmx1G "
       discovery.type: single-node
