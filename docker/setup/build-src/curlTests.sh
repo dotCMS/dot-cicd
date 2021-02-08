@@ -19,17 +19,19 @@ echo "  >>>   BUILD ID: ${BUILD_ID}"
 echo "  >>>   GIT HASH: ${BUILD_HASH}"
 echo "  >>>   STORAGE_JOB_COMMIT_FOLDER: ${STORAGE_JOB_COMMIT_FOLDER}"
 echo "  >>>   STORAGE_JOB_BRANCH_FOLDER: ${STORAGE_JOB_BRANCH_FOLDER}"
+echo "  >>>   CURL_TEST: ${CURL_TEST}"
 echo "================================================================================"
 echo "================================================================================"
 echo ""
 
-if [[ ! -z "${WAIT_SIDECAR_FOR}" ]]; then
-  echo "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
-  echo "            Requested sleep of [${WAIT_SIDECAR_FOR}]", waiting for the sidecar?
-  echo "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
-  echo ""
-  sleep ${WAIT_SIDECAR_FOR}
+if [[ -z "${WAIT_SIDECAR_FOR}" ]]; then
+  WAIT_SIDECAR_FOR='3m'
 fi
+echo "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+echo "            Requested sleep of [${WAIT_SIDECAR_FOR}]", waiting for the sidecar?
+echo "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+echo ""
+sleep ${WAIT_SIDECAR_FOR}
 
 echo ""
 echo "========================================================================================================"
@@ -54,19 +56,25 @@ do
     continue
   fi
 
+  collectionId=$(echo "${f}"| tr ' ' '_' | cut -f 1 -d '.')
+  if [[ -n "${CURL_TEST}" && "${CURL_TEST}" != "${f}" ]]; then
+    echo "File ${f} is not ${CURL_TEST}, ignoring it"
+    continue
+  fi
+
   echo "Running newman for collection: \"${f}\""
-  collectionName=$(echo "$f"| tr ' ' '_' | cut -f 1 -d '.')
-  page="${collectionName}.html"
+  page="${collectionId}.html"
   resultFile="${reportFolder}/${page}"
 
   # actual running of postman tests for current collection
   newman run "$f" -e ${postmanEnvFile} --reporters cli,htmlextra --reporter-htmlextra-export $resultFile
 
   # handle collection results
-  curlResults[$collectionName]=$?
-  resultLabel=$(resolveLabel ${curlResults[$collectionName]})
+  curlResults[$collectionId]=$?
+  resultLabel=$(resolveLabel ${curlResults[$collectionId]})
   echo "<tr><td><a href=\"./$page\">$f</a></td>
     <td>${resultLabel}</td></tr>" >> /build/resultLinks.html
+  echo
 done
 
 cat /build/newmanTestResultsHeader.html /build/resultLinks.html /build/newmanTestResultsFooter.html \

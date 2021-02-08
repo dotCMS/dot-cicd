@@ -3,16 +3,15 @@
 set -e
 
 function usage {
-  echo "usage: ${0} <target> <operation>"
-  echo "  target: only two values is accepted: 'travis' or 'github', fallbacks to ${DEFAULT_CLOUD_PROVIDER}"
-  echo "  operation: identified operation to perform (e.g. 'buildBase' or )"
+  echo "Usage: ${0} <target> <operation>
+  Target: only two values is accepted: 'travis' or 'github', fallbacks to ${DEFAULT_CLOUD_PROVIDER}
+  operation: identified operation to perform (e.g. 'buildBase')"
 }
 
 DEFAULT_CLOUD_PROVIDER="github"
 
 : ${DOT_CICD_PATH:="./dotcicd"} && export DOT_CICD_PATH
 : ${DOT_CICD_LIB:="${DOT_CICD_PATH}/library"} && export DOT_CICD_LIB
-: ${DOT_CICD_VERSION:="1.0"} && export DOT_CICD_VERSION
 : ${DOT_CICD_CLOUD_PROVIDER:="${DEFAULT_CLOUD_PROVIDER}"} && export DOT_CICD_CLOUD_PROVIDER
 
 if [[ "${DOT_CICD_CLOUD_PROVIDER}" != "travis" && "${DOT_CICD_CLOUD_PROVIDER}" != "github" ]]; then
@@ -33,7 +32,6 @@ echo "dot-cicd vars"
 echo "#############"
 echo "DOT_CICD_PATH: ${DOT_CICD_PATH}"
 echo "DOT_CICD_LIB: ${DOT_CICD_LIB}"
-echo "DOT_CICD_VERSION: ${DOT_CICD_VERSION}"
 echo "DOT_CICD_CLOUD_PROVIDER: ${DOT_CICD_CLOUD_PROVIDER}"
 echo "DOT_CICD_PERSIST: ${DOT_CICD_PERSIST}"
 echo "DOT_CICD_TARGET: ${DOT_CICD_TARGET}"
