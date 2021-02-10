@@ -15,4 +15,4 @@ services:
       - discovery.type=single-node
       - data
       - bootstrap.memory_lock=true
-      - "ES_JAVA_OPTS=-Xms1G -Xmx1G "
+      - "ES_JAVA_OPTS=-Xms1500m -Xmx1500m"
