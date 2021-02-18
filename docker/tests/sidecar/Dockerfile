@@ -20,37 +20,13 @@ ARG BUILD_ID=HEAD
 ENV BUILD_ID=${BUILD_ID}
 ARG BUILD_HASH
 ENV BUILD_HASH=${BUILD_HASH}
-
-ENV SERVICE_DELAY_DEFAULT_MIN 1
-ENV SERVICE_DELAY_DEFAULT_STEP 3
-ENV SERVICE_DELAY_DEFAULT_MAX 30
+ARG TOMCAT_VERSION=""
 
 WORKDIR /srv
 
-RUN apk --no-cache upgrade \
-    && apk add --no-cache bash openssl ca-certificates gnupg grep sed tini nss git s6-dns nodejs=10.19.0-r0 npm=10.19.0-r0 \
-    && update-ca-certificates
-RUN apk --no-cache add libc6-compat curl libsass \
-    --repository http://dl-cdn.alpinelinux.org/alpine/edge/community/
-
-# This is a nasty hack for libjsass, Alpine 3.9 no longer has a deprecated symlink in /lib
-RUN [ ! -e /lib/ld-linux-x86-64.so.2 ] &&  ln -s $(readlink /lib64/ld-linux-x86-64.so.2) /lib/ld-linux-x86-64.so.2 || :
-
-RUN npm config set unsafe-perm true
-RUN npm install -g newman
-RUN npm uninstall -g har-validator
-RUN npm install -g newman-reporter-htmlextra
-RUN npm install -g highlight.js@10 --save-dev
-
-# Dockerize distributed under MIT license (https://github.com/jwilder/dockerize)
-ENV DOCKERIZE_VERSION v0.6.0
-RUN wget --quiet https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-alpine-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
-    && tar -xzf dockerize-alpine-linux-amd64-$DOCKERIZE_VERSION.tar.gz -C /usr/local/bin \
-    && rm dockerize-alpine-linux-amd64-$DOCKERIZE_VERSION.tar.gz
-
 # dotCMS core distributed under GPLv3 license (https://github.com/dotCMS/core/blob/master/license.txt)
 COPY setup/build-src/build_dotcms.sh /build/build_dotcms.sh
-RUN chmod 500 /build/build_dotcms.sh && /build/build_dotcms.sh ${BUILD_FROM} ${BUILD_ID}
+RUN chmod 500 /build/build_dotcms.sh && /build/build_dotcms.sh ${BUILD_FROM} ${BUILD_ID} ${TOMCAT_VERSION}
 
 # Scripts from docker setup
 COPY setup/build-src/displayDebugData.sh /build/displayDebugData.sh
@@ -106,6 +82,37 @@ RUN chmod 500 /build/stop-sidecar.sh
 RUN mkdir -p /srv/utils /srv/templates /srv/config /srv/home
 RUN chmod -R 666 /srv && find /srv/ -type d -exec chmod a+x {} \;
 
+# OpenJDK distributed under GPLv2+Oracle Classpath Exception license (http://openjdk.java.net/legal/gplv2+ce.html)
+# Alpine Linux packages distributed under various licenses including GPL-3.0+ (https://pkgs.alpinelinux.org/packages)
+FROM openjdk:8-jdk-alpine
+
+WORKDIR /srv
+
+RUN apk --no-cache upgrade \
+    && apk add --no-cache bash openssl ca-certificates gnupg grep sed tini nss git s6-dns \
+    && update-ca-certificates 
+
+RUN apk --no-cache add libc6-compat tomcat-native curl && apk add libsass --no-cache \
+    --repository http://dl-cdn.alpinelinux.org/alpine/edge/community/
+
+RUN apk --no-cache add nodejs=10.19.0-r0 npm=10.19.0-r0
+RUN npm config set unsafe-perm true
+RUN npm install -g newman
+RUN npm uninstall -g har-validator
+RUN npm install -g newman-reporter-htmlextra
+RUN npm install -g highlight.js@10 --save-dev
+
+# This is a nasty hack for libjsass, Alpine 3.9 no longer has a deprecated symlink in /lib
+RUN [ ! -e /lib/ld-linux-x86-64.so.2 ] &&  ln -s $(readlink /lib64/ld-linux-x86-64.so.2) /lib/ld-linux-x86-64.so.2 || :
+
+# Dockerize distributed under MIT license (https://github.com/jwilder/dockerize)
+ENV DOCKERIZE_VERSION v0.6.0
+RUN wget --quiet https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-alpine-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
+    && tar -xzf dockerize-alpine-linux-amd64-$DOCKERIZE_VERSION.tar.gz -C /usr/local/bin \
+    && rm dockerize-alpine-linux-amd64-$DOCKERIZE_VERSION.tar.gz
+
+COPY --from=build-cms /srv/ /srv/
+COPY --from=build-cms /build/ /build/
 COPY ROOT/ /
 
 # Make scripts runable
@@ -115,6 +122,12 @@ RUN find /srv/ -type f -name "*.sh" -exec chmod a+x {} \;
 RUN find /srv/templates -type d -exec chmod 770 {} \;
 
 RUN mkdir -p /data/shared/assets && mkdir -p /data/local/dotsecure/license && chmod -R 660 /data && find /data/ -type d -exec chmod 770 {} \;
+
+ENV SERVICE_DELAY_DEFAULT_MIN=1
+ENV SERVICE_DELAY_DEFAULT_STEP=3
+ENV SERVICE_DELAY_DEFAULT_MAX=30
+
+#VOLUME /data/local
 
 ## Ports
 # Direct connect
