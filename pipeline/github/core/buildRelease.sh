@@ -1,7 +1,7 @@
 #!/bin/bash
 
 DOCKER_SOURCE=${DOT_CICD_LIB}/docker
-export IMAGE_NAME='dotcms/dotcms-release'
+export IMAGE_NAME='dotcms/dotcms-release-process'
 
 cd ${DOCKER_SOURCE}/release
 

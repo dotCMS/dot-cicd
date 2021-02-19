@@ -8,3 +8,5 @@ docker/tests/integration/output
 docker/tests/integration/setup
 docker/tests/curl/output
 docker/tests/curl/setup
+.idea/
+docker/tests/sidecar/setup/
