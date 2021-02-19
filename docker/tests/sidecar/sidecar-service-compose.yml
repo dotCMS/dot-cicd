@@ -53,7 +53,9 @@ services:
     volumes:
       - cms-shared:/data/shared
       - cms-local:/data/local
-      - license:/data/local/dotsecure/license
+      - type: bind
+        source: ./license
+        target: /data/local/dotsecure/license
     networks:
       - db_net
       - es_net
