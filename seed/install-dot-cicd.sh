@@ -72,9 +72,20 @@ prepareScripts () {
   done
 }
 
+allowSsh() {
+  if [ -n "${SSH_RSA_KEY}" ]; then 
+    mkdir .ssh
+    echo "${SSH_RSA_KEY}" > .ssh/id_rsa
+    chmod 600 .ssh/id_rsa
+  else
+    echo 'SSH key not provided, skipping ssh'
+  fi
+}
+
 # Fetch CI/CD github repo to include and use its library
 fetchCICD () {
   prepareCICD
+  allowSsh
   gitCloneAndCheckout ${DOT_CICD_REPO} ${DOT_CICD_BRANCH}
   prepareScripts
   exit 0

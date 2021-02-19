@@ -55,12 +55,13 @@ function cleanUpTest {
 
 # Prepares resources to build integration image
 function setupBuildBase {
-  local dotcmsDockerImage=${1}
-  gitFetchRepo "https://github.com/dotCMS/docker.git" ${dotcmsDockerImage}
   mkdir -p ${DOCKER_SOURCE}/tests/sidecar/setup
   mkdir -p ${DOCKER_SOURCE}/tests/sidecar/license
   cp -R ${DOCKER_SOURCE}/setup/build-src ${DOCKER_SOURCE}/tests/sidecar/setup
-  cp -R ${DOCKER_SOURCE}/setup/db ${DOCKER_SOURCE}/tests/sidecar/db
+  cp -R ${DOCKER_SOURCE}/setup/db ${DOCKER_SOURCE}/tests/sidecar/setup
+
+  local dotcmsDockerImage=${1}
+  gitFetchRepo "https://github.com/dotCMS/docker.git" ${dotcmsDockerImage}
   cp -R ${dotcmsDockerImage}/images/dotcms/ROOT ${DOCKER_SOURCE}/tests/sidecar
   cp -R ${dotcmsDockerImage}/images/dotcms/build-src/build_dotcms.sh ${DOCKER_SOURCE}/tests/sidecar/setup/build-src
 }
