@@ -4,7 +4,8 @@ function usage {
   echo "Required environment variables:
     - BUILD_ID: (optional) commit to use to build image, default to 'master'
     - DATABASE_TYPE: (optional) database type, defaults to 'postgres'
-    - LICENSE_KEY: license key string"
+    - LICENSE_KEY: license key string
+    - SKIP_IMAGE_BUILD: (optional) flag to skip image build, default to true"
 }
 
 if [[ -z "${LICENSE_KEY}" ]]; then
@@ -17,13 +18,12 @@ fi
 : ${DATABASE_TYPE:="postgres"} && export DATABASE_TYPE
 : ${PROVIDER_DB_USERNAME:="postgres"} && export PROVIDER_DB_USERNAME
 : ${PROVIDER_DB_PASSWORD:="postgres"} && export PROVIDER_DB_PASSWORD
-: ${SKIP_IMAGE_BUILD:="false"} && export SKIP_IMAGE_BUILD
+: ${SKIP_IMAGE_BUILD:="true"} && export SKIP_IMAGE_BUILD
 export IMAGE_BASE_NAME="cicd-tests-base-image"
 export SIDECAR_IMAGE_BASE_NAME="cicd-dotcms-image"
 export databaseType=${DATABASE_TYPE}
 export TEST_TYPE=curl
 export EXPORT_RESULTS=false
-# export BUILD_HASH=${GITHUB_SHA::8}
 
 mkdir ${DOT_CICD_STAGE_OPERATION}/setup
 mkdir ${DOT_CICD_STAGE_OPERATION}/license
