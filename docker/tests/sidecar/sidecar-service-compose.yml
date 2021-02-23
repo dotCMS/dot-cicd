@@ -11,6 +11,7 @@ volumes:
   cms-shared:
   cms-local:
   license:
+  output:
 
 services:
 
@@ -18,7 +19,8 @@ services:
     image: "${SIDECAR_IMAGE_BASE_NAME}"
     command: ["dotcms", "${TEST_TYPE}"]
     ports:
-      - "8080:8080"
+      - 8080:8080
+      - 8000:8000
     environment:
       databaseType:
       CMS_HEAP_SIZE: 1g
@@ -41,12 +43,14 @@ services:
       BUILD_ID:
       GITHUB_USER:
       GITHUB_USER_TOKEN:
-      WAIT_DB_FOR: 1m
-      WAIT_SIDECAR_FOR: 3m
+      WAIT_DB_FOR:
+      WAIT_SIDECAR_FOR:
       DOT_CICD_PATH:
       DOT_CICD_CLOUD_PROVIDER:
       DOT_CICD_PERSIST:
       DOT_CICD_TARGET:
+      CURL_TEST:
+      DEBUG:
     depends_on:
       - database
       - elasticsearch
@@ -56,6 +60,9 @@ services:
       - type: bind
         source: ./license
         target: /data/local/dotsecure/license
+      - type: bind
+        source: ./output
+        target: /custom/output
     networks:
       - db_net
       - es_net

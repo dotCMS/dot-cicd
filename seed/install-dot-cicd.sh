@@ -4,6 +4,7 @@
 : ${DOT_CICD_REPO:="https://github.com/dotCMS/dot-cicd.git"} && export DOT_CICD_REPO
 : ${DOT_CICD_BRANCH:=""} && export DOT_CICD_BRANCH
 : ${DOT_CICD_LIB:="${DOT_CICD_PATH}/library"} && export DOT_CICD_LIB
+: ${PROXY_MODE:="false"} && export PROXY_MODE
 
 if [ "${DOT_CICD_BRANCH}" = "master" ]; then
   export DOT_CICD_BRANCH=
@@ -27,7 +28,7 @@ prepareCICD () {
   fi
 }
 
-# Clones and checkout a provided repo url with branch (optional)
+# Clones and checks out a provided repo url with branch (optional)
 gitCloneAndCheckout () {
   local DOT_CICD_REPO=$1
   local DOT_CICD_BRANCH=$2
@@ -40,6 +41,12 @@ gitCloneAndCheckout () {
   git config --global user.email "dotcmsbuild@dotcms.com"
   git config --global user.name "dotcmsbuild"
   git config --global pull.rebase false
+
+  if [ -d ${DOT_CICD_LIB} ]; then
+    echo "Found a distribution at ${DOT_CICD_LIB}, removing it"
+    rm -rf ${DOT_CICD_LIB}
+  fi
+
   echo "Cloning CI/CD repo from ${DOT_CICD_REPO} to ${DOT_CICD_LIB}"
   git clone ${DOT_CICD_REPO} ${DOT_CICD_LIB}
 
@@ -56,7 +63,6 @@ gitCloneAndCheckout () {
     if [ $? -ne 0 ]; then
       echo "Error checking out branch '${DOT_CICD_BRANCH}', continuing with master"
     else
-      git branch
       git pull origin ${DOT_CICD_BRANCH}
     fi
 
@@ -88,7 +94,10 @@ fetchCICD () {
   allowSsh
   gitCloneAndCheckout ${DOT_CICD_REPO} ${DOT_CICD_BRANCH}
   prepareScripts
-  exit 0
+
+  if [ "${PROXY_MODE}" = "false" ]; then
+    exit 0
+  fi
 }
 
 fetchCICD
