@@ -2,11 +2,12 @@
 
 function usage {
   echo "Required environment variables:
-    - BUILD_ID: (optional) commit to use to build image, default to 'master'
+    - BUILD_ID: (optional) commit to use to build image, defaults to 'master'
     - DATABASE_TYPE: (optional) database type, defaults to 'postgres'
     - LICENSE_KEY: license key string
-    - SKIP_IMAGE_BUILD: (optional) flag to skip image build, default to true
-    - DEBUG: (optional) debug flag to listen at port 8000, default to false
+    - SKIP_IMAGE_BUILD: (optional) flag to skip image build, defaults to true
+    - CURL_TEST: (optional) filename of the postman collection to run, defaults to empty
+    - DEBUG: (optional) debug flag to listen at port 8000, defaults to false"
 }
 
 if [[ -z "${LICENSE_KEY}" ]]; then
