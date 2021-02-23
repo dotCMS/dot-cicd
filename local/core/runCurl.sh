@@ -5,7 +5,8 @@ function usage {
     - BUILD_ID: (optional) commit to use to build image, default to 'master'
     - DATABASE_TYPE: (optional) database type, defaults to 'postgres'
     - LICENSE_KEY: license key string
-    - SKIP_IMAGE_BUILD: (optional) flag to skip image build, default to true"
+    - SKIP_IMAGE_BUILD: (optional) flag to skip image build, default to true
+    - DEBUG: (optional) debug flag to listen at port 8000, default to false
 }
 
 if [[ -z "${LICENSE_KEY}" ]]; then
@@ -19,6 +20,7 @@ fi
 : ${PROVIDER_DB_USERNAME:="postgres"} && export PROVIDER_DB_USERNAME
 : ${PROVIDER_DB_PASSWORD:="postgres"} && export PROVIDER_DB_PASSWORD
 : ${SKIP_IMAGE_BUILD:="true"} && export SKIP_IMAGE_BUILD
+: ${DEBUG:="false"} && export DEBUG
 export IMAGE_BASE_NAME="cicd-tests-base-image"
 export SIDECAR_IMAGE_BASE_NAME="cicd-dotcms-image"
 export databaseType=${DATABASE_TYPE}
@@ -46,6 +48,7 @@ echo "TEST_TYPE: ${TEST_TYPE}"
 echo "EXPORT_RESULTS: ${EXPORT_RESULTS}"
 echo "SKIP_IMAGE_BUILD: ${SKIP_IMAGE_BUILD}"
 echo "CURL_TEST: ${CURL_TEST}"
+echo "DEBUG: ${DEBUG}"
 echo
 
 if [[ "${SKIP_IMAGE_BUILD}" == 'false' ]]; then
