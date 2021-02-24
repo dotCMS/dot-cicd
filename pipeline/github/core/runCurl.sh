@@ -18,6 +18,9 @@ licenseFile=${licenseFolder}/license.dat
 touch ${licenseFile}
 chmod 777 ${licenseFile}
 echo "${LICENSE_KEY}" > ${licenseFile}
+outputFolder=${runFolder}/output
+mkdir -p ${outputFolder}
+chmod 777 ${outputFolder}
 
 docker-compose \
   -f ${DOCKER_SOURCE}/tests/sidecar/sidecar-service-compose.yml \
