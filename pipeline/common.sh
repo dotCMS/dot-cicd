@@ -16,7 +16,6 @@ function gitClone {
 
   if [[ -n "${branch}" ]]; then
     cd ${dest}
-    pwd
     git fetch --all
     git pull
     echo "Checking out branch ${branch}"
@@ -66,7 +65,9 @@ function setupBuildBase {
   cp -R ${DOCKER_SOURCE}/setup/db ${DOCKER_SOURCE}/tests/sidecar/setup
 
   local dotcmsDockerImage=${1}
-  gitFetchRepo "https://github.com/dotCMS/docker.git" ${dotcmsDockerImage} "19756-docker-java-11"
+  pwd
+  gitFetchRepo 'https://github.com/dotCMS/docker.git' ${dotcmsDockerImage} "19756-docker-java-11"
+  pwd
   #echo "OJO:>>" && cat ${dotcmsDockerImage}/images/dotcms/ROOT/srv/20-dotcms-environment.sh
   cp -R ${dotcmsDockerImage}/images/dotcms/ROOT ${DOCKER_SOURCE}/tests/sidecar
   echo "OJO:>>" && cat ${DOCKER_SOURCE}/tests/sidecar/ROOT/srv/20-dotcms-environment.sh
