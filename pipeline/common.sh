@@ -15,6 +15,7 @@ function gitClone {
   fi
 
   if [[ -n "${branch}" ]]; then
+    cd ${dest}
     git fetch --all
     git pull
     echo "Checking out branch ${branch}"
