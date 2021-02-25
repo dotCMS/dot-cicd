@@ -65,10 +65,8 @@ function setupBuildBase {
   cp -R ${DOCKER_SOURCE}/setup/db ${DOCKER_SOURCE}/tests/sidecar/setup
 
   local dotcmsDockerImage=${1}
-  echo "OJO:>>" && pwd
   gitFetchRepo 'https://github.com/dotCMS/docker.git' ${dotcmsDockerImage} "19756-docker-java-11"
-  echo "OJO:>>" && pwd
-  #echo "OJO:>>" && cat ${dotcmsDockerImage}/images/dotcms/ROOT/srv/20-dotcms-environment.sh
+  echo "OJO:>>" && cat ${dotcmsDockerImage}/images/dotcms/ROOT/srv/20-dotcms-environment.sh
   cp -R ${dotcmsDockerImage}/images/dotcms/ROOT ${DOCKER_SOURCE}/tests/sidecar
   echo "OJO:>>" && cat ${DOCKER_SOURCE}/tests/sidecar/ROOT/srv/20-dotcms-environment.sh
   cp -R ${dotcmsDockerImage}/images/dotcms/build-src/build_dotcms.sh ${DOCKER_SOURCE}/tests/sidecar/setup/build-src
