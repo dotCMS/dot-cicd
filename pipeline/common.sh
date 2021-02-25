@@ -20,7 +20,6 @@ function gitClone {
     git pull
     echo "Checking out branch ${branch}"
     git checkout -b ${branch} --track origin/${branch}
-    cat images/dotcms/ROOT/srv/20-dotcms-environment.sh
     if [[ $? != 0 ]]; then
       echo "Error checking out branch '${branch}', continuing with master"
     fi
