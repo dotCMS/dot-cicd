@@ -16,10 +16,11 @@ function gitClone {
 
   if [[ -n "${branch}" ]]; then
     cd ${dest}
+    pwd
     git fetch --all
     git pull
     echo "Checking out branch ${branch}"
-    git checkout -b ${branch}
+    git checkout -b ${branch} --track origin/${branch}
     if [[ $? != 0 ]]; then
       echo "Error checking out branch '${branch}', continuing with master"
     fi
