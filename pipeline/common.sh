@@ -7,9 +7,7 @@ function gitClone {
   local branch=$3
 
   echo "Cloning repo from ${repo}"
-  echo "OJO:>>" && pwd
   git clone ${repo} ${dest}
-  echo "OJO:>>" && pwd
 
   if [[ $? != 0 ]]; then
     echo "Error cloning repo '${repo}'"
@@ -17,7 +15,7 @@ function gitClone {
   fi
 
   if [[ -n "${branch}" ]]; then
-    cd ${dest}
+    pushd ${dest}
     git fetch --all
     git pull
     echo "Checking out branch ${branch}"
@@ -25,7 +23,7 @@ function gitClone {
     if [[ $? != 0 ]]; then
       echo "Error checking out branch '${branch}', continuing with master"
     fi
-    cd ..
+    popd
   fi
 }
 
@@ -61,14 +59,15 @@ function cleanUpTest {
 
 # Prepares resources to build integration image
 function setupBuildBase {
-  echo "OJO:>>" && pwd
   mkdir -p ${DOCKER_SOURCE}/tests/sidecar/setup
   mkdir -p ${DOCKER_SOURCE}/tests/sidecar/license
   cp -R ${DOCKER_SOURCE}/setup/build-src ${DOCKER_SOURCE}/tests/sidecar/setup
   cp -R ${DOCKER_SOURCE}/setup/db ${DOCKER_SOURCE}/tests/sidecar/setup
 
   local dotcmsDockerImage=${1}
+  echo "OJO:>>" && pwd
   gitFetchRepo 'https://github.com/dotCMS/docker.git' ${dotcmsDockerImage} "19756-docker-java-11"
+  echo "OJO:>>" && pwd
   #echo "OJO:>>" && cat ${dotcmsDockerImage}/images/dotcms/ROOT/srv/20-dotcms-environment.sh
   cp -R ${dotcmsDockerImage}/images/dotcms/ROOT ${DOCKER_SOURCE}/tests/sidecar
   echo "OJO:>>" && cat ${DOCKER_SOURCE}/tests/sidecar/ROOT/srv/20-dotcms-environment.sh
