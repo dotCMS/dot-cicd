@@ -7,7 +7,7 @@ keys_str="--access_key=${aws_access_key_id} --secret_key=${aws_secret_access_key
 
 test_prefix='cicd-test'
 distro_base_key='versions'
-javadoc_base_key="docs/${version}/javadocs"
+javadoc_base_key="docs/${version}"
 if [[ ${is_release} != true ]]; then
   distro_base_key="${test_prefix}/${distro_base_key}"
   javadoc_base_key="${test_prefix}/${javadoc_base_key}"
