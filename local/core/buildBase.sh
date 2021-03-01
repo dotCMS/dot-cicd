@@ -7,7 +7,7 @@ echo "Buidling sidecar image:
   ${DOT_CICD_STAGE_OPERATION}/"
 echo
 
-docker build -t ${SIDECAR_IMAGE_BASE_NAME} \
+docker build --pull --no-cache -t ${SIDECAR_IMAGE_BASE_NAME} \
   --build-arg BUILD_FROM=COMMIT \
   --build-arg BUILD_ID=${BUILD_ID} \
   ${DOT_CICD_STAGE_OPERATION}/

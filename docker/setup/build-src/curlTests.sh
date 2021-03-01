@@ -56,13 +56,13 @@ do
     continue
   fi
 
-  collectionId=$(echo "${f}"| tr ' ' '_' | cut -f 1 -d '.')
   if [[ -n "${CURL_TEST}" && "${CURL_TEST}" != "${f}" ]]; then
     echo "File ${f} is not ${CURL_TEST}, ignoring it"
     continue
   fi
 
   echo "Running newman for collection: \"${f}\""
+  collectionId=$(echo "${f}"| tr ' ' '_' | cut -f 1 -d '.')
   page="${collectionId}.html"
   resultFile="${reportFolder}/${page}"
 

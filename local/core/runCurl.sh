@@ -22,6 +22,7 @@ fi
 : ${PROVIDER_DB_PASSWORD:="postgres"} && export PROVIDER_DB_PASSWORD
 : ${SKIP_IMAGE_BUILD:="true"} && export SKIP_IMAGE_BUILD
 : ${DEBUG:="false"} && export DEBUG
+: ${WAIT_SIDECAR_FOR:=80} && export WAIT_SIDECAR_FOR
 export IMAGE_BASE_NAME="cicd-tests-base-image"
 export SIDECAR_IMAGE_BASE_NAME="cicd-dotcms-image"
 export databaseType=${DATABASE_TYPE}
