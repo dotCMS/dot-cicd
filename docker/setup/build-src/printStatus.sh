@@ -5,7 +5,7 @@ reportsBranchIndexURL="${branchFolder}/reports/html/index.html"
 logCommitURL="${commitFolder}/logs/dotcms.log"
 logBranchURL="${branchFolder}/logs/dotcms.log"
 
-if [[ ${EXPORT_RESULTS} == true ]]; then
+if [[ ${EXPORT_REPORTS} == true ]]; then
   echo ""
   echo -e "\e[36m==========================================================================================================================\e[0m"
   echo -e "\e[36m==========================================================================================================================\e[0m"

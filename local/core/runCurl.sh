@@ -26,7 +26,7 @@ export IMAGE_BASE_NAME="cicd-tests-base-image"
 export SIDECAR_IMAGE_BASE_NAME="cicd-dotcms-image"
 export databaseType=${DATABASE_TYPE}
 export TEST_TYPE=curl
-export EXPORT_RESULTS=false
+export EXPORT_REPORTS=false
 
 mkdir ${DOT_CICD_STAGE_OPERATION}/setup
 mkdir ${DOT_CICD_STAGE_OPERATION}/license
@@ -46,7 +46,7 @@ echo "databaseType: ${databaseType}"
 echo "PROVIDER_DB_USERNAME: ${PROVIDER_DB_USERNAME}"
 echo "PROVIDER_DB_PASSWORD: ${PROVIDER_DB_PASSWORD}"
 echo "TEST_TYPE: ${TEST_TYPE}"
-echo "EXPORT_RESULTS: ${EXPORT_RESULTS}"
+echo "EXPORT_REPORTS: ${EXPORT_REPORTS}"
 echo "SKIP_IMAGE_BUILD: ${SKIP_IMAGE_BUILD}"
 echo "CURL_TEST: ${CURL_TEST}"
 echo "DEBUG: ${DEBUG}"
