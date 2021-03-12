@@ -11,7 +11,7 @@ git submodule update --init --recursive
 git clean -f -d && git pull
 
 echo "Checking out branch ${build_id}"
-git checkout -b ${build_id}
+git checkout -b ${build_id} --track origin/${build_id}
 git pull origin ${build_id}
 
 echo
