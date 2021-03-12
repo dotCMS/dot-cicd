@@ -27,5 +27,8 @@ persistResults
 
 cd /build/src/core/dotCMS/src/curl-test
 
+. /build/githubStatus.sh
+ignoring_return_value=$?
+
 . /build/printStatus.sh
 ignoring_return_value=$?
