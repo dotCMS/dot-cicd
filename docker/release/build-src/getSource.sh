@@ -18,7 +18,7 @@ fi
 echo "Checking out ${gitBranchTag} ${build_id}"
 if [[ ${is_release} == true ]]; then
   git checkout tags/${build_id} -b ${build_id}
-else
+elif [[ "${build_id}" != "master" ]]; then
   git checkout -b ${build_id}
 fi
 
