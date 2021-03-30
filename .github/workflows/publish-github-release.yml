@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-18.04
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      SSH_RSA_KEY: ${{ secrets.DOTCMS_BUILD_RSA_KEY  }}
+      SSH_KEY: ${{ secrets.DOTCMS_BUILD_RSA_KEY  }}
       DEBUG: false
     steps:
       - name: Get commit message
