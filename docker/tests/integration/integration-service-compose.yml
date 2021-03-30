@@ -11,7 +11,7 @@ networks:
 services:
 
   integration-tests:
-    image: "${IMAGE_BASE_NAME}"
+    image: "${IMAGE_NAME}"
     environment:
       databaseType:
       EXTRA_PARAMS:

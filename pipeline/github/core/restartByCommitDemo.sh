@@ -20,6 +20,6 @@ git pull
 git commit --allow-empty -m "Trigger demo restart as per release of ${build_id}"
 git status
 echo "Executing: git push"
-if [[ ${is_release} == true ]]; then
+if [[ "${is_release}" == 'true' ]]; then
   git push
 fi

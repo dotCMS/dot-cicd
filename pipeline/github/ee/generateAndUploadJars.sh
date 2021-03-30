@@ -18,10 +18,17 @@ if [[ $? != 0 ]]; then
   exit 1
 fi
 
-if [[ ${is_release} == true ]]; then
+if [[ "${is_release}" == 'true' ]]; then
   releaseParam='-Prelease=true'
 else
   releaseParam=''
+  #  This is for testing purposes, we should never seen a branch no other than master or a release one
+  if [[ "${build_id}" != 'master' ]]; then
+    cp ./gradle.properties ./gradle.properties.bak
+    sed -i "s,^dotcmsReleaseVersion=.*$,dotcmsReleaseVersion=${github_sha},g" ./gradle.properties
+    echo "Overriding dotcmsReleaseVersion to: ${github_sha}"
+    cat ./gradle.properties | grep dotcmsReleaseVersion
+  fi
 fi
 
 echo

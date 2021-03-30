@@ -1,57 +1,45 @@
 #!/bin/bash
 
-DOCKER_SOURCE=${DOT_CICD_LIB}/docker
-IMAGE_NAME='dotcms/dotcms-release-process'
+export DOCKER_SOURCE=${DOT_CICD_LIB}/docker
+export IMAGE_NAME='dotcms/dotcms-release-process'
 
-cd ${DOCKER_SOURCE}/release
+cp ${DOT_CICD_LIB}/pipeline/github/githubCommon.sh ${DOCKER_SOURCE}/images/release/build-src
 
-echo
-echo '############################################################################################################################################'
-echo "Executing: docker build --pull --no-cache -t ${IMAGE_NAME} ."
-echo "Executing: docker run --rm \
-  -v ${BASE_FOLDER}/.ssh:/root/.ssh \
-  -e build_id=\"${BRANCH}\" \
-  -e ee_build_id=\"${EE_BRANCH}\" \
-  -e repo_username=${REPO_USERNAME} \
-  -e repo_password=${REPO_PASSWORD} \
-  -e github_user=${GITHUB_USER} \
-  -e github_user_token=${GITHUB_USER_TOKEN} \
-  -e github_sha=${GITHUB_SHA} \
-  -e aws_access_key_id=${AWS_ACCESS_KEY_ID} \
-  -e aws_secret_access_key=${AWS_SECRET_ACCESS_KEY} \
-  -e docker_username=${DOCKER_USERNAME} \
-  -e docker_password=${DOCKER_PASSWORD} \
-  -e is_release=${IS_RELEASE} \
-  -e debug=${DEBUG} \
-  -e ee_rsa=\"${SSH_RSA_KEY}\" \
- ${IMAGE_NAME} $2 $3 $4 $5 $6"
-echo '############################################################################################################################################'
+pushd ${DOCKER_SOURCE}/images/release
 
-docker build --pull --no-cache -t ${IMAGE_NAME} .
-dResult=$?
-if [[ ${dResult} != 0 ]]; then
-  exit 1
+if [[ "${IS_RELEASE}" != 'true' ]]; then
+  executeCmd "docker build --pull --no-cache -t ${IMAGE_NAME} ."
+  if [[ ${cmdResult} != 0 ]]; then
+    exit 1
+  fi
 fi
 
-docker run --rm \
-  -v ${BASE_FOLDER}/.ssh:/root/.ssh \
-  -e build_id="${BRANCH}" \
-  -e ee_build_id="${EE_BRANCH}" \
-  -e repo_username=${REPO_USERNAME} \
-  -e repo_password=${REPO_PASSWORD} \
-  -e github_user=${GITHUB_USER} \
-  -e github_user_token=${GITHUB_USER_TOKEN} \
-  -e github_sha=${GITHUB_SHA} \
-  -e aws_access_key_id=${AWS_ACCESS_KEY_ID} \
-  -e aws_secret_access_key=${AWS_SECRET_ACCESS_KEY} \
-  -e docker_username=${DOCKER_USERNAME} \
-  -e docker_password=${DOCKER_PASSWORD} \
-  -e is_release=${IS_RELEASE} \
-  -e debug=${DEBUG} \
-  -e ee_rsa="${SSH_RSA_KEY}" \
-  ${IMAGE_NAME} $2 $3 $4 $5 $6
-dResult=$?
-if [[ ${dResult} == 0 ]]; then
+if [[ -n "${BASE_FOLDER}" ]]; then
+  HOME_FOLDER=${BASE_FOLDER}
+fi
+
+set -- ${@:2}
+executeCmd "docker run --rm
+  -v ${HOME_FOLDER}/.ssh:/root/.ssh
+  -e BUILD_ID=\"${BUILD_ID}\"
+  -e BUILD_HASH=${BUILD_HASH}
+  -e EE_BUILD_ID=\"${EE_BRANCH}\"
+  -e repo_username=${REPO_USERNAME}
+  -e repo_password=${REPO_PASSWORD}
+  -e GITHUB_USER=${GITHUB_USER}
+  -e GITHUB_USER_EMAIL:=${GITHUGITHUB_USER_EMAIL:B_USER}
+  -e GITHUB_USER_TOKEN=${GITHUB_USER_TOKEN}
+  -e aws_access_key_id=${AWS_ACCESS_KEY_ID}
+  -e aws_secret_access_key=${AWS_SECRET_ACCESS_KEY}
+  -e docker_username=${DOCKER_USERNAME}
+  -e docker_password=${DOCKER_PASSWORD}
+  -e is_release=${IS_RELEASE}
+  -e DEBUG=${DEBUG}
+ ${IMAGE_NAME} $@"
+
+popd
+
+if [[ ${cmdResult} == 0 ]]; then
   exit 0
 else
   exit 1

@@ -28,7 +28,6 @@ dot-cicd
 |     └──integration
 |     └──seed
 |     └──shared
-|     └──sidecar
 └──pipeline
   └──github
    |  └──core

@@ -1,36 +1,25 @@
 #!/bin/bash
 
-github_user=$1
-github_user_token=$2
-build_id=$3
-is_release=$4
-docker_username=$5
-docker_password=$6
-docker_repo="docker"
-github="github.com"
-github_docker_path="dotCMS/${docker_repo}"
-github_docker_host_path="${github}/${github_docker_path}"
-github_docker_remote_repo="https://${github_docker_host_path}"
-github_docker_repo="${github_docker_remote_repo}.git"
-github_docker_token_repo="https://${github_user_token}@${github_docker_host_path}.git"
+IS_RELEASE=$2
+docker_username=$3
+docker_password=$4
 
 docker_image_name='dotcms'
-docker_tag="${build_id}"
-if [[ ${is_release} == true ]]; then
-  docker_tag="${build_id#*-}"
+docker_tag="${BUILD_ID}"
+if [[ "${IS_RELEASE}" == 'true' ]]; then
+  docker_tag="${BUILD_ID#*-}"
   docker_tag="${docker_tag//v}"
 fi
 
 cd ..
-git config --global user.email "${github_user}@dotcms.com"
-git config --global user.name "${github_user}"
-git clone ${github_docker_repo}
+gitConfig ${GITHUB_USER}
+fetchDocker docker ${DOCKER_BRANCH}
 cd docker
 git fetch --all
 [[ -n "${DOCKER_BRANCH}" && "${DOCKER_BRANCH}" != 'master' ]] && git checkout -b ${DOCKER_BRANCH} --track origin/${DOCKER_BRANCH}
 cd images/dotcms
 
-if [[ ${is_release} != true ]]; then
+if [[ "${IS_RELEASE}" != 'true' ]]; then
   docker_image_name="${docker_image_name}-cicd-test"
 fi
 docker_image_full_name="dotcms/${docker_image_name}"
@@ -54,8 +43,8 @@ docker_build_cmd="docker buildx build
   --push
   --no-cache
   --build-arg BUILD_FROM=COMMIT
-  --build-arg BUILD_ID=${build_id}"
-if [[ ${is_release} == true ]]; then
+  --build-arg BUILD_ID=${BUILD_ID}"
+if [[ "${IS_RELEASE}" == 'true' ]]; then
   docker_build_cmd="${docker_build_cmd}
     --build-arg IS_RELEASE=true
     -t ${docker_image_full_name}:latest"
@@ -63,5 +52,8 @@ fi
 docker_build_cmd="${docker_build_cmd}
   -t ${docker_image_full_name}:${docker_tag}
   ."
-echo "Executing: ${docker_build_cmd}"
-time $(echo ${docker_build_cmd})
+time executeCmd "${docker_build_cmd}"
+
+[[ ${cmdResult} != 0 ]] && exit 1
+
+exit 0
