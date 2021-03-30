@@ -1,0 +1,45 @@
+# https://docs.docker.com/compose/compose-file/compose-versioning/
+version: "3.7"
+
+# https://docs.docker.com/compose/compose-file/
+
+volumes:
+  cms-shared:
+  cms-local:
+  output:
+
+services:
+
+  dotcms-app:
+    image: cicd-dotcms
+    command: ["dotcms"]
+    expose:
+      - 8080
+    ports:
+      - 8080:8080
+      - 8000:8000
+    environment:
+      CMS_HEAP_SIZE: 1g
+      CMS_JAVA_OPTS: "-XX:+PrintFlagsFinal"
+      DATABASE_TYPE:
+      PROVIDER_DB_DRIVER: ${DATABASE_TYPE}
+      PROVIDER_DB_USERNAME: postgres
+      PROVIDER_DB_PASSWORD: postgres
+      PROVIDER_DB_DNSNAME: database
+      PROVIDER_DB_MAXCONNS: 15
+      PROVIDER_ELASTICSEARCH_DNSNAMES: elasticsearch
+      PROVIDER_ELASTICSEARCH_ENDPOINTS: "https://elasticsearch:9200"
+      INDEX_POLICY_SINGLE_CONTENT: "FORCE"
+      ASYNC_REINDEX_COMMIT_LISTENERS: "false"
+      ASYNC_COMMIT_LISTENERS: "false"
+#      CUSTOM_STARTER_URL:
+      WAIT_DB_FOR:
+    depends_on:
+      - database
+      - elasticsearch
+    volumes:
+      - cms-shared:/data/shared
+      - cms-local:/data/local
+      - type: bind
+        source: ./license/license.dat
+        target: /data/local/dotsecure/license/license.dat

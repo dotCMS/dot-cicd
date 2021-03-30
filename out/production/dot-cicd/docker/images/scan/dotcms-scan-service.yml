@@ -1,0 +1,22 @@
+# https://docs.docker.com/compose/compose-file/compose-versioning/
+version: "3.7"
+
+# https://docs.docker.com/compose/compose-file/
+
+services:
+
+  sidecar:
+    image: "${SIDECAR_APP_IMAGE_NAME}"
+    ports:
+      - 8090:8090
+    environment:
+      BUILD_HASH:
+      DOT_CICD_TARGET:
+      WAIT_DOTCMS_FOR:
+    depends_on:
+      - dotcms-app
+    volumes:
+      - type: bind
+        source: .
+        target: /zap/wrk
+        read_only: false

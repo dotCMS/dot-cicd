@@ -54,14 +54,11 @@ VOLUME /custom/output
 RUN mkdir /build/google
 RUN mkdir /build/github
 
-COPY setup/build-src/google/storage.sh /build/google/storage.sh
-RUN chmod 500 /build/google/storage.sh
+COPY setup/build-src/storage.sh /build/storage.sh
+RUN chmod 500 /build/storage.sh
 
-COPY setup/build-src/github/storage.sh /build/github/storage.sh
-RUN chmod 500 /build/github/storage.sh
-
-COPY setup/build-src/github/githubCommon.sh /build/github/githubCommon.sh
-RUN chmod 500 /build/github/githubCommon.sh
+COPY setup/build-src/githubCommon.sh /build/githubCommon.sh
+RUN chmod 500 /build/githubCommon.sh
 
 COPY setup/build-src/common.sh /build/common.sh
 RUN chmod 500 /build/common.sh
