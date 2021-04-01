@@ -1,7 +1,5 @@
 #!/bin/bash
 
-java -version
-
 DOCKER_SOURCE=${DOT_CICD_LIB}/docker
 setupBuildBase ${DOT_CICD_PATH}/docker
 
