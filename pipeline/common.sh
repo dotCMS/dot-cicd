@@ -14,16 +14,12 @@ function gitClone {
     exit 1
   fi
 
-  if [[ -n "${branch}" ]]; then
-    pushd ${dest}
-    git fetch --all
-    git pull
-    echo "Checking out branch ${branch}"
-    git checkout -b ${branch} --track origin/${branch}
+  if [[ ! -z "${branch}" ]]; then
+    echo "Checking out branch ${DOT_CICD_BRANCH}"
+    git checkout -b ${DOT_CICD_BRANCH}
     if [[ $? != 0 ]]; then
       echo "Error checking out branch '${branch}', continuing with master"
     fi
-    popd
   fi
 }
 
