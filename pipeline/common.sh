@@ -7,6 +7,7 @@ function gitClone {
   local branch=$3
 
   echo "Cloning repo from ${repo}"
+  echo "Params: ${repo} ${dest} ${branch}"
   git clone ${repo} ${dest}
 
   if [[ $? != 0 ]]; then
