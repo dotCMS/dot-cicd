@@ -42,7 +42,7 @@ function gitFetchRepo {
     dest=cicd/
   fi
 
-  gitClone $@
+  gitClone $1 $2 $3
 }
 
 # Cleans up setup for Docker test resources
