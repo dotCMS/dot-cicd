@@ -7,6 +7,7 @@ function gitClone {
   local branch=$3
 
   echo "Cloning repo from ${repo}"
+  echo "Params1: ${repo} ${dest} ${branch}"
   git clone ${repo} ${dest}
 
   if [[ $? != 0 ]]; then
@@ -14,9 +15,16 @@ function gitClone {
     exit 1
   fi
 
-  if [[ ! -z "${branch}" ]]; then
-    echo "Checking out branch ${DOT_CICD_BRANCH}"
-    git checkout -b ${DOT_CICD_BRANCH}
+  echo "Params2: ${repo} ${dest} ${branch}"
+  if [[ -n "${branch}" ]]; then
+    echo "Params3: ${repo} ${dest} ${branch}"
+    
+    pushd ${dest}
+    git fetch --all
+    git pull
+    echo "Params4: ${repo} ${dest} ${branch}"
+    echo "Checking out branch ${branch}"
+    git checkout -b ${branch} --track origin/${branch}
     if [[ $? != 0 ]]; then
       echo "Error checking out branch '${branch}', continuing with master"
     fi
@@ -38,7 +46,7 @@ function gitFetchRepo {
     dest=cicd/
   fi
 
-  gitClone $@
+  gitClone ${repo} ${dest} ${branch}
 }
 
 # Cleans up setup for Docker test resources
