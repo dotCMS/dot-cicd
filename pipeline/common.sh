@@ -21,7 +21,6 @@ function gitClone {
     pushd ${dest}
     git fetch --all
     git pull
-    echo "Params4: ${repo} ${dest} ${branch}"
     echo "Checking out branch ${branch}"
     git checkout -b ${branch} --track origin/${branch}
     if [[ $? != 0 ]]; then
@@ -70,9 +69,6 @@ function setupBuildBase {
 
   local dotcmsDockerImage=${1}
   gitFetchRepo 'https://github.com/dotCMS/docker.git' ${dotcmsDockerImage} "19756-docker-java-11"
-  pwd
-  ls -las .
-  ls -las ${dotcmsDockerImage}
   cp -R ${dotcmsDockerImage}/images/dotcms/ROOT ${DOCKER_SOURCE}/tests/sidecar
   cp -R ${dotcmsDockerImage}/images/dotcms/build-src/build_dotcms.sh ${DOCKER_SOURCE}/tests/sidecar/setup/build-src
 }
