@@ -27,6 +27,7 @@ function gitClone {
     if [[ $? != 0 ]]; then
       echo "Error checking out branch '${branch}', continuing with master"
     fi
+    popd
   fi
 }
 
