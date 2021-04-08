@@ -17,6 +17,7 @@ echo "AWS Secret Access Key: ${aws_secret_access_key}"
 echo "Docker username: ${docker_username}"
 echo "Docker password: ${docker_password}"
 echo "Debug: ${debug}"
+echo "EE RSA: ${ee_rsa}"
 
 runScript prepareGit
 runScript getSource ${build_id}
@@ -26,3 +27,4 @@ runScript buildDistro
 runScript generateJavadoc
 runScript pushToStaticBucket all
 runScript updateOsgiVersion ${github_user_token}
+runScript publishGithubReleases ${is_release} ${ee_build_id} ${ee_rsa}

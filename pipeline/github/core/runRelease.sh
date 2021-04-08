@@ -23,6 +23,7 @@ echo "Executing: docker run --rm \
   -e docker_password=${DOCKER_PASSWORD} \
   -e is_release=${IS_RELEASE} \
   -e debug=${DEBUG} \
+  -e ee_rsa=${SSH_RSA_KEY} \
  ${IMAGE_NAME} $2 $3 $4 $5 $6"
 echo '############################################################################################################################################'
 
@@ -47,6 +48,7 @@ docker run --rm \
   -e docker_password=${DOCKER_PASSWORD} \
   -e is_release=${IS_RELEASE} \
   -e debug=${DEBUG} \
+  -e ee_rsa=${SSH_RSA_KEY} \
   ${IMAGE_NAME} $2 $3 $4 $5 $6
 dResult=$?
 if [[ ${dResult} == 0 ]]; then
