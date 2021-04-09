@@ -23,7 +23,7 @@ echo 'Getting submodules'
 git submodule update --init --recursive
 git clean -f -d && git pull
 
-cd core/dotCMS/src/main/enterprise
+cd dotCMS/src/main/enterprise
 git checkout ${RELEASE_BRANCH_NAME}
 git commit --allow-empty -m "Publish Release"
 git push origin ${RELEASE_BRANCH_NAME}
