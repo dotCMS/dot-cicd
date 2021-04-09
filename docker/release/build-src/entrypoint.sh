@@ -19,7 +19,7 @@ echo "Docker password: ${docker_password}"
 echo "Debug: ${debug}"
 echo "EE RSA: ${ee_rsa}"
 
-#runScript prepareGit
+runScript prepareGit ${ee_rsa}
 #runScript getSource ${build_id}
 #runScript setVars
 #runScript generateAndUploadJars ${build_id} ${ee_build_id} ${repo_username} ${repo_password} ${github_sha} ${is_release}
