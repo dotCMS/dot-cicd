@@ -57,10 +57,10 @@ git push origin ${RELEASE_BRANCH_NAME}
 cd ../dot-cicd
 
 echo 'Releasing on docker'
-git clone git@github.com:dotCMS/docker.git docker
-pushd docker
+git clone git@github.com:dotCMS/docker.git docker-repo
+pushd docker-repo
 git clean -f -d && git pull
 git checkout ${RELEASE_BRANCH_NAME}
 git commit --allow-empty -m "Publish Release"
 git push origin ${RELEASE_BRANCH_NAME}
-cd ../docker
+cd ../docker-repo
