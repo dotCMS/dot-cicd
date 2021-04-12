@@ -47,7 +47,20 @@ git commit --allow-empty -m "Publish Release"
 git push origin ${RELEASE_BRANCH_NAME}
 cd ../plugin-seeds
 
+echo 'Releasing on dot-cicd'
+git clone git@github.com:dotCMS/dot-cicd.git dot-cicd
+pushd dot-cicd
+git clean -f -d && git pull
+git checkout ${RELEASE_BRANCH_NAME}
+git commit --allow-empty -m "Publish Release"
+git push origin ${RELEASE_BRANCH_NAME}
+cd ../dot-cicd
 
-
-
-#cd ../core
+echo 'Releasing on docker'
+git clone git@github.com:dotCMS/docker.git docker
+pushd docker
+git clean -f -d && git pull
+git checkout ${RELEASE_BRANCH_NAME}
+git commit --allow-empty -m "Publish Release"
+git push origin ${RELEASE_BRANCH_NAME}
+cd ../docker
