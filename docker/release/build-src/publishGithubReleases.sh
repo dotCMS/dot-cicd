@@ -27,13 +27,27 @@ echo 'Releasing on enterprise'
 #git checkout ${RELEASE_BRANCH_NAME}
 #git commit --allow-empty -m "Publish Release"
 #git push origin ${RELEASE_BRANCH_NAME}
+#cd ../core
 
-echo 'Releasing on core-web'
-git clone git@github.com:dotCMS/core-web.git core-web
-pushd core-web
+#echo 'Releasing on core-web'
+#git clone git@github.com:dotCMS/core-web.git core-web
+#pushd core-web
+#git clean -f -d && git pull
+#git checkout ${RELEASE_BRANCH_NAME}
+#git commit --allow-empty -m "Publish Release"
+#git push origin ${RELEASE_BRANCH_NAME}
+#cd ../core-web
+
+echo 'Releasing on plugin-seeds'
+git clone git@github.com:dotCMS/plugin-seeds.git plugin-seeds
+pushd plugin-seeds
 git clean -f -d && git pull
 git checkout ${RELEASE_BRANCH_NAME}
 git commit --allow-empty -m "Publish Release"
 git push origin ${RELEASE_BRANCH_NAME}
+cd ../plugin-seeds
 
-cd ../core
+
+
+
+#cd ../core
