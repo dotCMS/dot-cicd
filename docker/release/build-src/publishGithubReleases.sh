@@ -13,23 +13,27 @@ RELEASE_BRANCH_NAME=${ee_build_id/v/$RELEASE_PREFIX}
 
 echo
 echo '######################################################################'
+echo "RELEASE_BRANCH_NAME: " ${RELEASE_BRANCH_NAME}
+
 echo 'Releasing on enterprise'
-echo "RELEASE_BRANCH_NAME: " + ${RELEASE_BRANCH_NAME}
-echo '######################################################################'
 
-git clone https://github.com/dotCMS/core.git core
-pushd core
-echo 'Getting submodules'
-git submodule update --init --recursive
+#git clone https://github.com/dotCMS/core.git core
+#pushd core
+#echo 'Getting submodules'
+#git submodule update --init --recursive
+#git clean -f -d && git pull
+#
+#cd dotCMS/src/main/enterprise
+#git checkout ${RELEASE_BRANCH_NAME}
+#git commit --allow-empty -m "Publish Release"
+#git push origin ${RELEASE_BRANCH_NAME}
+
+echo 'Releasing on core-web'
+git clone https://github.com/dotCMS/core-web.git core-web
+pushd core-web
 git clean -f -d && git pull
-
-cd dotCMS/src/main/enterprise
 git checkout ${RELEASE_BRANCH_NAME}
 git commit --allow-empty -m "Publish Release"
 git push origin ${RELEASE_BRANCH_NAME}
-
-#git checkout ${RELEASE_BRANCH_NAME}
-#git fetch --all
-#git commit --allow-empty -m "Publish Release"
 
 cd ../core
