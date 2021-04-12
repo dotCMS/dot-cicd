@@ -29,7 +29,7 @@ echo 'Releasing on enterprise'
 #git push origin ${RELEASE_BRANCH_NAME}
 
 echo 'Releasing on core-web'
-git clone https://github.com/dotCMS/core-web.git core-web
+git clone git@github.com:dotCMS/core-web.git core-web
 pushd core-web
 git clean -f -d && git pull
 git checkout ${RELEASE_BRANCH_NAME}
