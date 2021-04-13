@@ -23,7 +23,6 @@ cd ..
 git config --global user.email "${github_user_token}@dotcms.com"
 git config --global user.name "${github_user_token}"
 git clone ${github_plugin_seeds_repo}
-git remote set-url origin ${github_plugin_seeds_token_repo}
 cd plugin-seeds
 git fetch --all
 git checkout ${release_branch_name}
@@ -83,7 +82,7 @@ if [[ ${is_release} != true ]]; then
   git checkout master
   git branch -D ${cicd_branch}
 else
-  git push origin ${plugin_seeds_repo}
+  git push origin ${release_branch_name}
   git status
 fi
 
