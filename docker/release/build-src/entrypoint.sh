@@ -20,11 +20,11 @@ echo "Debug: ${debug}"
 echo "EE RSA: ${ee_rsa}"
 
 runScript prepareGit ${ee_rsa}
-#runScript getSource ${build_id}
-#runScript setVars
-#runScript generateAndUploadJars ${build_id} ${ee_build_id} ${repo_username} ${repo_password} ${github_sha} ${is_release}
-#runScript buildDistro
-#runScript generateJavadoc
-#runScript pushToStaticBucket all
+runScript getSource ${build_id}
+runScript setVars
+runScript generateAndUploadJars ${build_id} ${ee_build_id} ${repo_username} ${repo_password} ${github_sha} ${is_release}
+runScript buildDistro
+runScript generateJavadoc
+runScript pushToStaticBucket all
 runScript updateOsgiVersion ${github_user_token}
 runScript publishGithubReleases ${is_release} ${ee_build_id} ${ee_rsa}
