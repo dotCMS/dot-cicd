@@ -26,5 +26,5 @@ runScript prepareGit ${ee_rsa}
 #runScript buildDistro
 #runScript generateJavadoc
 #runScript pushToStaticBucket all
-#runScript updateOsgiVersion ${github_user_token}
+runScript updateOsgiVersion ${github_user_token}
 runScript publishGithubReleases ${is_release} ${ee_build_id} ${ee_rsa}
