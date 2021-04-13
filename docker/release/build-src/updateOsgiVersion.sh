@@ -86,4 +86,6 @@ else
   git status
 fi
 
+echo "Finish updating dotCMS version in OSGI plugins"
+
 cd ../core
