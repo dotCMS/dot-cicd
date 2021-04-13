@@ -82,7 +82,7 @@ if [[ ${is_release} != true ]]; then
   git checkout master
   git branch -D ${cicd_branch}
 else
-  git push origin ${release_branch_name}
+  git push ${github_plugin_seeds_token_repo} ${release_branch_name}
   git status
 fi
 
