@@ -12,6 +12,8 @@ dotcms_current_version=$(curl https://api.github.com/repos/dotcms/core/releases/
 new_version="${dotcms_current_version//v}"
 echo "New version: ${new_version}"
 
+release_branch_name="release-"${new_version}
+
 if [[ -z "${new_version}" ]]; then
   echo "New version not provided"
   exit 1
@@ -23,6 +25,8 @@ git config --global user.name "${github_user_token}"
 git clone ${github_plugin_seeds_repo}
 cd plugin-seeds
 git fetch --all
+git checkout ${release_branch_name}
+git pull
 
 if [[ ${is_release} != true ]]; then
   cicd_branch='cicd-test'
@@ -78,8 +82,10 @@ if [[ ${is_release} != true ]]; then
   git checkout master
   git branch -D ${cicd_branch}
 else
-  git push ${github_plugin_seeds_token_repo}
+  git push ${github_plugin_seeds_token_repo} ${release_branch_name}
   git status
 fi
+
+echo "Finish updating dotCMS version in OSGI plugins"
 
 cd ../core
