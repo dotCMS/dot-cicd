@@ -14,12 +14,19 @@ function gitClone {
     exit 1
   fi
 
-  if [[ ! -z "${branch}" ]]; then
-    echo "Checking out branch ${DOT_CICD_BRANCH}"
-    git checkout -b ${DOT_CICD_BRANCH}
+  echo "Params2: ${repo} ${dest} ${branch}"
+  if [[ -n "${branch}" ]]; then
+    echo "Params3: ${repo} ${dest} ${branch}"
+    
+    pushd ${dest}
+    git fetch --all
+    git pull
+    echo "Checking out branch ${branch}"
+    git checkout -b ${branch} --track origin/${branch}
     if [[ $? != 0 ]]; then
       echo "Error checking out branch '${branch}', continuing with master"
     fi
+    popd
   fi
 }
 
@@ -38,7 +45,7 @@ function gitFetchRepo {
     dest=cicd/
   fi
 
-  gitClone $@
+  gitClone ${repo} ${dest} ${branch}
 }
 
 # Cleans up setup for Docker test resources
@@ -61,7 +68,7 @@ function setupBuildBase {
   cp -R ${DOCKER_SOURCE}/setup/db ${DOCKER_SOURCE}/tests/sidecar/setup
 
   local dotcmsDockerImage=${1}
-  gitFetchRepo 'https://github.com/dotCMS/docker.git' ${dotcmsDockerImage}
+  gitFetchRepo 'https://github.com/dotCMS/docker.git' ${dotcmsDockerImage} "release-21.05"
   cp -R ${dotcmsDockerImage}/images/dotcms/ROOT ${DOCKER_SOURCE}/tests/sidecar
   cp -R ${dotcmsDockerImage}/images/dotcms/build-src/build_dotcms.sh ${DOCKER_SOURCE}/tests/sidecar/setup/build-src
 }
