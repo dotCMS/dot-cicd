@@ -68,7 +68,7 @@ function setupBuildBase {
   cp -R ${DOCKER_SOURCE}/setup/db ${DOCKER_SOURCE}/tests/sidecar/setup
 
   local dotcmsDockerImage=${1}
-  gitFetchRepo 'https://github.com/dotCMS/docker.git' ${dotcmsDockerImage} "19756-docker-java-11"
+  gitFetchRepo 'https://github.com/dotCMS/docker.git' ${dotcmsDockerImage} "release.21.05"
   cp -R ${dotcmsDockerImage}/images/dotcms/ROOT ${DOCKER_SOURCE}/tests/sidecar
   cp -R ${dotcmsDockerImage}/images/dotcms/build-src/build_dotcms.sh ${DOCKER_SOURCE}/tests/sidecar/setup/build-src
 }
