@@ -65,10 +65,10 @@ files=('OSGi/com.dotcms.3rd.party/build.gradle'
 for file in "${files[@]}"
 do
   echo "Replacing version for ${file}"
-  sed -i '' "s,com.dotcms:dotcms:[0-9][0-9]\.[0-9][0-9]\.[0-9],com.dotcms:dotcms:${new_version},g" ${file}
+  sed -i "s,com.dotcms:dotcms:[0-9][0-9]\.[0-9][0-9]\.[0-9],com.dotcms:dotcms:${new_version},g" ${file}
   ss="name: 'dotcms', version: '[0-9][0-9]\.[0-9][0-9]\.[0-9]'"
   rs="name: 'dotcms', version: '${new_version}'"
-  sed -i '' "s/${ss}/${rs}/g" ${file}
+  sed -i "s/${ss}/${rs}/g" ${file}
   cat ${file} | grep "${new_version}"
 done
 
