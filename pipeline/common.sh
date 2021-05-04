@@ -15,7 +15,7 @@ function gitClone {
   fi
 
   echo "Params2: ${repo} ${dest} ${branch}"
-  if [[ -n "${branch}" ]]; then
+  if [[ -n "${branch}" && "${branch}" != 'master' ]]; then
     echo "Params3: ${repo} ${dest} ${branch}"
     
     pushd ${dest}
