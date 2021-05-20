@@ -1,5 +1,9 @@
 #!/bin/bash
 
-echo "This script is deprecated, ignoring this call"
+###########################
+# Script: buildTestsBase.sh
+# Deprecated
 
+# TODO: Script Deprecation
+echo "This script is deprecated, ignoring this call"
 exit 0

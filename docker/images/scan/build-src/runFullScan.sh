@@ -1,8 +1,12 @@
 #!/bin/bash
 
-full_scan_report_file='full-scan-testreport.html'
+########################
+# Script: runFullScan.sh
+# Full Scan script
+
 full_scan_report_file='index.html'
 
+# Runs full scan
 echo '
 #####################
 Running ZAP Full Scan
@@ -11,7 +15,6 @@ Running ZAP Full Scan
   && echo "Executing: ./zap-full-scan.py
     -t ${scan_url}
     -r ${full_scan_report_file}"
-
 ./zap-full-scan.py \
   -t ${scan_url} \
   -r ${full_scan_report_file}
@@ -24,4 +27,5 @@ scan_label='Full Scan Results'
 ERROR_CODES="${ERROR_CODES}
 ${scan_label}: ${full_scan_result}"
 
+# Copy results to report folder and register results in map
 copyResults ${full_scan_report_file} "${scan_label}"

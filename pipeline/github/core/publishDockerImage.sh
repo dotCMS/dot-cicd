@@ -1,41 +1,50 @@
 #!/bin/bash
 
-IS_RELEASE=$2
-docker_username=$3
-docker_password=$4
+###############################
+# Script: publishDockerImage.sh
+# Builds and publishes, with 'docker buildx' commands, the multi-arch docker DotCMS images
+#
+# $1: docker_username: artifactory repo username
+# $2: docker_password: artifactory repo password
+
+docker_username=$1
+docker_password=$2
 
 docker_image_name='dotcms'
 docker_tag="${BUILD_ID}"
+# Evaluates dry run
 if [[ "${IS_RELEASE}" == 'true' ]]; then
   docker_tag="${BUILD_ID#*-}"
   docker_tag="${docker_tag//v}"
 fi
 
 cd ..
+# Configs git with default user
 gitConfig ${GITHUB_USER}
+# Git clones docker repo with provided branch
 fetchDocker docker ${DOCKER_BRANCH}
-cd docker
-git fetch --all
-[[ -n "${DOCKER_BRANCH}" && "${DOCKER_BRANCH}" != 'master' ]] && git checkout -b ${DOCKER_BRANCH} --track origin/${DOCKER_BRANCH}
-cd images/dotcms
+cd docker/images/dotcms
 
 if [[ "${IS_RELEASE}" != 'true' ]]; then
   docker_image_name="${docker_image_name}-cicd-test"
 fi
 docker_image_full_name="dotcms/${docker_image_name}"
 
+# Prepare docker multi-arch build
+docker --version
+
+# Docker login
+echo "Executing: echo ${docker_password} | docker login --username ${docker_username} --password-stdin"
+echo ${docker_password} | docker login --username ${docker_username} --password-stdin
+
 uname -sm
 docker run --rm --privileged linuxkit/binfmt:v0.8
 ls -1 /proc/sys/fs/binfmt_misc/qemu-*
 
-docker --version
-echo 'Creating multiarch Docker images'
+echo 'Creating multi-arch Docker images'
 echo 'Executing: docker buildx create --use --name multiarch'
 docker buildx create --use --name multiarch
 docker buildx inspect --bootstrap
-
-echo "Executing: echo ${docker_password} | docker login --username ${docker_username} --password-stdin"
-echo ${docker_password} | docker login --username ${docker_username} --password-stdin
 
 docker_build_cmd="docker buildx build
   --platform linux/amd64,linux/arm64
@@ -46,12 +55,13 @@ docker_build_cmd="docker buildx build
   --build-arg BUILD_ID=${BUILD_ID}"
 if [[ "${IS_RELEASE}" == 'true' ]]; then
   docker_build_cmd="${docker_build_cmd}
-    --build-arg IS_RELEASE=true
+    --build-arg is_release=true
     -t ${docker_image_full_name}:latest"
 fi
 docker_build_cmd="${docker_build_cmd}
   -t ${docker_image_full_name}:${docker_tag}
   ."
+# Actual multi-arch build
 time executeCmd "${docker_build_cmd}"
 
 [[ ${cmdResult} != 0 ]] && exit 1

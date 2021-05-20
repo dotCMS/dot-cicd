@@ -1,5 +1,10 @@
 #!/bin/bash
 
+#######################
+# Script: entrypoint.sh
+# Main script ro run ZAP Scan
+
+# Import common stuff
 . githubCommon.sh
 . testResults.sh
 
@@ -15,10 +20,8 @@ export ERROR_CODES=''
 sidecar_args=(${SIDECAR_ARGS})
 selected_scan=${sidecar_args[0]}
 
-function createOutput {
-  mkdir -p ${report_folder}
-}
 
+# Resolves dotcms-app IP address and append it to /etc/hosts
 function hostAlias {
   local dotcms_host=($(host dotcms-app))
   [[ "${DEBUG}" == 'true' ]] && echo "${dotcms_host[@]}"
@@ -28,11 +31,18 @@ function hostAlias {
   [[ "${DEBUG}" == 'true' ]] && cat /etc/hosts
 }
 
+# Copy provided scan results file to report folder
+#
+# $1: results_file: results file
 function _copyResults {
   local results_file=${1}
   cp wrk/${results_file} ${report_folder}
 }
 
+# Copy provided scan results file to report folder and add results_file in map with its corresponding results status
+#
+# $1: results_file: results file
+# $2: results name: results name (label)
 function copyResults {
   local results_file=${1}
   local results_name=${2}
@@ -40,6 +50,7 @@ function copyResults {
   scan_results[${results_file}]="${results_name}"
 }
 
+# Base on the selected_scan env-var the run the type of scan
 function runScan {
   case ${selected_scan} in
     api)
@@ -57,6 +68,7 @@ function runScan {
   esac
 }
 
+# Print result links
 function showResultsLinks {
   commit_folder=${BASE_STORAGE_URL}/${BUILD_HASH}/scan/${selected_scan}
   branch_folder=${BASE_STORAGE_URL}/current/scan/${selected_scan}
@@ -71,6 +83,7 @@ Branch location: ${reports_branch_url}
 "
 }
 
+# Wait for DotCMS instance in case is not execution is not bundled
 if [[ "${BUNDLED_MODE}" == 'false' ]]; then
   : ${WAIT_DOTCMS_FOR:="3m"}
   echo "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -80,6 +93,7 @@ Requested sleep of [${WAIT_DOTCMS_FOR}], waiting for DotCMS?
   sleep ${WAIT_DOTCMS_FOR}
 fi
 
+# Validates selected scan is resolved
 [[ -z "${selected_scan}" ]] && echo 'Scan not provided, aborting' && exit 1
 report_folder=${OUTPUT_FOLDER}/${selected_scan}/reports/html
 
@@ -95,9 +109,12 @@ selected_scan: ${selected_scan[@]}
 
 hostAlias
 su - zap
-createOutput
+mkdir -p ${report_folder}
 
+# Show results before running scan
 showResultsLinks
+
+# Run the actual scan
 runScan
 
 echo "
@@ -106,8 +123,9 @@ Vulnerability Scan Done for ${target_host}
 ####################################################
 "
 
+# If results detected then persist them and print the results
 if [[ ${#scan_results[@]} -gt 0 ]]; then
-  echo "Error codes:${ERROR_CODES}"
+  [[ "${DEBUG}" == 'true' ]] && echo "Error codes:${ERROR_CODES}"
   persistResults
   showResultsLinks
 else

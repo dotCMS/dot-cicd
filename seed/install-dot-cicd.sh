@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# Env-Vars definition
 DEFAULT_GITHUB_USER_EMAIL='dotcmsbuild@dotcms.com'
 DEFAULT_GITHUB_USER=dotcmsbuild
 : ${DOT_CICD_PATH:="../dotcicd"} && export DOT_CICD_PATH
@@ -36,6 +37,9 @@ prepareCICD () {
 }
 
 # Clones and checks out a provided repo url with branch (optional)
+#
+# $1: dot_cicd_repo dot-cicd repo url
+# $2: dot_cicd_branch dot-cicd branch to check out
 gitCloneAndCheckout () {
   local dot_cicd_repo=$1
   local dot_cicd_branch=$2
@@ -95,6 +99,7 @@ fetchCICD () {
   prepareScripts
 }
 
+# Actual code to get the dot-cicd repo
 fetchCICD
 
 if [ $? -ne 0 ]; then

@@ -1,5 +1,9 @@
 #!/bin/bash
 
+####################
+# Script: storage.sh
+# Prints information about where results can be accessed and persists the tests results there.
+
 export OUTPUT_FOLDER="/custom/output"
 export reportsIndexURL="${BASE_STORAGE_URL}/${STORAGE_JOB_BRANCH_FOLDER}/reports/html/index.html"
 

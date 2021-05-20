@@ -1,5 +1,28 @@
 #!/bin/bash
 
+#########################
+# Script: githubCommon.sh
+# Collection of common functions used across the pipeline
+
+# Evaluates a provided command to be echoed and then executed setting the result in a variable
+#
+# $1: cmd command to execute
+function executeCmd {
+  local cmd=${1}
+  cmd=$(echo ${cmd} | tr '\n' ' \ \n')
+  [[ "${DEBUG}" == 'true' ]] && echo "Executing:
+==========
+${cmd}
+"
+  eval "${cmd}; export cmdResult=$?"
+  if [[ "${DEBUG}" == 'true' ]]; then
+    echo -e "cmdResult: ${cmdResult}\n"
+  fi
+}
+
+# HTTP-Encodes a provided string
+#
+# $1: string: url to encode
 function urlEncode {
   local string="${1}"
   local strlen=${#string}
@@ -18,6 +41,9 @@ function urlEncode {
   ENCODED_URL="${encoded}"
 }
 
+# Resolves results path based on the definition TEST_TYPE and databaseType env-vars
+#
+# $1: path: initial path
 function resolveResultsPath {
   local path="${1}"
   if [[ -n "${TEST_TYPE}" ]]; then
@@ -33,13 +59,8 @@ function resolveResultsPath {
 DEFAULT_GITHUB_USER=victoralfaro-dotcms
 DEFAULT_GITHUB_USER_EMAIL='victor.alfaro@dotcms.com'
 
-if [[ -z "${BUILD_ID}" ]]; then
-  BUILD_ID=${CURRENT_BRANCH}
-fi
-if [[ -z "${BUILD_ID}" ]]; then
-  BUILD_ID=${BRANCH}
-fi
-
+[[ -z "${BUILD_ID}" ]] && BUILD_ID=${CURRENT_BRANCH}
+[[ -z "${BUILD_ID}" ]] && BUILD_ID=${BRANCH}
 : ${BUILD_HASH:="${GITHUB_SHA::8}"} && export BUILD_HASH
 : ${GITHUB_USER:="${DEFAULT_GITHUB_USER}"} && export GITHUB_USER
 : ${GITHUB_USER_EMAIL:="${DEFAULT_GITHUB_USER_EMAIL}"} && export GITHUB_USER_EMAIL
@@ -60,7 +81,8 @@ else
   export CONTAINERIZED=true
 fi
 
-[[ "${CONTAINERIZED}" == 'false' || "${DEBUG}" == 'true' ]] && echo "###########
+[[ "${CONTAINERIZED}" == 'false' || "${DEBUG}" == 'true' ]] \
+  && echo "###########
 Github vars
 ###########
 BUILD_ID: ${BUILD_ID}
@@ -80,6 +102,10 @@ PLUGIN_SEEDS_GITHUB_REPO: ${PLUGIN_SEEDS_GITHUB_REPO}
 DEBUG: ${DEBUG}
 "
 
+# Builds credentials part for Github repo url, that is Github user token and username associated with it
+#
+# $1: token: token to use when building credentials part
+# $2: user: github username to use in credentials part
 function resolveCreds {
   local token=${1}
   local user=${2}
@@ -100,6 +126,10 @@ function resolveCreds {
   echo ${creds}
 }
 
+# Builds credentials and host parts for Github repo url
+#
+# $1: token: token to use when building credentials part
+# $2: user: Github username to use in credentials part
 function resolveSite {
   local creds=$(resolveCreds ${1} ${2})
   [[ -n "${creds}" ]] && creds="${creds}@"
@@ -108,11 +138,19 @@ function resolveSite {
   echo ${site}
 }
 
+# Builds path: Github organization + repo name
+#
+# $1: path: Github repo name
 function resolvePath {
   local path=${DOTCMS_GITHUB_ORG}/${1}
   echo ${path}
 }
 
+# Builds Github repo url
+#
+# $1: Github repo name
+# $1: token to use when building credentials part
+# $2: Github username to use in credentials part
 function resolveRepoUrl {
   local path=$(resolvePath ${1})
   local site=$(resolveSite ${2} ${3})
@@ -120,11 +158,18 @@ function resolveRepoUrl {
   echo ${url}
 }
 
+# Builds non-cloning Github repo url, that is without the '.git' suffix
+#
+# $@: same args as resolveRepoUrl
 function resolveRepoPath {
   local path=$(resolveRepoUrl $@)
   echo ${path%".git"}
 }
 
+# Sets git config globals user.email and user.name
+#
+# $1: username: Github username
+# $2: name: Github user name
 function gitConfig {
   local username=${1}
   local name=${2}
@@ -149,12 +194,10 @@ function gitConfig {
   [[ "${DEBUG}" == 'true' ]] && git config --list
 }
 
-function printGitStatus {
-  echo "Git status:"
-  git branch
-  git status
-}
-
+# Defaults to a extracted repo name from repo url
+#
+# $1: repo_rl: repo url
+# $2: dest: destination to
 function defaultLocation {
   local repo_url=${1}
   local dest=${2}
@@ -162,6 +205,11 @@ function defaultLocation {
   echo ${dest}
 }
 
+# Git clones a given repo url, with a specific branch to a specific location.
+#
+# $1: repo_url: repo url
+# $2: branch: branch to check out
+# $3: dest: destination to save the repo
 function gitClone {
   local repo_url=${1}
   local branch=${2}
@@ -193,6 +241,10 @@ function gitClone {
   return ${cloneResult}
 }
 
+# Given a repo url use it to replace the url element in a .gitmodules file in provided location
+#
+# $1: repo_url: repo url
+# $2: dest: destination to save the repo
 function gitSubModules {
   local repo_url=${1}
   [[ -z "${repo_url}" ]] && echo "No repo url provided, aborting" && exit 1
@@ -216,6 +268,9 @@ function gitSubModules {
   return ${sub_result}
 }
 
+# Git clones with submodules support
+#
+# $@: same args as gitSubModules
 function gitCloneSubModules {
   gitClone $@
   local clone_result=$?
@@ -232,6 +287,11 @@ function gitCloneSubModules {
   return ${sub_result}
 }
 
+# Git clone not with a repo url but with the repo's name using or not a user token
+#
+# $1: repository name
+# $2: branch: branch to check out
+# $3: dest: destination to save repo
 function simpleGitClone {
   local repo=$(resolveRepoUrl ${1})
   local branch=${2}
@@ -240,25 +300,20 @@ function simpleGitClone {
   return $?
 }
 
+# Given a repo url and a branch, run a remote list to see if it exists remotely
+#
+# $1: repo_url: repo url
+# $2: build_id: branch to query
 function gitRemoteLs {
   local repo_url=${1}
   local build_id=${2}
   return $(git ls-remote --heads ${repo_url} ${build_id} | wc -l | tr -d '[:space:]')
 }
 
-function executeCmd {
-  local cmd=${1}
-  cmd=$(echo ${cmd} | tr '\n' ' \ \n')
-  [[ "${DEBUG}" == 'true' ]] && echo "Executing:
-==========
-${cmd}
-"
-  eval "${cmd}; export cmdResult=$?"
-  if [[ "${DEBUG}" == 'true' ]]; then
-    echo -e "cmdResult: ${cmdResult}\n"
-  fi
-}
-
+# Git clones the docker repository into a specific location with a specific branch
+#
+# $2: dest: destination to save repo
+# $3: branch: branch to check out
 function fetchDocker {
   local dest=${1}
   local branch=${2}
@@ -274,18 +329,27 @@ function fetchDocker {
   fi
 }
 
-# Prepares resources to build a docker image with db access
+# Copies resources to build a docker image with db volume
+#
+# $1: docker_file_path: path where a Dockerfile is located
 function setupDockerDb {
   local docker_file_path=${1}
   cp -R ${DOCKER_SOURCE}/setup/db ${docker_file_path}/setup
 }
 
+# Copies dot-cicd external scripts to be included in docker image scripts
+#
+# $1: docker_file_path: path where a Dockerfile is located
 function setupExternal {
   local docker_file_path=${1}
   [[ ! -d ${docker_file_path}/setup/build-src ]] && mkdir -p ${docker_file_path}/setup/build-src
   cp ${DOT_CICD_LIB}/pipeline/github/githubCommon.sh ${docker_file_path}/setup/build-src
 }
 
+# Copies scripts to be included in the docker image scripts
+#
+# $1: docker_file_path: path where a Dockerfile is located
+# $2: docker_repo_path: docker repo path
 function setupSrc {
   local docker_file_path=${1}
   local docker_repo_path=${2}
@@ -295,6 +359,9 @@ function setupSrc {
   cp -R ${docker_repo_path}/images/dotcms/build-src/build_dotcms.sh ${docker_file_path}/setup/build-src
 }
 
+# Creates a directories for output and license
+#
+# $1: docker_file_path: path where a Dockerfile is located
 function addLicenseAndOutput {
   local docker_file_path=${1}
   output_folder=${docker_file_path}/output
@@ -303,7 +370,10 @@ function addLicenseAndOutput {
   mkdir -p ${license_folder} && chmod 777 ${license_folder}
 }
 
-# Prepares resources to build a docker image with db access and valid license
+# Copies all the resources (scripts, files, directories) to a location they could be used creating dotcms docker image
+#
+# $1: docker_file_path: path where a Dockerfile is located
+# $2: docker_repo_path: docker repo path
 function setupDocker {
   local docker_file_path=${1}
   local docker_repo_path=${2}
@@ -318,6 +388,8 @@ function setupDocker {
 }
 
 # Prepares resources to build integration image
+#
+# $1: folder: folder to create and copy integration resources to
 function setupDockerIntegration {
   local folder=${1}
   [[ -z "${folder}" ]] && folder=integration
@@ -326,6 +398,12 @@ function setupDockerIntegration {
   cp -R ${DOCKER_SOURCE}/setup ${DOCKER_SOURCE}/tests/integration
 }
 
+# Calls 'docker build' command with provided build args to create a docker image.
+# Most of the times this is used after running a setupXXX function for it to work properly.
+#
+# $1: image_name: name to use when building image
+# $2: docker_file_path: path where a Dockerfile is located
+# $3: skip_pull: when true
 function buildBase {
   local image_name=${1}
   local docker_file_path=${2}
@@ -359,6 +437,10 @@ function buildBase {
   fi
 }
 
+# Creates a directory and file with provided license
+#
+# $1: docker_file_path: path where a Dockerfile is located
+# $2: license: DotCMS license
 function prepareLicense {
   local docker_file_path=${1}
   local license=${2}
@@ -379,6 +461,7 @@ function prepareLicense {
   fi
 }
 
+# More Env-Vars definition, specifically to results storage
 githack_test_results_url=$(resolveRepoPath ${TEST_RESULTS_GITHUB_REPO} | sed -e 's/github.com/raw.githack.com/')
 export BASE_STORAGE_URL="${githack_test_results_url}/$(urlEncode ${BUILD_ID})/projects/${DOT_CICD_TARGET}"
 export GITHUB_PERSIST_COMMIT_URL="${BASE_STORAGE_URL}/$(resolveResultsPath ${BUILD_HASH})"

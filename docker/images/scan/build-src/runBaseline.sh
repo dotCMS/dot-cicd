@@ -1,11 +1,15 @@
 #!/bin/bash
 
+########################
+# Script: runBaseline.sh
+# Baseline Scan script
+
 baseline_conf_file=baseline.conf
-#baseline_report_file='baseline-testreport.html'
 baseline_report_file='index.html'
 
 mv ${baseline_conf_file} wrk/
 
+# Runs baseline scan using configuration file stored in baseline_conf_file
 echo '
 #########################
 Running ZAP Baseline Scan
@@ -16,7 +20,6 @@ Running ZAP Baseline Scan
     -r ${baseline_report_file}
     -c ${baseline_conf_file}
     -P ${zap_port}"
-
 ./zap-baseline.py \
   -t ${scan_url} \
   -r ${baseline_report_file} \
@@ -30,4 +33,5 @@ scan_label='Baseline Scan Results'
 ERROR_CODES="${ERROR_CODES}
 ${scan_label}: ${baseline_scan_result}"
 
+# Copy results to report folder and register results in map
 copyResults ${baseline_report_file} "${scan_label}"

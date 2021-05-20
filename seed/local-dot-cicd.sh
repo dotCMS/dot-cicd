@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# Env-Vars definition
 : ${DOT_CICD_PATH:="${HOME}/.dotcicd"} && export DOT_CICD_PATH
 : ${DOT_CICD_STAGE_FOLDER:="${DOT_CICD_PATH}/stage"} && export DOT_CICD_STAGE_FOLDER
 : ${DOT_CICD_STAGE_PATH:="${DOT_CICD_PATH}/stage"} && export DOT_CICD_STAGE_PATH
@@ -17,12 +18,15 @@ DOCKER_BRANCH: ${DOCKER_BRANCH}
 LOCAL_MODE: ${LOCAL_MODE}
 "
 
+# Resets path in case it already exists to have a clean run
 [[ -d ${DOT_CICD_PATH} ]] && rm -rf ${DOT_CICD_PATH}
 mkdir ${DOT_CICD_PATH}
 
+# Get and use install-dot-cicd.sh script
 curl -fsSL https://raw.githubusercontent.com/dotCMS/dot-cicd/${DOT_CICD_BRANCH}/seed/install-dot-cicd.sh --output ${DOT_CICD_PATH}/install-pipeline.sh
 chmod 700 ${DOT_CICD_PATH}/install-pipeline.sh && . ${DOT_CICD_PATH}/install-pipeline.sh
 
+# Runs local with arguments
 pushd ${DOT_CICD_LIB}
 . ./local.sh $@
 popd

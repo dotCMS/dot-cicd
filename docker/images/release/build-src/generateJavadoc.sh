@@ -1,5 +1,9 @@
 #!/bin/bash
 
+############################
+# Script: generateJavadoc.sh
+# Calls gradle task to generate javadoc
+
 echo 'Generating Java Doc'
 
 pushd dotCMS

@@ -57,7 +57,7 @@ COPY setup/build-src/stopDotcms.sh /srv/stopDotcms.sh
 
 COPY setup/build-src/entrypoint.sh /srv/customEntrypoint.sh
 
-RUN apk --no-cache add openssl gnupg grep sed tini nss s6-dns go libpq git gcc musl-dev curl nodejs=12.22.1-r0 npm=12.22.1-r0
+RUN apk --no-cache add openssl gnupg grep sed tini nss s6-dns go libpq git gcc musl-dev curl nodejs=14.16.1-r1 npm=14.16.1-r1
 RUN npm config set unsafe-perm true
 RUN npm install -g newman
 RUN npm uninstall -g har-validator

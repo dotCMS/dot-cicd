@@ -1,5 +1,9 @@
 #!/bin/bash
 
+###############################
+# Script: overrideProperties.sh
+# Overrides properties at DotCMS configurations files
+
 assetsFolder="/custom/assets"
 dotsecureFolder="/custom/dotsecure"
 esdataFolder="/custom/esdata"

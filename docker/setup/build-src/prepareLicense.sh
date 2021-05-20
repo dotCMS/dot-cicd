@@ -1,5 +1,11 @@
 #!/bin/bash
 
+###########################
+# Script: prepareLicense.sh
+# Given a license it creates a folder to store a file with license contents
+#
+# $1: dotCMS_license: license itself
+
 set -e
 
 dotCMS_license="$1"

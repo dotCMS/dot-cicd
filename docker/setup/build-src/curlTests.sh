@@ -1,5 +1,9 @@
 #!/bin/bash
 
+######################
+# Script: curlTests.sh
+# Runs curl tests (postman tests) found in /build/src/core/dotCMS/build/reports/tests/curlTest
+
 function resolveLabel {
   local result=$1
   if [[ $result == 0 ]]; then

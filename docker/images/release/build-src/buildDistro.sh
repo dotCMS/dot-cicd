@@ -1,5 +1,9 @@
 #!/bin/bash
 
+#########################
+# Script: buildDistro.sh
+# Execute gradle task for creating DotCMS distribution
+
 pushd dotCMS
 echo
 echo '######################################################################'

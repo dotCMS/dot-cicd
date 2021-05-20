@@ -1,8 +1,13 @@
 #!/bin/bash
 
+##########################
+# Script: checkProvider.sh
+# Deprecated
+
 CLOUD_PROVIDERS=(travis github)
 currentProvider=${1}
 
+# TODO: Script Deprecation
 echo "This script has been deprecated"
 exit 0
 

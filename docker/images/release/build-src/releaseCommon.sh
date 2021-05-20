@@ -1,5 +1,12 @@
 #!/bin/bash
 
+##########################
+# Script: releaseCommon.sh
+# Collection of functions related to release process
+
+# Runs a release script not without first announce it
+#
+# $1: script: script file to run
 function runScript {
   local script=$1
 

@@ -1,3 +1,7 @@
+########################
+# Script: printStatus.sh
+# Prints information about the status of integration or unit tests
+
 commitFolder=${BASE_STORAGE_URL}/${STORAGE_JOB_COMMIT_FOLDER}
 branchFolder=${BASE_STORAGE_URL}/${STORAGE_JOB_BRANCH_FOLDER}
 reportsCommitIndexURL="${commitFolder}/reports/html/index.html"

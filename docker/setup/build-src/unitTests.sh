@@ -1,5 +1,9 @@
 #!/bin/bash
 
+######################
+# Script: unitTests.sh
+# Runs unit tests by calling the corresponding gradle task
+
 . /build/printStatus.sh
 . /build/testResults.sh
 

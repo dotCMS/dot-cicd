@@ -1,5 +1,10 @@
 #!/bin/bash
 
+#############################
+# Script: testsResults.sh
+# Collection of functions that support storing results in test-results repo
+
+# Checks for token stored in env-var GITHUB_USER_TOKEN. It not exit the execution with error code 1.
 function checkForToken {
   if [[ -z "${GITHUB_USER_TOKEN}" ]]; then
     echo "Error: Test results push token is not defined, aborting..."
@@ -9,34 +14,19 @@ function checkForToken {
   echo "Test results token found"
 }
 
-function removeIfExists {
-  local results=${1}
-
-  if [[ -d $results ]]; then
-    echo "Removing test results results: ${results}"
-    rm -rf $results
-  fi
-}
-
-function createAndSwitch {
-  local folder=${1}
-  if [[ ! -d ${folder} ]]; then
-    [[ "${DEBUG}" == 'true' ]] && echo "Creating ${folder}"
-    mkdir -p ${folder}
-  fi
-
-  cd ${folder}
-}
-
+# Removes specific test type results folder and commit the deletion
 function cleanTestFolders {
   if [[ -n "${BUILD_ID}" ]]; then
-    [[ "${DEBUG}" == 'true' ]] && echo "Removing ./${BUILD_ID}/${TEST_TYPE}"
-    removeIfExists ./${BUILD_ID}/${TEST_TYPE}
+    local folder=./${BUILD_ID}/${TEST_TYPE}
+    [[ -d ${folder} ]] && rm -rf folder && [[ "${DEBUG}" == 'true' ]] && echo "Removing ${folder}"
   fi
 
   git commit -m "Cleaning ${TEST_TYPE} tests results with hash '${BUILD_HASH}' and branch '${BUILD_ID}'"
 }
 
+# Creates required directory structure for the provided results folder and copies them to the new location
+#
+# $1: results: to copy to results location
 function addResults {
   local results=${1}
   if [[ -z "${results}" ]]; then
@@ -51,23 +41,36 @@ function addResults {
   cp -R ${OUTPUT_FOLDER}/* ${target_folder}
 }
 
+# Persists results in 'test-results' repo in the provided BUILD_ID branch.
 function persistResults {
+  # Prepare who is pushing the changes
   gitConfig ${GITHUB_USER}
 
+  # Resolve test results fully
   test_results_repo_url=$(resolveRepoUrl ${TEST_RESULTS_GITHUB_REPO} ${GITHUB_USER_TOKEN} ${GITHUB_USER})
   local test_results_path=${DOT_CICD_PATH}/${TEST_RESULTS_GITHUB_REPO}
 
+  # Query for remote branch
   gitRemoteLs ${test_results_repo_url} ${BUILD_ID}
   local remote_branch=$?
+  # If it does not exist use master
   if [[ ${remote_branch} == 1 ]]; then
     branch=${BUILD_ID}
   else
     branch=master
   fi
 
+  # Clone test-results repo at resolved branch
   gitClone ${test_results_repo_url} ${branch} ${test_results_path}
-  createAndSwitch ${test_results_path}/projects/${DOT_CICD_TARGET}
+  # Create results folder if ir does not exist and switch to it
+  local results_folder=${test_results_path}/projects/${DOT_CICD_TARGET}
+  if [[ ! -d ${results_folder} ]]; then
+    [[ "${DEBUG}" == 'true' ]] && echo "Creating ${results_folder}"
+    mkdir -p ${results_folder}
+  fi
+  cd ${results_folder}
 
+  # If no remote branch detected create one
   if [[ ${remote_branch} != 1 ]]; then
     [[ "${DEBUG}" == 'true' ]] && echo "Git command:
       git checkout -b ${BUILD_ID}
@@ -75,16 +78,22 @@ function persistResults {
     git checkout -b ${BUILD_ID}
   fi
 
+  # Clean test results folders by removing contents and committing them
   cleanTestFolders
 
+  # Do not add commit results when the branch is master, otherwise add test results to commit
   [[ "${BUILD_ID}" != "master" ]] && addResults ./${BUILD_HASH}
+  # Add results to current
   addResults ./current
 
+  # Check for something new to commit
   [[ "${DEBUG}" == 'true' ]] && git branch && git status && echo
   git status | grep "nothing to commit, working tree clean"
   git_result=$?
 
+  # If there are changes then start the fun part
   if [[ ${git_result} != 0 ]]; then
+    # Add everything
     [[ "${DEBUG}" == 'true' ]] && echo "Git command:
       git add .
     "
@@ -95,6 +104,7 @@ function persistResults {
       exit 1
     fi
 
+    # Commit the changes
     [[ "${DEBUG}" == 'true' ]] && echo "Git command:
       git commit -m \"Adding ${TEST_TYPE} tests results for ${BUILD_HASH} at ${BUILD_ID}\"
     "
@@ -105,16 +115,23 @@ function persistResults {
       exit 1
     fi
 
-    [[ "${DEBUG}" == 'true' ]] && echo "Git command:
+    # Do not pull unless branch is remote
+    if [[ ${remote_branch} == 1 ]]; then
+      # Perform a pull just in case
+      [[ "${DEBUG}" == 'true' ]] && echo "Git command:
+        git pull origin ${BUILD_ID}
+      "
       git pull origin ${BUILD_ID}
-    "
-    git pull origin ${BUILD_ID}
-    git_result=$?
-    if [[ ${git_result} != 0 ]]; then
-      echo "Error pulling from git branch ${BUILD_ID}, error code: ${git_result}"
-      exit 1
+      git_result=$?
+      if [[ ${git_result} != 0 ]]; then
+        echo "Error pulling from git branch ${BUILD_ID}, error code: ${git_result}"
+        exit 1
+      fi
+    else
+      echo "Not pulling ${BUILD_ID} since it is not yet remote"
     fi
 
+    # Finally push the changes
     [[ "${DEBUG}" == 'true' ]] && echo "Git command:
       git push ${test_results_repo_url}
     "
@@ -134,6 +151,10 @@ function persistResults {
   fi
 }
 
+# Creates a summary status file for test the specific TEST_TYPE, databaseType in both commit and branch paths.
+#
+# $1: results status
+# $2: folder to store file
 function trackCoreTests {
   local resultLabel=
   if [[ ${1} == 0 ]]; then

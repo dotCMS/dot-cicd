@@ -1,5 +1,9 @@
 #!/bin/bash
 
+#############################
+# Script: integrationTests.sh
+# Runs integration tests by calling the corresponding gradle task
+
 function waitDbFor {
   local wait=${1}
   echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"

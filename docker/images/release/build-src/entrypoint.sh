@@ -1,5 +1,17 @@
 #!/bin/bash
 
+#######################
+# Script: entrypoint.sh
+# Main script for release process which runs a set of steps:
+# - Get the actual source for core/enterprise
+# - Set some required variables
+# - Generates and uploads jars
+# - Created distribution files
+# - Generates javadoc
+# - Push distribution and javadoc files to S3 bucket
+# - Updates DotCMS versions in plugins repo
+# - Publishes Github releases on main repos
+
 . /build/githubCommon.sh
 . /build/releaseCommon.sh
 
@@ -26,7 +38,7 @@ runScript setVars
 runScript generateAndUploadJars ${BUILD_ID} ${EE_BUILD_ID} ${repo_username} ${repo_password} ${BUILD_BASH} ${is_release}
 runScript buildDistro
 runScript generateJavadoc
-runScript pushToStaticBucket all
+runScript pushToStaticBucket all ${is_release}
 runScript updateOsgiVersion ${GITHUB_USER} ${GITHUB_USER_TOKEN}
 popd
 runScript publishGithubReleases ${is_release} ${EE_BUILD_ID} ${GITHUB_USER} ${GITHUB_USER_TOKEN}

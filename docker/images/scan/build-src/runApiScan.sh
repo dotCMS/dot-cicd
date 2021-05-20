@@ -1,8 +1,16 @@
+#!/bin/bash
+
+#######################
+# Script: runApiScan.sh
+# API Scan script
+
+# Base64 encoded user:password
 basic_auth='YWRtaW5AZG90Y21zLmNvbTphZG1pbg=='
 user_id='dotcms.org.1'
 token_id=123
 exp_secs=100000
 payload="{\"userId\":\"${user_id}\", \"tokenId\":\"${token_id}\", \"expirationSeconds\":\"${exp_secs}\"}"
+# Gets access token to use the API
 access_token=$(curl --insecure -fSLs --request POST ${target_host}/api/v1/apitoken \
   --header 'Content-Type: application/json' \
   --header "Authorization: Basic ${basic_auth}" \
@@ -10,12 +18,12 @@ access_token=$(curl --insecure -fSLs --request POST ${target_host}/api/v1/apitok
   | jq -r '.entity.jwt')
 api_scan_file='application.wadl-Swagger20.json'
 api_conf_file='api.conf'
-#api_scan_report_file='api-scan-testreport.html'
 api_scan_report_file='index.html'
 
 mv ${api_scan_file} wrk/
 mv ${api_conf_file} wrk/
 
+# Run API scan using API descriptor file stored in api_scan_file
 echo '####################
 Running ZAP API Scan
 ####################'
@@ -50,4 +58,5 @@ scan_label='API Scan Results'
 ERROR_CODES="${ERROR_CODES}
 ${scan_label}: ${api_scan_result}"
 
+# Copy results to report folder and register results in map
 copyResults ${api_scan_report_file} "${scan_label}"

@@ -1,5 +1,12 @@
 #!/bin/bash
 
+#######################
+# Script: entrypoint.sh
+# Main script to run the unit and integration. For curl tests this is considered as a secondary script that runs after
+# a while a DotCMS instance is up and running.
+#
+# $1: TEST_TYPE: test type and its possible values are 'unit', 'integration' or 'curl'
+
 export TEST_TYPE=${1}
 
 if [[ ! -z "${EXTRA_PARAMS}" ]]; then

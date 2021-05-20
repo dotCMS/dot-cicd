@@ -1,5 +1,9 @@
 #!/bin/bash
 
+###########################
+# Script: printBuildInfo.sh
+# Prints build information environment variables: BUILD_HASH, BUILD_ID and $OUTPUT_FOLDER
+
 if [[ -z "${BUILD_HASH}" ]]; then
   echo ""
   echo "======================================================================================"
