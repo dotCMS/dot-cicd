@@ -2,14 +2,21 @@
 
 set -e
 
+#####################
+# Script: pipeline.sh
+# Main entrypoint for DotCMS pipeline.
+# Usually called from GA workflow-step-run, after being the dot-cicd repo has been fetched.
+
 DEFAULT_CLOUD_PROVIDER="github"
 
+# Prints script usage
 function usage {
   echo "Usage: ${0} <target> <operation>
   Target: only one value is accepted: 'github', fallbacks to ${DEFAULT_CLOUD_PROVIDER}
   operation: identified operation to perform (e.g. 'buildBase')"
 }
 
+# Env-Vars definition
 : ${DOT_CICD_PATH:="../dotcicd"} && export DOT_CICD_PATH
 : ${DOT_CICD_LIB:="${DOT_CICD_PATH}/library"} && export DOT_CICD_LIB
 : ${DOT_CICD_TARGET:="core"} && export DOT_CICD_TARGET
@@ -73,12 +80,14 @@ if [[ -z "${DOT_CICD_TARGET}" ]]; then
   exit 1
 fi
 
+# Calling common script with useful stuff (most likely to be githubCommon.sh)
 . ${PROVIDER_PATH}/${DOT_CICD_CLOUD_PROVIDER}Common.sh
 
 if [[ "${DEBUG}" == 'true' ]]; then
   echo "Current dir: ${PWD}"
 fi
 
+# Resolving final script to execute and its paths
 pipelineScript=${OPERATION_TARGET_PATH}/${operation}.sh
 set -- ${@:2}
 echo "Executing ${pipelineScript} $@"
@@ -88,4 +97,5 @@ if [[ ! -s ${pipelineScript} ]]; then
   exit 1
 fi
 
+# Calling fina pipeline script
 . ${pipelineScript} $@

@@ -105,14 +105,16 @@ function persistResults {
       exit 1
     fi
 
-    [[ "${DEBUG}" == 'true' ]] && echo "Git command:
+    if [[ ${remote_branch} == 1 ]]; then
+      [[ "${DEBUG}" == 'true' ]] && echo "Git command:
+        git pull origin ${BUILD_ID}
+      "
       git pull origin ${BUILD_ID}
-    "
-    git pull origin ${BUILD_ID}
-    git_result=$?
-    if [[ ${git_result} != 0 ]]; then
-      echo "Error pulling from git branch ${BUILD_ID}, error code: ${git_result}"
-      exit 1
+      git_result=$?
+      if [[ ${git_result} != 0 ]]; then
+        echo "Error pulling from git branch ${BUILD_ID}, error code: ${git_result}"
+        exit 1
+      fi
     fi
 
     [[ "${DEBUG}" == 'true' ]] && echo "Git command:

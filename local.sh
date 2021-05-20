@@ -1,5 +1,11 @@
 #!/bin/bash
 
+##################
+# Script: local.sh
+# Main entrypoint for DotCMS local execution.
+# Usually called from devs local machine.
+
+# Prints script usage
 function usage {
   echo "Usage: <operation>
 Required arguments:
@@ -29,7 +35,6 @@ mkdir -p ${DOT_CICD_STAGE_OPERATION}
 
 : ${DOT_CICD_DOCKER_PATH:="${DOT_CICD_PATH}/docker"} && export DOT_CICD_DOCKER_PATH
 : ${DOCKER_SOURCE:="${DOT_CICD_LIB}/docker"} && export DOCKER_SOURCE
-
 : ${DEBUG_MODE:="false"} && export DEBUG_MODE
 
 . ${DOT_CICD_LIB}/pipeline/github/githubCommon.sh

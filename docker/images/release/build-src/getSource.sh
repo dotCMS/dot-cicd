@@ -4,7 +4,6 @@ github_user=${1}
 github_user_token=${2}
 build_id=${3}
 
-cd /build/src
 gitCloneSubModules $(resolveRepoUrl ${CORE_GITHUB_REPO} ${github_user_token} ${github_user}) ${build_id}
 
 pushd ${CORE_GITHUB_REPO}

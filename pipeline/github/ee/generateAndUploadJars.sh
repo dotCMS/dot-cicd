@@ -1,5 +1,9 @@
 #!/bin/bash
 
+##################################
+# Script: generateAndUploadJars.sh
+# Generates and uploads enterprise jars to repo with credentials
+
 build_id=$1
 ee_build_id=$2
 repo_username=$3
@@ -12,12 +16,14 @@ echo
 echo '######################################################################'
 echo 'Building DotCMS with: ./gradlew java -PuseGradleNode=false'
 echo '######################################################################'
+# Build project
 ./gradlew java -PuseGradleNode=false
 if [[ $? != 0 ]]; then
   echo 'Error executing ./gradlew java -PuseGradleNode=false'
   exit 1
 fi
 
+# Mark this as release or dry-run
 if [[ "${is_release}" == 'true' ]]; then
   releaseParam='-Prelease=true'
 else
@@ -36,6 +42,7 @@ echo '##########################################################################
 echo 'Uploading Enterprise Edition jar'
 echo "./gradlew -b deploy.gradle uploadEnterprise ${releaseParam} -Pusername=${repo_username} -Ppassword=${repo_password}"
 echo '####################################################################################################################'
+# Upload and deploy enterprise jars
 ./gradlew -b deploy.gradle uploadEnterprise ${releaseParam} -Pusername=${repo_username} -Ppassword=${repo_password}
 if [[ $? != 0 ]]; then
   echo "Error executing ./gradlew -b deploy.gradle uploadEnterprise ${releaseParam} -Pusername=${repo_username} -Ppassword=${repo_password}"

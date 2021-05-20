@@ -1,24 +1,37 @@
 #!/bin/bash
 
-IS_RELEASE=$2
+###############################
+# Script: publishDockerImage.sh
+# Builds and publishes, with 'docker buildx' commands, the multi-arch docker DotCMS images
+
+is_release=$2
 docker_username=$3
 docker_password=$4
 
 docker_image_name='dotcms'
 docker_tag="${BUILD_ID}"
-if [[ "${IS_RELEASE}" == 'true' ]]; then
+# Evaluates dry run
+if [[ "${is_release}" == 'true' ]]; then
   docker_tag="${BUILD_ID#*-}"
   docker_tag="${docker_tag//v}"
 fi
 
 cd ..
+# Configs git with default user
 gitConfig ${GITHUB_USER}
-fetchDocker docker ${DOCKER_BRANCH}
-cd docker
-git fetch --all
-cd images/dotcms
 
-if [[ "${IS_RELEASE}" != 'true' ]]; then
+core_docker_path=/build/src/core/docker
+# Resolve which docker path to use (core or docker repo folder)
+resolved_docker_path=$(dockerPathWithFallback ${core_docker_path} docker)
+# Git clones docker repo with provided branch if
+if [[ "${resolved_docker_path}" == 'docker' ]]; then
+  fetchDocker docker ${DOCKER_BRANCH}
+  pushd docker/images/dotcms
+else
+  pushd ${core_docker_path}
+fi
+
+if [[ "${is_release}" != 'true' ]]; then
   docker_image_name="${docker_image_name}-cicd-test"
 fi
 docker_image_full_name="dotcms/${docker_image_name}"
@@ -27,8 +40,9 @@ uname -sm
 docker run --rm --privileged linuxkit/binfmt:v0.8
 ls -1 /proc/sys/fs/binfmt_misc/qemu-*
 
+# Prepare docker multi-arch build
 docker --version
-echo 'Creating multiarch Docker images'
+echo 'Creating multi-arch Docker images'
 echo 'Executing: docker buildx create --use --name multiarch'
 docker buildx create --use --name multiarch
 docker buildx inspect --bootstrap
@@ -43,15 +57,18 @@ docker_build_cmd="docker buildx build
   --no-cache
   --build-arg BUILD_FROM=COMMIT
   --build-arg BUILD_ID=${BUILD_ID}"
-if [[ "${IS_RELEASE}" == 'true' ]]; then
+if [[ "${is_release}" == 'true' ]]; then
   docker_build_cmd="${docker_build_cmd}
-    --build-arg IS_RELEASE=true
+    --build-arg is_release=true
     -t ${docker_image_full_name}:latest"
 fi
 docker_build_cmd="${docker_build_cmd}
   -t ${docker_image_full_name}:${docker_tag}
   ."
+# Actual multi-arch build
 time executeCmd "${docker_build_cmd}"
+
+popd
 
 [[ ${cmdResult} != 0 ]] && exit 1
 

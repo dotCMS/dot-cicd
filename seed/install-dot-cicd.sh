@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# Env-Vars definition
 DEFAULT_GITHUB_USER_EMAIL='dotcmsbuild@dotcms.com'
 DEFAULT_GITHUB_USER=dotcmsbuild
 : ${DOT_CICD_PATH:="../dotcicd"} && export DOT_CICD_PATH
@@ -95,6 +96,7 @@ fetchCICD () {
   prepareScripts
 }
 
+# Actual code to get the dot-cicd repo
 fetchCICD
 
 if [ $? -ne 0 ]; then

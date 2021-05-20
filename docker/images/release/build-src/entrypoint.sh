@@ -20,6 +20,7 @@ echo "Docker password: ${docker_password}"
 echo "Debug: ${DEBUG}"
 echo
 
+pushd /build/src
 runScript getSource ${GITHUB_USER} ${GITHUB_USER_TOKEN} ${BUILD_ID}
 pushd ${CORE_GITHUB_REPO}
 runScript setVars
@@ -30,3 +31,5 @@ runScript pushToStaticBucket all
 runScript updateOsgiVersion ${GITHUB_USER} ${GITHUB_USER_TOKEN}
 popd
 runScript publishGithubReleases ${is_release} ${EE_BUILD_ID} ${GITHUB_USER} ${GITHUB_USER_TOKEN}
+popd
+

@@ -16,6 +16,4 @@ docker/tests/integration/ROOT/
 docker/tests/shared/output/
 docker/tests/shared/setup/
 docker/tests/shared/ROOT/
-docker/tests/curl/output/
-docker/tests/curl/setup/
-docker/tests/curl/ROOT/
+

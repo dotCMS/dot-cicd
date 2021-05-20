@@ -1,5 +1,9 @@
 #!/bin/bash
 
+######################
+# Script: getSource.sh
+# Git clones core repo with its submodules using github credentials (user and token) and the provided branch
+
 github_user=${1}
 github_user_token=${2}
 build_id=${3}

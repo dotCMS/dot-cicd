@@ -1,5 +1,10 @@
 #!/bin/bash
 
+################################
+# Script: restartByCommitDemo.sh
+# Pushes a commit to demo.dotcms.com in order to restart it.
+# In progress.
+
 build_id=$1
 is_release=$2
 demo_repo="demo.dotcms.com"

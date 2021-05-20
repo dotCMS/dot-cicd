@@ -1,12 +1,18 @@
 #!/bin/bash
 
+#######################
+# Script: runRelease.sh
+# Runs a docker image implemented for automating the release process
+
 export DOCKER_SOURCE=${DOT_CICD_LIB}/docker
 export IMAGE_NAME='dotcms/dotcms-release-process'
 
+# Copy common collection of functions
 cp ${DOT_CICD_LIB}/pipeline/github/githubCommon.sh ${DOCKER_SOURCE}/images/release/build-src
 
 pushd ${DOCKER_SOURCE}/images/release
 
+# When is not a release, build the release-process docker image
 if [[ "${IS_RELEASE}" != 'true' ]]; then
   executeCmd "docker build --pull --no-cache -t ${IMAGE_NAME} ."
   if [[ ${cmdResult} != 0 ]]; then
@@ -18,7 +24,9 @@ if [[ -n "${BASE_FOLDER}" ]]; then
   HOME_FOLDER=${BASE_FOLDER}
 fi
 
+# Removes first argument
 set -- ${@:2}
+# Start docker release-process container
 executeCmd "docker run --rm
   -v ${HOME_FOLDER}/.ssh:/root/.ssh
   -e BUILD_ID=\"${BUILD_ID}\"
@@ -35,7 +43,7 @@ executeCmd "docker run --rm
   -e docker_password=${DOCKER_PASSWORD}
   -e is_release=${IS_RELEASE}
   -e DEBUG=${DEBUG}
- ${IMAGE_NAME} $@"
+  ${IMAGE_NAME} $@"
 
 popd
 
