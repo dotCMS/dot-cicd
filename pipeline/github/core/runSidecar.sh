@@ -75,7 +75,7 @@ resolved_docker_path=$(dockerPathWithFallback ${DOT_CICD_TARGET}/dotcms ${docker
   && fetchDocker ${docker_repo_path} ${DOCKER_BRANCH}
 
 # Builds parametrized dotcms image for it to be used later
-buildBase cicd-dotcms ${docker_dotcms_path}
+# buildBase cicd-dotcms ${docker_dotcms_path} TODO
 # Copies folders with database volume and scripts to be included in the image
 setupDocker ${SIDECAR_APP_CONTEXT} ${docker_repo_path}
 

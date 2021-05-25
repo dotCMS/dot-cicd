@@ -11,7 +11,8 @@ volumes:
 services:
 
   dotcms-app:
-    image: cicd-dotcms
+    # image: cicd-dotcms
+    image: dotcms/dotcms
     command: ["dotcms"]
     ports:
       - 8080:8080
