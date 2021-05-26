@@ -1,6 +1,6 @@
 # OpenJDK distributed under GPLv2+Oracle Classpath Exception license (http://openjdk.java.net/legal/gplv2+ce.html)
 # Alpine Linux packages distributed under various licenses including GPL-3.0+ (https://pkgs.alpinelinux.org/packages)
-FROM dotcms/dotcms-seed:jdk11 as build-cms
+FROM dotcms/dotcms-seed:dotcms-seed-ubuntu-slim as build-cms
 
 LABEL com.dotcms.contact "support@dotcms.com"
 LABEL com.dotcms.vendor "dotCMS LLC"
@@ -84,32 +84,33 @@ RUN chmod -R 666 /srv && find /srv/ -type d -exec chmod a+x {} \;
 
 # OpenJDK distributed under GPLv2+Oracle Classpath Exception license (http://openjdk.java.net/legal/gplv2+ce.html)
 # Alpine Linux packages distributed under various licenses including GPL-3.0+ (https://pkgs.alpinelinux.org/packages)
-FROM openjdk:8-jdk-alpine
+FROM adoptopenjdk/openjdk11:jdk-11.0.11_9-ubuntu-slim
 
 WORKDIR /srv
 
-RUN apk --no-cache upgrade \
-    && apk add --no-cache bash openssl ca-certificates gnupg grep sed tini nss git s6-dns \
-    && update-ca-certificates 
+#RUN apk --no-cache upgrade \
+#    && apk add --no-cache bash openssl ca-certificates gnupg grep sed tini nss git s6-dns \
+#    && update-ca-certificates
+#
+#RUN apk --no-cache add libc6-compat tomcat-native curl && apk add libsass --no-cache \
+#    --repository http://dl-cdn.alpinelinux.org/alpine/edge/community/
 
-RUN apk --no-cache add libc6-compat tomcat-native curl && apk add libsass --no-cache \
-    --repository http://dl-cdn.alpinelinux.org/alpine/edge/community/
+RUN apt-get update -y && apt-get install -y bash openssl ca-certificates gnupg grep sed tini libnss3-dev git dnsutils wget \
+    && update-ca-certificates
 
-RUN apk --no-cache add nodejs=10.19.0-r0 npm=10.19.0-r0
+RUN apt-get install -y nodejs npm
 RUN npm config set unsafe-perm true
 RUN npm install -g newman
 RUN npm uninstall -g har-validator
 RUN npm install -g newman-reporter-htmlextra
 RUN npm install -g highlight.js@10 --save-dev
 
-# This is a nasty hack for libjsass, Alpine 3.9 no longer has a deprecated symlink in /lib
-RUN [ ! -e /lib/ld-linux-x86-64.so.2 ] &&  ln -s $(readlink /lib64/ld-linux-x86-64.so.2) /lib/ld-linux-x86-64.so.2 || :
-
 # Dockerize distributed under MIT license (https://github.com/jwilder/dockerize)
-ENV DOCKERIZE_VERSION v0.6.0
-RUN wget --quiet https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-alpine-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
-    && tar -xzf dockerize-alpine-linux-amd64-$DOCKERIZE_VERSION.tar.gz -C /usr/local/bin \
-    && rm dockerize-alpine-linux-amd64-$DOCKERIZE_VERSION.tar.gz
+
+ENV DOCKERIZE_VERSION v0.6.1
+RUN wget --quiet https://github.com/jwilder/dockerize/archive/$DOCKERIZE_VERSION.tar.gz \
+    && tar -xzf $DOCKERIZE_VERSION.tar.gz -C /usr/local/bin \
+    && rm $DOCKERIZE_VERSION.tar.gz
 
 COPY --from=build-cms /srv/ /srv/
 COPY --from=build-cms /build/ /build/
