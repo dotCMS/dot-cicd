@@ -27,6 +27,7 @@ git config --global user.name "${github_user}"
 git clone ${github_docker_repo}
 cd docker
 git fetch --all
+[[ -n "${DOCKER_BRANCH}" && "${DOCKER_BRANCH}" != 'master' ]] && git checkout -b ${DOCKER_BRANCH} --track origin/${DOCKER_BRANCH}
 cd images/dotcms
 
 if [[ ${is_release} != true ]]; then
