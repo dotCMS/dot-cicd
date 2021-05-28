@@ -2,39 +2,65 @@
 
 set -e
 
-function usage {
-  echo "Usage: ${0} <target> <operation>
-  Target: only two values is accepted: 'travis' or 'github', fallbacks to ${DEFAULT_CLOUD_PROVIDER}
-  operation: identified operation to perform (e.g. 'buildBase')"
-}
+#####################
+# Script: pipeline.sh
+# Main entrypoint for DotCMS pipeline.
+# Usually called from GA workflow-step-run, after being the dot-cicd repo has been fetched.
 
 DEFAULT_CLOUD_PROVIDER="github"
 
-: ${DOT_CICD_PATH:="./dotcicd"} && export DOT_CICD_PATH
-: ${DOT_CICD_LIB:="${DOT_CICD_PATH}/library"} && export DOT_CICD_LIB
-: ${DOT_CICD_CLOUD_PROVIDER:="${DEFAULT_CLOUD_PROVIDER}"} && export DOT_CICD_CLOUD_PROVIDER
+# Prints script usage
+function usage {
+  echo "Usage: ${0} <target> <operation>
+  Target: only one value is accepted: 'github', fallbacks to ${DEFAULT_CLOUD_PROVIDER}
+  operation: identified operation to perform (e.g. 'buildBase')"
+}
 
-if [[ "${DOT_CICD_CLOUD_PROVIDER}" != "travis" && "${DOT_CICD_CLOUD_PROVIDER}" != "github" ]]; then
+# Env-Vars definition
+: ${DOT_CICD_PATH:="../dotcicd"} && export DOT_CICD_PATH
+: ${DOT_CICD_LIB:="${DOT_CICD_PATH}/library"} && export DOT_CICD_LIB
+: ${DOT_CICD_TARGET:="core"} && export DOT_CICD_TARGET
+: ${DOT_CICD_CLOUD_PROVIDER:="${DEFAULT_CLOUD_PROVIDER}"} && export DOT_CICD_CLOUD_PROVIDER
+export CICD_LOCAL_FOLDER="${DOT_CICD_LIB}/local/${DOT_CICD_TARGET}"
+
+if [[ "${DOT_CICD_CLOUD_PROVIDER}" != "github" ]]; then
   echo "DOT_CICD_CLOUD_PROVIDER is not valid, falling back to ${DEFAULT_CLOUD_PROVIDER}"
   DOT_CICD_CLOUD_PROVIDER="${DEFAULT_CLOUD_PROVIDER}"
 fi
 
-if [[ "${DOT_CICD_CLOUD_PROVIDER}" == "travis" ]]; then
-  export DOT_CICD_PERSIST="google"
-elif [[ "${DOT_CICD_CLOUD_PROVIDER}" == "github" ]]; then
+if [[ "${DOT_CICD_CLOUD_PROVIDER}" == "github" ]]; then
   export DOT_CICD_PERSIST="github"
 fi
 
+export PROVIDER_PATH=${DOT_CICD_LIB}/pipeline/${DOT_CICD_CLOUD_PROVIDER}
+export OPERATION_TARGET_PATH=${PROVIDER_PATH}/${DOT_CICD_TARGET}
+
+: ${DOCKER_BRANCH:=""} && export DOCKER_BRANCH
+: ${DEBUG:="false"} && export DEBUG
+
 [[ -s ${DOT_CICD_LIB}/banner ]] && cat ${DOT_CICD_LIB}/banner
 
-echo "#############"
-echo "dot-cicd vars"
-echo "#############"
-echo "DOT_CICD_PATH: ${DOT_CICD_PATH}"
-echo "DOT_CICD_LIB: ${DOT_CICD_LIB}"
-echo "DOT_CICD_CLOUD_PROVIDER: ${DOT_CICD_CLOUD_PROVIDER}"
-echo "DOT_CICD_PERSIST: ${DOT_CICD_PERSIST}"
-echo "DOT_CICD_TARGET: ${DOT_CICD_TARGET}"
+echo "
+#############
+dot-cicd vars
+#############
+DOT_CICD_BRANCH: ${DOT_CICD_BRANCH}
+DOT_CICD_PATH: ${DOT_CICD_PATH}
+DOT_CICD_LIB: ${DOT_CICD_LIB}
+DOT_CICD_TARGET: ${DOT_CICD_TARGET}
+DOT_CICD_CLOUD_PROVIDER: ${DOT_CICD_CLOUD_PROVIDER}
+DOT_CICD_PERSIST: ${DOT_CICD_PERSIST}
+PROVIDER_PATH: ${PROVIDER_PATH}
+OPERATION_TARGET_PATH: ${OPERATION_TARGET_PATH}
+DOCKER_BRANCH: ${DOCKER_BRANCH}
+DEBUG: ${DEBUG}
+Args: $@
+"
+
+echo "############
+Java version
+############"
+java -version
 echo
 
 if [[ $# == 0 ]]; then
@@ -54,15 +80,22 @@ if [[ -z "${DOT_CICD_TARGET}" ]]; then
   exit 1
 fi
 
-providerPath=${DOT_CICD_LIB}/pipeline/${DOT_CICD_CLOUD_PROVIDER}
-. ${providerPath}/${DOT_CICD_CLOUD_PROVIDER}Common.sh
+# Calling common script with useful stuff (most likely to be githubCommon.sh)
+. ${PROVIDER_PATH}/${DOT_CICD_CLOUD_PROVIDER}Common.sh
 
-pipelineScript=${providerPath}/${DOT_CICD_TARGET}/${operation}.sh
-echo "Executing ${pipelineScript} $2 $3 $4 $5 $6 $7"
+if [[ "${DEBUG}" == 'true' ]]; then
+  echo "Current dir: ${PWD}"
+fi
+
+# Resolving final script to execute and its paths
+pipelineScript=${OPERATION_TARGET_PATH}/${operation}.sh
+set -- ${@:2}
+echo "Executing ${pipelineScript} $@"
 
 if [[ ! -s ${pipelineScript} ]]; then
   echo "Pipeline script associated to operation cannot be found, aborting..."
   exit 1
 fi
 
-. ${pipelineScript} $2 $3 $4 $5 $6 $7
+# Calling fina pipeline script
+. ${pipelineScript} $@

@@ -1,3 +1,18 @@
+#!/bin/bash
+
+#############################
+# Script: integrationTests.sh
+# Runs integration tests by calling the corresponding gradle task
+
+function waitDbFor {
+  local wait=${1}
+  echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+  echo "            Requested sleep of [${wait}]", waiting for the DB?
+  echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+  echo ""
+  sleep ${wait}
+}
+
 # Validating we have a license file
 if [[ ! -s "/custom/dotsecure/license/license.dat" ]]; then
   echo ""
@@ -19,6 +34,7 @@ if [[ ! -z "${EXTRA_PARAMS}" ]]; then
 fi
 
 . /build/printStatus.sh
+. /build/testResults.sh
 
 echo ""
 echo "================================================================================"
@@ -34,14 +50,8 @@ echo "==========================================================================
 echo "================================================================================"
 echo ""
 
-if [[ -z "${WAIT_DB_FOR}" ]]; then
-  WAIT_DB_FOR='1m'
-fi
-echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
-echo "            Requested sleep of [${WAIT_DB_FOR}]", waiting for the db?
-echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
-echo ""
-sleep ${WAIT_DB_FOR}
+: ${WAIT_DB_FOR:="30"}
+waitDbFor ${WAIT_DB_FOR}
 
 echo ""
 echo "================================================================================"
@@ -72,9 +82,9 @@ cp -R /build/src/core/dotCMS/build/reports/tests/integrationTest/* /custom/outpu
 # Do we want to export the resulting reports to google storage?
 if [[ "${EXPORT_REPORTS}" == "true" ]]; then
   # Track job results
-  trackJob ${CURRENT_JOB_BUILD_STATUS} /custom/output
+  trackCoreTests ${CURRENT_JOB_BUILD_STATUS} /custom/output
   
-  . /build/${DOT_CICD_PERSIST}/storage.sh
+  . /build/storage.sh
   ignoring_return_value=$?
 fi
 

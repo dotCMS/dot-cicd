@@ -1,7 +1,15 @@
 #!/bin/bash
 
+##########################
+# Script: checkProvider.sh
+# Deprecated
+
 CLOUD_PROVIDERS=(travis github)
 currentProvider=${1}
+
+# TODO: Script Deprecation
+echo "This script has been deprecated"
+exit 0
 
 if [[ -z "${currentProvider}" ]]; then
   echo "Current cloud provider was not specified, aborting..."
@@ -18,7 +26,7 @@ for p in "${CLOUD_PROVIDERS[@]}"; do
   fi
 done
 
-if [[ ${found} == false ]]; then
+if [[ "${found}" == 'false' ]]; then
   echo "Provider ${currentProvider} is not supported, aborting..."
   exit 1
 fi

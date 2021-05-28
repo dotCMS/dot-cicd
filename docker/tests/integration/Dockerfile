@@ -27,6 +27,8 @@ ARG LICENSE_KEY
 
 WORKDIR /srv
 
+RUN apk update && apk --no-cache add curl
+
 # dotCMS core distributed under GPLv3 license (https://github.com/dotCMS/core/blob/master/license.txt)
 COPY setup/build-src/checkout.sh /build/checkout.sh
 RUN chmod 500 /build/checkout.sh && /build/checkout.sh ${BUILD_FROM} ${BUILD_ID}
@@ -54,17 +56,14 @@ VOLUME /custom/output
 RUN mkdir /build/google
 RUN mkdir /build/github
 
-COPY setup/build-src/google/storage.sh /build/google/storage.sh
-RUN chmod 500 /build/google/storage.sh
+COPY setup/build-src/storage.sh /build/storage.sh
+RUN chmod 500 /build/storage.sh
 
-COPY setup/build-src/github/storage.sh /build/github/storage.sh
-RUN chmod 500 /build/github/storage.sh
+COPY setup/build-src/githubCommon.sh /build/githubCommon.sh
+RUN chmod 500 /build/githubCommon.sh
 
-COPY setup/build-src/github/githubCommon.sh /build/github/githubCommon.sh
-RUN chmod 500 /build/github/githubCommon.sh
-
-COPY setup/build-src/common.sh /build/common.sh
-RUN chmod 500 /build/common.sh
+COPY setup/build-src/testResults.sh /build/testResults.sh
+RUN chmod 500 /build/testResults.sh
 
 COPY setup/build-src/githubStatus.sh /build/githubStatus.sh
 RUN chmod 500 /build/githubStatus.sh
@@ -80,9 +79,6 @@ RUN chmod 500 /build/unitTests.sh
 
 COPY setup/build-src/entrypoint.sh /build/entrypoint.sh
 RUN chmod 500 /build/entrypoint.sh
-
-COPY setup/build-src/setVars.sh /build/setVars.sh
-RUN chmod 500 /build/setVars.sh
 
 COPY setup/build-src/printBuildInfo.sh /build/printBuildInfo.sh
 RUN chmod 500 /build/printBuildInfo.sh

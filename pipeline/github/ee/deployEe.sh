@@ -1,20 +1,26 @@
 #!/bin/bash
 
-BUILD_ID=${BRANCH}
-EE_BUILD_ID=${EE_BRANCH}
+#####################
+# Script: deployEe.sh
+# Runs scripts in a sequential way:
+#  - Git clones ans its submodules with the specified branch
+#  - Generates and uploads the enterprise jars to repo using repo credentials
+
 EE_FOLDER=${DOT_CICD_LIB}/pipeline/github/ee
 
-echo
-echo '######################################################################'
-echo "Build id: ${BUILD_ID}"
-echo "EE Build id: ${EE_BUILD_ID}"
-echo "Repo username: ${REPO_USERNAME}"
-echo "Repo password: ${REPO_PASSWORD}"
-echo "Is Release: ${IS_RELEASE}"
-echo "Debug: ${DEBUG}"
+echo "###########################################
+BUILD_ID: ${BUILD_ID}
+EE_BUILD_ID: ${EE_BUILD_ID}
+BUILD_HASH: ${BUILD_HASH}
+REPO_USERNAME: ${REPO_USERNAME}
+REPO_PASSWORD: ${REPO_PASSWORD}
+IS_RELEASE: ${IS_RELEASE}
+GITHUB_USER_TOKEN: ${GITHUB_USER_TOKEN}
+GITHUB_USER: ${GITHUB_USER}
+###########################################
+"
 
-java -version
-
-. ${EE_FOLDER}/prepareGit.sh
-. ${EE_FOLDER}/getSource.sh ${BUILD_ID}
-. ${EE_FOLDER}/generateAndUploadJars.sh ${BUILD_ID} ${EE_BUILD_ID} ${REPO_USERNAME} ${REPO_PASSWORD} ${GITHUB_SHA} ${IS_RELEASE}
+# Fetch core and its submodules from github
+. ${EE_FOLDER}/getSource.sh ${GITHUB_USER} ${GITHUB_USER_TOKEN} ${BUILD_ID}
+# Generate an upload EE jars
+. ${EE_FOLDER}/generateAndUploadJars.sh ${BUILD_ID} ${EE_BUILD_ID} ${REPO_USERNAME} ${REPO_PASSWORD} ${BUILD_HASH} ${IS_RELEASE}

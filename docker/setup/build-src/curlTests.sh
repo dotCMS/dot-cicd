@@ -1,3 +1,9 @@
+#!/bin/bash
+
+######################
+# Script: curlTests.sh
+# Runs curl tests (postman tests) found in /build/src/core/dotCMS/build/reports/tests/curlTest
+
 function resolveLabel {
   local result=$1
   if [[ $result == 0 ]]; then
@@ -8,6 +14,7 @@ function resolveLabel {
 }
 
 . /build/printStatus.sh
+. /build/testResults.sh
 
 echo ""
 echo "================================================================================"
@@ -24,27 +31,24 @@ echo "==========================================================================
 echo "================================================================================"
 echo ""
 
-if [[ -z "${WAIT_SIDECAR_FOR}" ]]; then
-  WAIT_SIDECAR_FOR='3m'
-fi
-echo "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
-echo "            Requested sleep of [${WAIT_SIDECAR_FOR}]", waiting for the sidecar?
-echo "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
-echo ""
-sleep ${WAIT_SIDECAR_FOR}
-
 echo ""
 echo "========================================================================================================"
 echo "Executing... [newman run <collection> -reporters cli,htmlextra --reporter-htmlextra-export] <report file>"
 echo "========================================================================================================"
 echo ""
 
+
 # Prepare to run newman for every found postman collection
 postmanEnvFile="postman_environment.json"
 reportFolder="/build/src/core/dotCMS/build/reports/tests/curlTest"
 mkdir -p $reportFolder
-cd /build/src/core/dotCMS/src/curl-test
-sed -i 's/localhost:8080/sidecar:8080/g' ./$postmanEnvFile
+
+srcFolder=/build/src/core/dotCMS/src
+mkdir -p ${srcFolder}
+mv /srv/curl-test ${srcFolder}
+cd ${srcFolder}/curl-test
+
+sed -i 's/localhost:8080/dotcms-app:8080/g' ./${postmanEnvFile}
 # Create a map to store collection -> newman result
 declare -A curlResults
 > /build/resultLinks.html
@@ -109,9 +113,9 @@ cp -R ${reportFolder}/* /custom/output/reports/html/
 # Do we want to export the resulting reports to google storage?
 if [[ "${EXPORT_REPORTS}" == "true" ]]; then
   # Track job results
-  trackJob ${CURRENT_JOB_BUILD_STATUS} /custom/output
+  trackCoreTests ${CURRENT_JOB_BUILD_STATUS} /custom/output
   
-  . /build/${DOT_CICD_PERSIST}/storage.sh
+  . /build/storage.sh
   ignoring_return_value=$?
 fi
 

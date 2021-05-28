@@ -1,24 +1,16 @@
 #!/bin/bash
 
-build_id=$1
+######################
+# Script: getSource.sh
+# Git clones core repo with its submodules using github credentials (user and token) and the provided branch
 
-# Clone core
+github_user=${1}
+github_user_token=${2}
+build_id=${3}
+
 pushd ${DOT_CICD_PATH}
-git clone https://github.com/dotCMS/core.git core
-pushd core
-echo 'Getting submodules'
-git submodule update --init --recursive
-git clean -f -d && git pull
-
-if [[ "${build_id}" != "master" ]]; then
-  echo "Checking out branch ${build_id}"
-  git checkout -b ${build_id} --track origin/${build_id}
-  git pull origin ${build_id}
-fi
-
-echo
-echo 'Git status:'
-git status
-
-popd
+gitCloneSubModules $(resolveRepoUrl ${CORE_GITHUB_REPO} ${github_user_token} ${github_user}) ${build_id}
+pushd ${CORE_GITHUB_REPO}/dotCMS/src/main/enterprise
+git checkout -b ${build_id} --track origin/${build_id}
+git pull origin ${build_id}
 popd

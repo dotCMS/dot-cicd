@@ -1,5 +1,9 @@
 #!/bin/bash
 
+###########################
+# Script: printBuildInfo.sh
+# Prints build information environment variables: BUILD_HASH, BUILD_ID and $OUTPUT_FOLDER
+
 if [[ -z "${BUILD_HASH}" ]]; then
   echo ""
   echo "======================================================================================"
@@ -17,10 +21,10 @@ if [[ -z "${BUILD_ID}" ]]; then
 fi
 
 # Validating if we have something to copy
-if [[ -z "$(ls -A $outputFolder)" ]]; then
+if [[ -z "$(ls -A $OUTPUT_FOLDER)" ]]; then
   echo ""
   echo "================================================================"
-  echo "           >>> EMPTY [${outputFolder}] FOUND <<<"
+  echo "           >>> EMPTY [${OUTPUT_FOLDER}] FOUND <<<"
   echo "================================================================"
   exit 0
 fi
