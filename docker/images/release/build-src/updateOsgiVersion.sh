@@ -17,7 +17,7 @@ dotcms_current_version=$(curl https://api.github.com/repos/dotcms/core/releases/
 new_version="${dotcms_current_version//v}"
 echo "New version: ${new_version}"
 
-release_branch_name="release-"${new_version}
+release_branch_name="release-${new_version}"
 
 if [[ -z "${new_version}" ]]; then
   echo "New version not provided"
@@ -29,7 +29,7 @@ pushd ../
 gitConfig ${github_user}
 plugin_seeds_github_repo_url=$(resolveRepoUrl ${PLUGIN_SEEDS_GITHUB_REPO} ${github_user_token} ${github_user})
 # Clones plugin_seeds repo
-gitClone ${plugin_seeds_github_repo_url} ${release_branch_name}
+gitClone ${plugin_seeds_github_repo_url}
 pushd ${PLUGIN_SEEDS_GITHUB_REPO}
 
 if [[ "${is_release}" != 'true' ]]; then

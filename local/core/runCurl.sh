@@ -53,13 +53,17 @@ WAIT_DOTCMS_FOR: ${WAIT_DOTCMS_FOR}
 DEBUG_MODE: ${DEBUG_MODE}
 "
 
-fetchDocker ${DOT_CICD_DOCKER_PATH} ${DOCKER_BRANCH}
+# Resolve which docker path to use (core or docker repo folder)
+RESOLVED_DOCKER_PATH=$(dockerPathWithFallback ${DOT_CICD_TARGET}/dotcms ${DOT_CICD_DOCKER_PATH})
+# Git clones docker repo with provided branch if
+[[ "${RESOLVED_DOCKER_PATH}" == "${DOT_CICD_DOCKER_PATH}" ]] \
+  && fetchDocker ${DOT_CICD_DOCKER_PATH} ${DOCKER_BRANCH}
 
 if [[ "${SKIP_IMAGE_BUILD}" == 'false' ]]; then
   buildBase cicd-dotcms ${DOCKER_DOTCMS_PATH}
 fi
 
-setupDocker ${DOT_CICD_STAGE_OPERATION} ${DOT_CICD_DOCKER_PATH}
+setupDocker ${DOT_CICD_STAGE_OPERATION} ${RESOLVED_DOCKER_PATH}
 cp ${DOCKER_SOURCE}/tests/shared/* ${DOT_CICD_STAGE_OPERATION}
 cp ${DOCKER_SOURCE}/tests/curl/* ${DOT_CICD_STAGE_OPERATION}
 buildBase ${IMAGE_NAME} ${DOT_CICD_STAGE_OPERATION} true

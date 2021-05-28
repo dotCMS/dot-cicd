@@ -22,8 +22,16 @@ cd ..
 # Configs git with default user
 gitConfig ${GITHUB_USER}
 # Git clones docker repo with provided branch
-fetchDocker docker ${DOCKER_BRANCH}
-cd docker/images/dotcms
+core_docker_path=/build/src/core/docker
+# Resolve which docker path to use (core or docker repo folder)
+resolved_docker_path=$(dockerPathWithFallback ${core_docker_path} docker)
+# Git clones docker repo with provided branch if
+if [[ "${resolved_docker_path}" == 'docker' ]]; then
+  fetchDocker docker ${DOCKER_BRANCH}
+  pushd docker/images/dotcms
+else
+  pushd ${core_docker_path}
+fi
 
 if [[ "${IS_RELEASE}" != 'true' ]]; then
   docker_image_name="${docker_image_name}-cicd-test"

@@ -68,8 +68,12 @@ fi
 # Login to docker
 echo ${DOCKER_TOKEN} | docker login --username ${DOCKER_USERNAME} --password-stdin
 
-# Git clones docker repo
-fetchDocker ${docker_repo_path} ${DOCKER_BRANCH}
+# Resolve which docker path to use (core or docker repo folder)
+resolved_docker_path=$(dockerPathWithFallback ${DOT_CICD_TARGET}/dotcms ${docker_repo_path})
+# Git clones docker repo with provided branch when docker repo matches docker path
+[[ "${resolved_docker_path}" == "${docker_repo_path}" ]] \
+  && fetchDocker ${docker_repo_path} ${DOCKER_BRANCH}
+
 # Builds parametrized dotcms image for it to be used later
 buildBase cicd-dotcms ${docker_dotcms_path}
 # Copies folders with database volume and scripts to be included in the image
