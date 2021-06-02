@@ -215,11 +215,6 @@ function gitClone {
   local branch=${2}
   local dest=${3}
 
-  if [[ -z "${repo_url}" ]]; then
-    echo "Git repo not provided, aborting"
-    exit 1
-  fi
-
   [[ -z "${branch}" ]] && branch='master'
   dest=$(defaultLocation ${repo_url} ${dest})
 
@@ -250,6 +245,8 @@ function gitSubModules {
   [[ -z "${repo_url}" ]] && echo "No repo url provided, aborting" && exit 1
   local dest=${2}
   [[ -z "${dest}" ]] && echo "No git folder provided, aborting" && exit 1
+  local github_user=${3}
+  [[ -z "${github_user}" ]] && github_user=${GITHUB_USER}
 
   echo 'Getting submodules'
   pushd ${dest}
@@ -262,7 +259,24 @@ function gitSubModules {
 
   git submodule update --init --recursive
   local sub_result=$?
-  git gc --aggressive
+  [[ ${sub_result} != 0 ]] && echo 'Error updating submodule' && exit 1
+
+  # Try to checkout submodule branch and
+  local module_path=$(cat .gitmodules| grep "path =" | cut -d'=' -f2 | tr -d '[:space:]')
+  local module_branch=$(cat .gitmodules| grep "branch =" | cut -d'=' -f2 | tr -d '[:space:]')
+  pushd ${module_path}
+  gitConfig ${github_user}
+  if [[ "${module_branch}" != 'master' ]]; then
+    git checkout -b ${module_branch} --track origin/${module_branch}
+  else
+    git checkout master
+  fi
+
+  git pull origin ${module_branch}
+  sub_result=$?
+  [[ ${sub_result} != 0 ]] && echo 'Error pulling from submodule' && exit 1
+
+  popd
   popd
 
   return ${sub_result}
@@ -279,9 +293,10 @@ function gitCloneSubModules {
   [[ "${DEBUG}" == 'true' ]] && pwd && ls -las .
 
   local repo_url=${1}
-  dest=$(defaultLocation ${repo_url} ${3})
+  local dest=$(defaultLocation ${repo_url} ${3})
+  local github_user=${4}
 
-  gitSubModules $(dirname ${repo_url}) ${dest}
+  gitSubModules $(dirname ${repo_url}) ${dest} ${github_user}
   local sub_result=$?
 
   return ${sub_result}
@@ -326,6 +341,20 @@ function fetchDocker {
   if [[ ${cloneResult} != 0 ]]; then
     echo "Error cloning repo '${repo}'"
     exit 1
+  fi
+}
+
+# Verifies id project docker path is present and has a Dockerfile, otherwise if will fallback to docker repo Dockerfile
+#
+# $1: project_docker_path: project docker file, most likely to be core's
+# $2: docker_repo_path: docker repo's path
+function dockerPathWithFallback {
+  local project_docker_path=${1}
+  local docker_repo_path=${2}
+  if [[ -f ${project_docker_path}/Dockerfile ]]; then
+    echo ${project_docker_path}
+  else
+    echo ${docker_repo_path}
   fi
 }
 

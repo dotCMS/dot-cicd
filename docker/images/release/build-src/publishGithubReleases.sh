@@ -36,7 +36,7 @@ function commitAndPush {
 # $2: module_path: when present it represents the path where submodule is targeted
 function pushRelease {
   local repo=${1}
-  local module_path=${2}
+  local with_submodules=${2}
   local repo_url=$(resolveRepoUrl ${repo} ${github_user_token} ${github_user})
 
   # Verifies for branch to be remote, if it does not exist ignore this repo
@@ -51,15 +51,12 @@ Releasing on ${repo}
 #############################"
   # Git clones the repo and depending on module_path it clones the submodules as well
   if [[ -n "${module_path}" ]]; then
-    gitCloneSubModules ${repo_url} ${RELEASE_BRANCH_NAME} ${repo}
-    pushd ${module_path}
-    git checkout -b ${RELEASE_BRANCH_NAME} --track origin/${RELEASE_BRANCH_NAME}
-    git pull origin ${RELEASE_BRANCH_NAME}
+    gitCloneSubModules ${repo_url} ${RELEASE_BRANCH_NAME} ${repo} ${github_user}
   else
     gitClone ${repo_url} ${RELEASE_BRANCH_NAME} ${repo}
-    pushd ${repo}
   fi
 
+  pushd ${repo}
   # Commit and pushes "changes"
   commitAndPush ${repo_url}
   popd
