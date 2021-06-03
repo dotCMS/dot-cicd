@@ -24,7 +24,6 @@ Branch location: ${reports_branch_url}
 }
 
 # clonar repositorio de core-web
-echo "OJO:>> gitClone $(resolveRepoUrl ${CORE_WEB_GITHUB_REPO} ${GITHUB_USER_TOKEN} ${GITHUB_USER}) ${CORE_WEB_BUILD_ID}"
 gitClone $(resolveRepoUrl ${CORE_WEB_GITHUB_REPO} ${GITHUB_USER_TOKEN} ${GITHUB_USER}) ${CORE_WEB_BUILD_ID}
 # el repo queda en core-web
 

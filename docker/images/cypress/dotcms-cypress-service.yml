@@ -25,6 +25,7 @@ services:
       SIDECAR_ARGS:
       WAIT_DB_FOR:
       WAIT_DOTCMS_FOR:
+      CORE_WEB_BUILD_ID:
     depends_on:
       - dotcms-app
     # volumes:
