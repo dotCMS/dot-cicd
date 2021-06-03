@@ -51,7 +51,7 @@ pwd
 ls -la
 npm run build:prod
 npm install -g nx
-BASEURL=http://dotcms-app:8080 npm run e2e
+export BASEURL=http://dotcms-app:8080 && npm run e2e
 # nx e2e dotcms-ui-e2e --base-url http://dotcms-app:8080
 # cypress ....
 
