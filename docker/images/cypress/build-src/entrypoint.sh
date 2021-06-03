@@ -3,11 +3,7 @@
 . githubCommon.sh
 . testResults.sh
 
-output_folder=/srv/output
-mkdir -p ${output_folder}
-video_output=${output_folder}/videos
-screenshot_output=${output_folder}/screenshots
-report_output=${output_folder}/reports
+export OUTPUT_FOLDER=/srv/core-web/dist/cypress/apps/dotcms-ui-e2e
 export DOT_CICD_TARGET=${CORE_WEB_GITHUB_REPO}
 export BASE_STORAGE_URL="${GITHACK_TEST_RESULTS_CORE_WEB_URL}/$(urlEncode ${BUILD_ID})/projects/${DOT_CICD_TARGET}"
 
@@ -59,7 +55,6 @@ BASEURL=http://dotcms-app:8080 npm run e2e:open
 # cypress ....
 
 # publicar los tests
-cp -R /srv/core-web/dist/cypress/apps/dotcms-ui-e2e/* ${output_folder}
 if [[ $? == 0 ]]; then
   persistResults ${TEST_RESULTS_CORE_WEB_GITHUB_REPO}
   showResultsLinks
