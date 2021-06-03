@@ -1,8 +1,5 @@
 #!/bin/bash
 
-npm --version
-exit 1
-
 . githubCommon.sh
 . testResults.sh
 
@@ -54,8 +51,10 @@ pwd
 ls -la
 npm run build:prod
 npm install -g nx
-BASEURL=http://dotcms-app:8080 npm run e2e
-# nx e2e dotcms-ui-e2e --base-url http://dotcms-app:8080
+# npm run e2e
+# ng e2e dotcms-ui-e2e --headless true --base-url ${BASEURL:-http://localhost:8080} || (npm run poste2e && exit 1)
+nx e2e dotcms-ui-e2e --headless true --base-url http://dotcms-app:8080
+npm run poste2e
 # cypress ....
 
 # publicar los tests
