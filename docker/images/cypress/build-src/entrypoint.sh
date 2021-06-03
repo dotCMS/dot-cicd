@@ -4,6 +4,7 @@
 . testResults.sh
 
 export OUTPUT_FOLDER=/srv/core-web/dist/cypress/apps/cypress
+mkdir -p ${OUTPUT_FOLDER}
 export DOT_CICD_TARGET=${CORE_WEB_GITHUB_REPO}
 export BASE_STORAGE_URL="${GITHACK_TEST_RESULTS_CORE_WEB_URL}/$(urlEncode ${BUILD_ID})/projects/${DOT_CICD_TARGET}"
 cypress_output=/srv/core-web/dist/cypress/apps/dotcms-ui-e2e
@@ -51,11 +52,11 @@ pwd
 ls -la
 npm run build:prod
 npm install -g nx
-BASEURL=http://dotcms-app:8080 npm run e2e
+# BASEURL=http://dotcms-app:8080 npm run e2e
 # npm run e2e
 # ng e2e dotcms-ui-e2e --headless true --base-url ${BASEURL:-http://localhost:8080} || (npm run poste2e && exit 1)
-#nx e2e dotcms-ui-e2e --headless true --base-url http://dotcms-app:8080
-#npm run poste2e
+nx e2e dotcms-ui-e2e --headless true --base-url http://dotcms-app:8080
+npm run poste2e
 # cypress ....
 
 # publicar los tests
