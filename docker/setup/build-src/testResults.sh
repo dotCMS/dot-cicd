@@ -42,13 +42,18 @@ function addResults {
 }
 
 # Persists results in 'test-results' repo in the provided BUILD_ID branch.
+#
+# $1: test_results_repo: provided test results repo, if empty defaults to ${TEST_RESULTS_GITHUB_REPO}
 function persistResults {
   # Prepare who is pushing the changes
   gitConfig ${GITHUB_USER}
 
+  local test_results_repo=${1}
+  [[ -z "${test_results_repo}" ]] && test_results_repo=${TEST_RESULTS_GITHUB_REPO}
+
   # Resolve test results fully
-  test_results_repo_url=$(resolveRepoUrl ${TEST_RESULTS_GITHUB_REPO} ${GITHUB_USER_TOKEN} ${GITHUB_USER})
-  local test_results_path=${DOT_CICD_PATH}/${TEST_RESULTS_GITHUB_REPO}
+  test_results_repo_url=$(resolveRepoUrl ${test_results_repo} ${GITHUB_USER_TOKEN} ${GITHUB_USER})
+  local test_results_path=${DOT_CICD_PATH}/${test_results_repo}
 
   # Query for remote branch
   gitRemoteLs ${test_results_repo_url} ${BUILD_ID}

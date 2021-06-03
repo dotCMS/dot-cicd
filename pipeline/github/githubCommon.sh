@@ -72,6 +72,7 @@ export CORE_WEB_GITHUB_REPO=core-web
 export DOCKER_GITHUB_REPO=docker
 export PLUGIN_SEEDS_GITHUB_REPO=plugin-seeds
 export TEST_RESULTS_GITHUB_REPO=test-results
+export TEST_RESULTS_CORE_WEB_GITHUB_REPO=test-results-core-web
 : ${DEBUG:="false"} && export DEBUG
 
 caller=$(basename ${0})
@@ -491,8 +492,9 @@ function prepareLicense {
 }
 
 # More Env-Vars definition, specifically to results storage
-githack_test_results_url=$(resolveRepoPath ${TEST_RESULTS_GITHUB_REPO} | sed -e 's/github.com/raw.githack.com/')
-export BASE_STORAGE_URL="${githack_test_results_url}/$(urlEncode ${BUILD_ID})/projects/${DOT_CICD_TARGET}"
+export GITHACK_TEST_RESULTS_URL=$(resolveRepoPath ${TEST_RESULTS_GITHUB_REPO} | sed -e 's/github.com/raw.githack.com/')
+export GITHACK_TEST_RESULTS_CORE_WEB_URL=$(resolveRepoPath ${TEST_RESULTS_CORE_WEB_GITHUB_REPO} | sed -e 's/github.com/raw.githack.com/')
+export BASE_STORAGE_URL="${GITHACK_TEST_RESULTS_URL}/$(urlEncode ${BUILD_ID})/projects/${DOT_CICD_TARGET}"
 export GITHUB_PERSIST_COMMIT_URL="${BASE_STORAGE_URL}/$(resolveResultsPath ${BUILD_HASH})"
 export GITHUB_PERSIST_BRANCH_URL="${BASE_STORAGE_URL}/$(resolveResultsPath current)"
 commitPath="$(resolveResultsPath ${BUILD_HASH})"

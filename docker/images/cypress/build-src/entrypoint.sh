@@ -3,20 +3,27 @@
 . githubCommon.sh
 . testResults.sh
 
-export OUTPUT_FOLDER=/srv/output
-mkdir -p ${OUTPUT_FOLDER}
+output_folder=/srv/output
+mkdir -p ${output_folder}
+video_output=${output_folder}/videos
+screenshot_output=${output_folder}/screenshots
+report_output=${output_folder}/reports
+export DOT_CICD_TARGET=${CORE_WEB_GITHUB_REPO}
+export BASE_STORAGE_URL="${GITHACK_TEST_RESULTS_CORE_WEB_URL}/$(urlEncode ${BUILD_ID})/projects/${DOT_CICD_TARGET}"
 
-export VIDEO_OUTPUT=${OUTPUT_FOLDER}/videos
-mkdir -p ${VIDEO_OUTPUT}
-export SCREENSHOT_OUTPUT=${OUTPUT_FOLDER}/screenshots
-mkdir -p ${SCREENSHOT_OUTPUT}
-export REPORT_OUTPUT=${OUTPUT_FOLDER}/reports
-mkdir -p ${REPORT_OUTPUT}
-
-# COPIAR DIRECTORIO COMPLETO
-function _copyResults {
-  local results_file=${1}
-  cp wrk/${results_file} ${report_folder}
+# Print result links
+function showResultsLinks {
+  commit_folder=${BASE_STORAGE_URL}/${BUILD_HASH}/scan/${selected_scan}
+  branch_folder=${BASE_STORAGE_URL}/current/scan/${selected_scan}
+  reports_commit_url="${commit_folder}/reports/html/index.html"
+  reports_branch_url="${branch_folder}/reports/html/index.html"
+  echo "
+==========================================================
+Scan reports location:
+Commit location: ${reports_commit_url}
+Branch location: ${reports_branch_url}
+==========================================================
+"
 }
 
 # clonar repositorio de core-web
@@ -52,3 +59,9 @@ BASEURL=http://dotcms-app:8080 npm run e2e:open
 # cypress ....
 
 # publicar los tests
+cp -R /srv/core-web/dist/cypress/apps/dotcms-ui-e2e/* ${output_folder}
+if [[ $? == 0 ]]; then
+  persistResults ${TEST_RESULTS_CORE_WEB_GITHUB_REPO}
+  showResultsLinks
+fi
+
