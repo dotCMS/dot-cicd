@@ -3,19 +3,20 @@
 . githubCommon.sh
 . testResults.sh
 
-export OUTPUT_FOLDER=/srv/core-web/dist/cypress/apps/dotcms-ui-e2e
+export OUTPUT_FOLDER=/srv/core-web/dist/cypress/apps/cypress
 export DOT_CICD_TARGET=${CORE_WEB_GITHUB_REPO}
 export BASE_STORAGE_URL="${GITHACK_TEST_RESULTS_CORE_WEB_URL}/$(urlEncode ${BUILD_ID})/projects/${DOT_CICD_TARGET}"
+cypress_output=/srv/core-web/dist/cypress/apps/dotcms-ui-e2e
 
 # Print result links
 function showResultsLinks {
-  commit_folder=${BASE_STORAGE_URL}/${BUILD_HASH}/scan/${selected_scan}
-  branch_folder=${BASE_STORAGE_URL}/current/scan/${selected_scan}
-  reports_commit_url="${commit_folder}/reports/html/index.html"
-  reports_branch_url="${branch_folder}/reports/html/index.html"
+  commit_folder=${BASE_STORAGE_URL}/${BUILD_HASH}/cypress
+  branch_folder=${BASE_STORAGE_URL}/current/cypress
+  reports_commit_url="${commit_folder}/reports/index.html"
+  reports_branch_url="${branch_folder}/reports/index.html"
   echo "
 ==========================================================
-Scan reports location:
+Cypress reports location:
 Commit location: ${reports_commit_url}
 Branch location: ${reports_branch_url}
 ==========================================================
@@ -56,6 +57,7 @@ BASEURL=http://dotcms-app:8080 npm run e2e
 
 # publicar los tests
 if [[ $? == 0 ]]; then
+  mv ${cypress_output} ${OUTPUT_FOLDER}
   persistResults ${TEST_RESULTS_CORE_WEB_GITHUB_REPO}
   showResultsLinks
 fi
