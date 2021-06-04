@@ -13,7 +13,7 @@ docker_password=$2
 docker_image_name='dotcms'
 docker_tag="${BUILD_ID}"
 
-[[ "${docker_tag}" == 'v21.05-jdk8' ]] && echo "OJO:>> ${docker_tag}" && docker_tag='v21.05' && echo "OJO:>> ${docker_tag}"
+[[ "${BUILD_ID}" == 'v21.05-jdk8' ]] && echo "OJO:>> ${BUILD_ID}" && export BUILD_ID='v21.05' && echo "OJO:>> ${BUILD_ID}"
 
 # Evaluates dry run
 if [[ "${IS_RELEASE}" == 'true' ]]; then
