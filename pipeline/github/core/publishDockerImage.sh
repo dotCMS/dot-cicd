@@ -12,6 +12,9 @@ docker_password=$2
 
 docker_image_name='dotcms'
 docker_tag="${BUILD_ID}"
+
+[[ "${docker_tag}" == 'v21.05-jdk8' ]] && docker_tag='v21.05'
+
 # Evaluates dry run
 if [[ "${IS_RELEASE}" == 'true' ]]; then
   docker_tag="${BUILD_ID#*-}"
