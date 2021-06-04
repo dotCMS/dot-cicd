@@ -3,7 +3,7 @@
 . githubCommon.sh
 . testResults.sh
 
-export OUTPUT_FOLDER=/srv/core-web/dist/cypress/apps/cypress
+export OUTPUT_FOLDER=/srv/core-web/dist/cypress/apps
 export DOT_CICD_TARGET=${CORE_WEB_GITHUB_REPO}
 export BASE_STORAGE_URL="${GITHACK_TEST_RESULTS_CORE_WEB_URL}/$(urlEncode ${CORE_WEB_BUILD_ID})/projects/${DOT_CICD_TARGET}"
 cypress_output=/srv/core-web/dist/cypress/apps/dotcms-ui-e2e
@@ -27,7 +27,7 @@ Branch location: ${reports_branch_url}
 gitClone $(resolveRepoUrl ${CORE_WEB_GITHUB_REPO} ${GITHUB_USER_TOKEN} ${GITHUB_USER}) ${CORE_WEB_BUILD_ID}
 # el repo queda en core-web
 
-mkdir -p ${OUTPUT_FOLDER}
+mkdir -p ${OUTPUT_FOLDER}/cypress
 
 # esperar por dotcms
 if [[ "${BUNDLED_MODE}" == 'false' ]]; then
@@ -43,8 +43,8 @@ fi
 # curl .. http://dotcms-app:8080/xxx
 cd ${CORE_WEB_GITHUB_REPO}
 curl --location --request POST 'http://dotcms-app:8080/api/bundle?sync=true' \
---header 'Authorization: Basic YWRtaW5AZG90Y21zLmNvbTphZG1pbg==' \
---form 'file=@"./apps/dotcms-ui-e2e/src/fixtures/Cypress-DB-Seed.tar.gz"'
+  --header 'Authorization: Basic YWRtaW5AZG90Y21zLmNvbTphZG1pbg==' \
+  --form 'file=@"./apps/dotcms-ui-e2e/src/fixtures/Cypress-DB-Seed.tar.gz"'
 
 # correr cypress contra http://dotcms-app:8080/xxx
 echo '################################## 1 ##################################'
@@ -62,7 +62,7 @@ npm run poste2e
 
 # publicar los tests
 if [[ $? == 0 ]]; then
-  cp -R ${cypress_output}/* ${OUTPUT_FOLDER}
+  cp -R ${cypress_output}/* ${OUTPUT_FOLDER}/cypress
   persistResults ${TEST_RESULTS_CORE_WEB_GITHUB_REPO}
   showResultsLinks
 fi
