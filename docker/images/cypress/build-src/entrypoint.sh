@@ -5,7 +5,7 @@
 
 export OUTPUT_FOLDER=/srv/core-web/dist/cypress/apps/cypress
 export DOT_CICD_TARGET=${CORE_WEB_GITHUB_REPO}
-export BASE_STORAGE_URL="${GITHACK_TEST_RESULTS_CORE_WEB_URL}/$(urlEncode ${BUILD_ID})/projects/${DOT_CICD_TARGET}"
+export BASE_STORAGE_URL="${GITHACK_TEST_RESULTS_CORE_WEB_URL}/$(urlEncode ${CORE_WEB_BUILD_ID})/projects/${DOT_CICD_TARGET}"
 cypress_output=/srv/core-web/dist/cypress/apps/dotcms-ui-e2e
 
 # Print result links
@@ -62,7 +62,7 @@ npm run poste2e
 
 # publicar los tests
 if [[ $? == 0 ]]; then
-  mv ${cypress_output} ${OUTPUT_FOLDER}
+  cp -R ${cypress_output}/* ${OUTPUT_FOLDER}
   persistResults ${TEST_RESULTS_CORE_WEB_GITHUB_REPO}
   showResultsLinks
 fi
