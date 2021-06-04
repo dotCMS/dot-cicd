@@ -4,7 +4,6 @@
 . testResults.sh
 
 export OUTPUT_FOLDER=/srv/core-web/dist/cypress/apps/cypress
-mkdir -p ${OUTPUT_FOLDER}
 export DOT_CICD_TARGET=${CORE_WEB_GITHUB_REPO}
 export BASE_STORAGE_URL="${GITHACK_TEST_RESULTS_CORE_WEB_URL}/$(urlEncode ${BUILD_ID})/projects/${DOT_CICD_TARGET}"
 cypress_output=/srv/core-web/dist/cypress/apps/dotcms-ui-e2e
@@ -28,6 +27,8 @@ Branch location: ${reports_branch_url}
 gitClone $(resolveRepoUrl ${CORE_WEB_GITHUB_REPO} ${GITHUB_USER_TOKEN} ${GITHUB_USER}) ${CORE_WEB_BUILD_ID}
 # el repo queda en core-web
 
+mkdir -p ${OUTPUT_FOLDER}
+
 # esperar por dotcms
 if [[ "${BUNDLED_MODE}" == 'false' ]]; then
   : ${WAIT_DOTCMS_FOR:="80"}
@@ -40,7 +41,6 @@ fi
 
 # upload bundle
 # curl .. http://dotcms-app:8080/xxx
-mkdir -p ${OUTPUT_FOLDER}
 cd ${CORE_WEB_GITHUB_REPO}
 curl --location --request POST 'http://dotcms-app:8080/api/bundle?sync=true' \
 --header 'Authorization: Basic YWRtaW5AZG90Y21zLmNvbTphZG1pbg==' \
