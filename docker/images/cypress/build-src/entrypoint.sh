@@ -63,6 +63,7 @@ npm run poste2e
 # publicar los tests
 if [[ $? == 0 ]]; then
   cp -R ${cypress_output}/* ${OUTPUT_FOLDER}/cypress
+  export BUILD_ID=${CORE_WEB_BUILD_ID}
   persistResults ${TEST_RESULTS_CORE_WEB_GITHUB_REPO}
   showResultsLinks
 fi
