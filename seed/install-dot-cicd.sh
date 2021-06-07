@@ -59,7 +59,7 @@ gitCloneAndCheckout () {
     cd ${DOT_CICD_LIB}
     git fetch --all
     echo "Checking out branch ${DOT_CICD_BRANCH}"
-    git checkout -b ${DOT_CICD_BRANCH}
+    git checkout -b ${DOT_CICD_BRANCH} --track origin/${DOT_CICD_BRANCH}
     if [ $? -ne 0 ]; then
       echo "Error checking out branch '${DOT_CICD_BRANCH}', continuing with master"
     else
