@@ -28,6 +28,8 @@ services:
       CORE_WEB_BUILD_ID:
     depends_on:
       - dotcms-app
+    volumes:
+      - /dev/shm:/dev/shm
     # volumes:
     #   - type: bind
     #     source: .
