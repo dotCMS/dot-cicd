@@ -58,6 +58,7 @@ gitCloneAndCheckout () {
   if [ -n "${DOT_CICD_BRANCH}" ]; then
     cd ${DOT_CICD_LIB}
     git fetch --all
+    git pull
     echo "Checking out branch ${DOT_CICD_BRANCH}"
     git checkout -b ${DOT_CICD_BRANCH} --track origin/${DOT_CICD_BRANCH}
     if [ $? -ne 0 ]; then
