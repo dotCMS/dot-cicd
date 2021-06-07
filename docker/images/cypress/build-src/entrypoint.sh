@@ -31,7 +31,7 @@ mkdir -p ${OUTPUT_FOLDER}/cypress
 
 # esperar por dotcms
 if [[ "${BUNDLED_MODE}" == 'false' ]]; then
-  : ${WAIT_DOTCMS_FOR:="80"}
+  : ${WAIT_DOTCMS_FOR:="3m"}
   echo "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
         Requested sleep of [${WAIT_DOTCMS_FOR}], waiting for DotCMS?
         +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
