@@ -39,12 +39,13 @@ if [[ "${BUNDLED_MODE}" == 'false' ]]; then
   sleep ${WAIT_DOTCMS_FOR}
 fi
 
-# upload bundle
-# curl .. http://dotcms-app:8080/xxx
 cd ${CORE_WEB_GITHUB_REPO}
-curl --location --request POST 'http://dotcms-app:8080/api/bundle?sync=true' \
-  --header 'Authorization: Basic YWRtaW5AZG90Y21zLmNvbTphZG1pbg==' \
-  --form 'file=@"./apps/dotcms-ui-e2e/src/fixtures/Cypress-DB-Seed.tar.gz"'
+
+# upload bundle NOT NEEDED ANYMORE
+# curl .. http://dotcms-app:8080/xxx
+# curl --location --request POST 'http://dotcms-app:8080/api/bundle?sync=true' \
+#   --header 'Authorization: Basic YWRtaW5AZG90Y21zLmNvbTphZG1pbg==' \
+#   --form 'file=@"./apps/dotcms-ui-e2e/src/fixtures/Cypress-DB-Seed.tar.gz"'
 
 # correr cypress contra http://dotcms-app:8080/xxx
 echo '################################## 1 ##################################'
@@ -56,7 +57,7 @@ npm install -g nx
 # BASEURL=http://dotcms-app:8080 npm run e2e
 # npm run e2e
 # ng e2e dotcms-ui-e2e --headless true --base-url ${BASEURL:-http://localhost:8080} || (npm run poste2e && exit 1)
-nx e2e dotcms-ui-e2e --headless true --base-url http://dotcms-app:8080
+nx e2e dotcms-ui-e2e --headless true --browser chrome --base-url http://dotcms-app:8080
 npm run poste2e
 # cypress ....
 
