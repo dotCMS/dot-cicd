@@ -98,7 +98,7 @@ fi
 cp -R ../../setup .
 
 # Starting the container for the build image
-export IMAGE_BASE_NAME=${BUILD_IMAGE_TAG}
+export IMAGE_NAME=${BUILD_IMAGE_TAG}
 docker-compose -f unit-service-compose.yml \
   up \
   --abort-on-container-exit

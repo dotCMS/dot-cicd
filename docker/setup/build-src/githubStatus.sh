@@ -1,5 +1,9 @@
 #! /bin/sh
 
+#########################
+# Script: githubStatus.sh
+# Using the Github API reports the current state of the tests
+
 GITHUB_STATUS="failure"
 GITHUB_DESCRIPTION="Tests FAILED"
 if [[ ${CURRENT_JOB_BUILD_STATUS} == 0 ]]; then
@@ -27,21 +31,6 @@ if [[ -n "${PULL_REQUEST}" && "${PULL_REQUEST}" != "false" ]]; then
   elif [[ "${TEST_TYPE}" == "integration" ]]; then
     statusesContext="${statusesLabel} - [Integration tests results] - [${databaseType}]"
   fi
-
-#  logURL="${BASE_STORAGE_URL}/${STORAGE_JOB_BRANCH_FOLDER}/logs/dotcms.log"
-
-#  echo ""
-#  echo "=================================================================================="
-#  echo "=================================================================================="
-#  echo "  >>>   Storage folder for job: [${STORAGE_JOB_BRANCH_FOLDER}]"
-#  echo "  >>>   Reports URL for job: [${reportsIndexURL}]"
-#  echo "  >>>   Log URL for job: [${logURL}]"
-#  echo "  >>>   GITHUB pull request: [https://github.com/dotCMS/core/pull/${PULL_REQUEST}]"
-#  echo "  >>>   Job build status: ${CURRENT_JOB_BUILD_STATUS}"
-#  echo "  >>>   GITHUB user: ${GITHUB_USER}/${GITHUB_USER_TOKEN}"
-#  echo "=================================================================================="
-#  echo "=================================================================================="
-#  echo ""
 
   jsonBaseValue="https://api.github.com/repos/dotCMS/core/statuses/"
   jsonAttribute="\"href\": \"${jsonBaseValue}"

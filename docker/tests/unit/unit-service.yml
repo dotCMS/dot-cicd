@@ -7,11 +7,10 @@ version: "3.7"
 services:
 
   unit-tests:
-    image: "${IMAGE_BASE_NAME}"
+    image: "${IMAGE_NAME}"
     command: ["unit"]
     environment:
       EXTRA_PARAMS:
-      GOOGLE_CREDENTIALS_BASE64:
       EXPORT_REPORTS:
       PULL_REQUEST:
       GITHUB_USER:
@@ -20,5 +19,8 @@ services:
       DOT_CICD_CLOUD_PROVIDER:
       DOT_CICD_PERSIST:
       DOT_CICD_TARGET:
+      BUILD_ID:
+      BUILD_HASH:
+      DEBUG:
     ports:
       - "15005:5005"

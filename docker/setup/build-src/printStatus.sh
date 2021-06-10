@@ -1,3 +1,7 @@
+########################
+# Script: printStatus.sh
+# Prints information about the status of integration or unit tests
+
 commitFolder=${BASE_STORAGE_URL}/${STORAGE_JOB_COMMIT_FOLDER}
 branchFolder=${BASE_STORAGE_URL}/${STORAGE_JOB_BRANCH_FOLDER}
 reportsCommitIndexURL="${commitFolder}/reports/html/index.html"
@@ -5,7 +9,7 @@ reportsBranchIndexURL="${branchFolder}/reports/html/index.html"
 logCommitURL="${commitFolder}/logs/dotcms.log"
 logBranchURL="${branchFolder}/logs/dotcms.log"
 
-if [[ ${EXPORT_REPORTS} == true ]]; then
+if [[ "${EXPORT_REPORTS}" == 'true' ]]; then
   echo ""
   echo -e "\e[36m==========================================================================================================================\e[0m"
   echo -e "\e[36m==========================================================================================================================\e[0m"

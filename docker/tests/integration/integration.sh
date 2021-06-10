@@ -110,7 +110,7 @@ cp -R ../../setup .
 
 # Starting the container for the build image
 export databaseType=${database}
-export IMAGE_BASE_NAME=${BUILD_IMAGE_TAG}
+export IMAGE_NAME=${BUILD_IMAGE_TAG}
 export SERVICE_HOST_PORT_PREFIX=1
 docker-compose -f integration-service-compose.yml \
   -f ../shared/${database}-docker-compose.yml \

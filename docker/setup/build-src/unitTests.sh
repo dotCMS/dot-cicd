@@ -1,4 +1,11 @@
+#!/bin/bash
+
+######################
+# Script: unitTests.sh
+# Runs unit tests by calling the corresponding gradle task
+
 . /build/printStatus.sh
+. /build/testResults.sh
 
 echo ""
 echo "================================================================================"
@@ -36,9 +43,9 @@ cp -R /build/src/core/dotCMS/build/test-results/unit-tests/html/ /custom/output/
 # Do we want to export the resulting reports to google storage?
 if [[ "${EXPORT_REPORTS}" == "true" ]]; then
   # Track job results
-  trackJob ${CURRENT_JOB_BUILD_STATUS} /custom/output
+  trackCoreTests ${CURRENT_JOB_BUILD_STATUS} /custom/output
 
-  . /build/${DOT_CICD_PERSIST}/storage.sh
+  . /build/storage.sh
   ignoring_return_value=$?
 fi
 
