@@ -30,8 +30,7 @@ set -- ${@:2}
 executeCmd "docker run --rm
   -e BUILD_ID=\"${BUILD_ID}\"
   -e BUILD_HASH=${BUILD_HASH}
-  -e EE_BUILD_ID=\"${EE_BUILD_ID}\"
-  -e dotcms_version=\"${DOTCMS_VERSION}\"
+  -e EE_BUILD_ID=\"${EE_BRANCH}\"
   -e repo_username=${REPO_USERNAME}
   -e repo_password=${REPO_PASSWORD}
   -e GITHUB_USER=${GITHUB_USER}

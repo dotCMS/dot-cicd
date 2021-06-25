@@ -21,7 +21,6 @@ echo "Single CMD: ${single_cmd}"
 echo "Build id: ${BUILD_ID}"
 echo "Build hash: ${BUILD_HASH}"
 echo "EE Build id: ${EE_BUILD_ID}"
-echo "Is Release: ${is_release}"
 echo "Repo username: ${repo_username}"
 echo "Repo password: ${repo_password}"
 echo "Github User: ${GITHUB_USER}"
@@ -35,7 +34,8 @@ echo
 
 runScript getSource ${GITHUB_USER} ${GITHUB_USER_TOKEN} ${BUILD_ID}
 pushd ${CORE_GITHUB_REPO}
-runScript generateAndUploadJars ${BUILD_ID} ${EE_BUILD_ID} ${repo_username} ${repo_password} ${BUILD_HASH} ${is_release}
+runScript setVars
+runScript generateAndUploadJars ${BUILD_ID} ${EE_BUILD_ID} ${repo_username} ${repo_password} ${BUILD_BASH} ${is_release}
 runScript buildDistro
 runScript generateJavadoc
 runScript pushToStaticBucket all ${is_release}
