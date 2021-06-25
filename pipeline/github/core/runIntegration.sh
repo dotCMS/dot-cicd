@@ -9,7 +9,7 @@ export DOCKER_SOURCE=${DOT_CICD_LIB}/docker
 export IMAGE_NAME="dotcms/cicd-test-base:${GITHUB_RUN_NUMBER}"
 export EXPORT_REPORTS=true
 export SERVICE_HOST_PORT_PREFIX=1
-export BUILD_ID
+
 docker_repo_path=${DOT_CICD_PATH}/docker
 integration_folder=${DOCKER_SOURCE}/tests/integration
 shared_folder=${DOCKER_SOURCE}/tests/shared
