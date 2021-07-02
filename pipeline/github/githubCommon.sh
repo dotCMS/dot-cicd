@@ -1,5 +1,6 @@
 #!/bin/bash
 
+eval $(docker-machine env default)
 #########################
 # Script: githubCommon.sh
 # Collection of common functions used across the pipeline
