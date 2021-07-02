@@ -6,7 +6,6 @@
 
 export DOCKER_SOURCE=${DOT_CICD_LIB}/docker
 export IMAGE_NAME='dotcms/dotcms-release-process'
-export DEBUG=true
 
 # Copy common collection of functions
 cp ${DOT_CICD_LIB}/pipeline/github/githubCommon.sh ${DOCKER_SOURCE}/images/release/build-src
