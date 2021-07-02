@@ -14,7 +14,7 @@ pushd ${DOCKER_SOURCE}/images/release
 
 # When is not a release, build the release-process docker image
 if [[ "${IS_RELEASE}" != 'true' ]]; then
-  executeCmd "docker build --pull --no-cache -t ${IMAGE_NAME} ."
+  executeCmd "docker build --no-cache -t ${IMAGE_NAME} ."
   if [[ ${cmdResult} != 0 ]]; then
     exit 1
   fi
