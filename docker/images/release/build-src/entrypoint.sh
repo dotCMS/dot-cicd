@@ -14,7 +14,6 @@
 
 . /build/githubCommon.sh
 . /build/releaseCommon.sh
-export DEBUG=true
 
 echo
 echo '######################################################################'
