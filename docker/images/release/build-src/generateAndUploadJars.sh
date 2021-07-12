@@ -11,7 +11,6 @@
 # $6: github_sha: commit SHA
 # $7: is_release: release flag
 
-
 build_id=$1
 ee_build_id=$2
 repo_username=$3
@@ -31,9 +30,8 @@ if [[ $? != 0 ]]; then
   exit 1
 fi
 
-if [[ "${is_release}" == 'true' ]]; then
-  releaseParam='-Prelease=true'
-else
+releaseParam='-Prelease=true'
+if [[ "${is_release}" != 'true' ]]; then
   releaseParam=''
   cp ./gradle.properties ./gradle.properties.bak
   release_version=${github_sha}
