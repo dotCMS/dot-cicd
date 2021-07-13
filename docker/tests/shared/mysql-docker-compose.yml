@@ -16,6 +16,8 @@ services:
       MYSQL_DATABASE: dotcms
     ports:
       - "${SERVICE_HOST_PORT_PREFIX}3306:3306"
+    tmpfs:
+      - /var/lib/mysql:rw
     volumes:
       - ./setup/db/mysql/custom.cnf:/etc/mysql/conf.d/custom.cnf
       - ./setup/db/mysql/init-scripts:/docker-entrypoint-initdb.d/
