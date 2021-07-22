@@ -6,7 +6,7 @@ version: "3.7"
 services:
 
   elasticsearch:
-    image: "dotcms/es-open-distro:1.3.0"
+    image: "dotcms/es-open-distro:1.7.0"
     ports:
       - "${SERVICE_HOST_PORT_PREFIX}9200:9200"
       - "${SERVICE_HOST_PORT_PREFIX}9600:9600"
@@ -17,7 +17,6 @@ services:
       discovery.type: single-node
       bootstrap.memory_lock: 'true'
       "ES_JAVA_OPTS": "-Xms1024m -Xmx1024m"
-      logger.org.elasticsearch.index.reindex: 'debug'
     ulimits:
       memlock:
         soft: -1
