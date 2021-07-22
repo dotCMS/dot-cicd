@@ -6,7 +6,7 @@ version: "3.7"
 services:
 
   elasticsearch:
-    image: "amazon/opendistro-for-elasticsearch:1.7.0"
+    image: "dotcms/es-open-distro:1.7.0"
     ports:
       - "${SERVICE_HOST_PORT_PREFIX}9200:9200"
       - "${SERVICE_HOST_PORT_PREFIX}9600:9600"
