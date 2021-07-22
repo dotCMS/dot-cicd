@@ -15,7 +15,7 @@ services:
       "PROVIDER_ELASTICSEARCH_DNSNAMES": 'elasticsearch'
       "ES_ADMIN_PASSWORD": 'admin'
       discovery.type: single-node
-      bootstrap.memory_lock: true
+      bootstrap.memory_lock: 'true'
       "ES_JAVA_OPTS": "-Xms1024m -Xmx1024m"
     ulimits:
       memlock:
