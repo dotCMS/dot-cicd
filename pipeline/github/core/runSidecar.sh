@@ -107,4 +107,4 @@ if [[ -n "${sidecar_app}" ]]; then
   executeCmd "${down_cmd}"
 fi
 
-[[ ${result} != 0 ]] && exit 0
+exit 0
