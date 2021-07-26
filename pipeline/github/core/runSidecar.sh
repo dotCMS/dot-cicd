@@ -85,12 +85,12 @@ buildBase cicd-dotcms ${resolved_docker_path}
 prepareLicense ${SIDECAR_APP_CONTEXT} ${LICENSE_KEY}
 
 # Build docker compose up command
-up_cmd="docker-compose -d
+up_cmd="docker-compose 
   ${SIDECAR_APP_IMAGE_FILE_PARAM}
   -f ${DOTCMS_DOCKER_COMPOSE}
   -f ${DOCKER_SOURCE}/tests/shared/${DATABASE_TYPE}-docker-compose.yml
   -f ${DOCKER_SOURCE}/tests/shared/open-distro-docker-compose.yml
-  up
+  up -d
   --abort-on-container-exit
 "
 # Runs compose files to start the sidecar image with the  dotcms, open distro and database
