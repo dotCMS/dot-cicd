@@ -85,7 +85,7 @@ buildBase cicd-dotcms ${resolved_docker_path}
 prepareLicense ${SIDECAR_APP_CONTEXT} ${LICENSE_KEY}
 
 # Build docker compose up command
-up_cmd="docker-compose
+up_cmd="docker-compose -d
   ${SIDECAR_APP_IMAGE_FILE_PARAM}
   -f ${DOTCMS_DOCKER_COMPOSE}
   -f ${DOCKER_SOURCE}/tests/shared/${DATABASE_TYPE}-docker-compose.yml
