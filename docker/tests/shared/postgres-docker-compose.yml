@@ -14,5 +14,7 @@ services:
       POSTGRES_DB: dotcms
     ports:
       - "${SERVICE_HOST_PORT_PREFIX}5432:5432"
+    tmpfs:
+      - /var/lib/postgresql/data:rw
     volumes:
       - ./setup/db/postgres/init-scripts:/docker-entrypoint-initdb.d/

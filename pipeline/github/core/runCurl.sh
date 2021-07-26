@@ -17,8 +17,12 @@ docker_dotcms_path=${docker_repo_path}/images/dotcms
 docker_file_path="${DOCKER_SOURCE}/tests/curl"
 shared_folder=${DOCKER_SOURCE}/tests/shared
 
+# Cloning core
+repo_url=$(resolveRepoUrl ${CORE_GITHUB_REPO} ${GITHUB_USER_TOKEN} ${github_user})
+gitClone ${repo_url} ${BUILD_ID}
+
 # Resolve which docker path to use (core or docker repo folder)
-resolved_docker_path=$(dockerPathWithFallback ${DOT_CICD_TARGET}/dotcms ${docker_repo_path})
+resolved_docker_path=${CORE_GITHUB_REPO}/docker/dotcms
 # Git clones docker repo with provided branch when docker repo matches docker path
 [[ "${resolved_docker_path}" == "${docker_repo_path}" ]] \
   && fetchDocker ${docker_repo_path} ${DOCKER_BRANCH}

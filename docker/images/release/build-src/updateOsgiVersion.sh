@@ -71,10 +71,7 @@ files=('OSGi/com.dotcms.3rd.party/build.gradle'
 for file in "${files[@]}"
 do
   echo "Replacing version for ${file}"
-  sed -i "s,com.dotcms:dotcms:[0-9][0-9]\.[0-9][0-9]\.[0-9],com.dotcms:dotcms:${new_version},g" ${file}
-  ss="name: 'dotcms', version: '[0-9][0-9]\.[0-9][0-9]\.[0-9]'"
-  rs="name: 'dotcms', version: '${new_version}'"
-  sed -i "s/${ss}/${rs}/g" ${file}
+  python3 /build/updateOsgiVersion.py ${file} ${new_version}
   cat ${file} | grep "${new_version}"
 done
 
@@ -87,7 +84,6 @@ git status
 # When is an actual release push the changes, otherwise don't do a thing
 if [[ "${is_release}" == 'true' ]]; then
   git push ${plugin_seeds_github_repo_url}
-  git status
 else
   echo "Dry run detected, not pushing ${release_branch_name} to ${plugin_seeds_github_repo_url}"
 fi

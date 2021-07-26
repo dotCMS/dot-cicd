@@ -346,25 +346,12 @@ function fetchDocker {
   fi
 }
 
-# Verifies id project docker path is present and has a Dockerfile, otherwise if will fallback to docker repo Dockerfile
-#
-# $1: project_docker_path: project docker file, most likely to be core's
-# $2: docker_repo_path: docker repo's path
-function dockerPathWithFallback {
-  local project_docker_path=${1}
-  local docker_repo_path=${2}
-  if [[ -f ${project_docker_path}/Dockerfile ]]; then
-    echo ${project_docker_path}
-  else
-    echo ${docker_repo_path}
-  fi
-}
-
 # Copies resources to build a docker image with db volume
 #
 # $1: docker_file_path: path where a Dockerfile is located
 function setupDockerDb {
   local docker_file_path=${1}
+  echo "Copying from ${DOCKER_SOURCE}/setup/db to ${docker_file_path}/setup"
   cp -R ${DOCKER_SOURCE}/setup/db ${docker_file_path}/setup
 }
 
@@ -374,6 +361,7 @@ function setupDockerDb {
 function setupExternal {
   local docker_file_path=${1}
   [[ ! -d ${docker_file_path}/setup/build-src ]] && mkdir -p ${docker_file_path}/setup/build-src
+  echo "Copying from ${DOT_CICD_LIB}/pipeline/github/githubCommon.sh to ${docker_file_path}/setup/build-src"
   cp ${DOT_CICD_LIB}/pipeline/github/githubCommon.sh ${docker_file_path}/setup/build-src
 }
 
@@ -385,9 +373,15 @@ function setupSrc {
   local docker_file_path=${1}
   local docker_repo_path=${2}
   mkdir -p ${docker_file_path}/setup
+  echo "Copying from ${DOCKER_SOURCE}/setup/build-src to ${docker_file_path}/setup"
   cp -R ${DOCKER_SOURCE}/setup/build-src ${docker_file_path}/setup
-  cp -R ${docker_repo_path}/images/dotcms/ROOT ${docker_file_path}
-  cp -R ${docker_repo_path}/images/dotcms/build-src/build_dotcms.sh ${docker_file_path}/setup/build-src
+  if [[ "${docker_file_path}" != "${docker_repo_path}" ]]; then
+    echo "Copying from ${docker_repo_path}/ROOT to ${docker_file_path}"
+    cp -R ${docker_repo_path}/ROOT ${docker_file_path}
+
+    echo "Copying from ${docker_repo_path}/build-src/build_dotcms.sh to ${docker_file_path}/setup/build-src"
+    cp -R ${docker_repo_path}/build-src/build_dotcms.sh ${docker_file_path}/setup/build-src
+  fi
 }
 
 # Creates a directories for output and license
@@ -476,7 +470,7 @@ function prepareLicense {
   local docker_file_path=${1}
   local license=${2}
   local license_folder=${docker_file_path}/license
-  [[ "${DEBUG}" == 'true' ]] && echo "License Args: $@"
+  echo "License Args: $@"
 
   mkdir -p ${license_folder}
   chmod 777 ${license_folder}
