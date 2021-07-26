@@ -91,7 +91,6 @@ up_cmd="docker-compose
   -f ${DOCKER_SOURCE}/tests/shared/${DATABASE_TYPE}-docker-compose.yml
   -f ${DOCKER_SOURCE}/tests/shared/open-distro-docker-compose.yml
   up -d
-  --abort-on-container-exit
 "
 # Runs compose files to start the sidecar image with the  dotcms, open distro and database
 executeCmd "${up_cmd}"
