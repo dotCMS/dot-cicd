@@ -10,15 +10,14 @@
 function runScript {
   local script=$1
 
-  set -- ${@:2}
-  echo 
+  echo
   echo '############################################################################################################################################'
-  echo "Executing . /build/${script}.sh $@"
+  echo "Executing . /build/${script}.sh $2 $3 $4 $5 $6 $7 $8"
   echo '############################################################################################################################################'
-  . /build/${script}.sh $@
+  . /build/${script}.sh $2 $3 $4 $5 $6 $7 $8
 
   if [[ $? != 0 ]]; then
-    echo "Error executing: . /build/${script}.sh $@"
+    echo "Error executing: . /build/${script}.sh $2 $3 $4 $5 $6 $7 $8"
     exit 1
   fi
 }
