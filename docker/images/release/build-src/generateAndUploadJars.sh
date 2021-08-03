@@ -8,8 +8,8 @@
 # $2: ee_build_id: enterprise branch or commit
 # $3: repo_username: artifactory repo username
 # $4: repo_password: artifactory repo password
-# $6: github_sha: commit SHA
-# $7: is_release: release flag
+# $5: github_sha: commit SHA
+# $6: is_release: release flag
 
 build_id=$1
 ee_build_id=$2
