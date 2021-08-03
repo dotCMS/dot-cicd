@@ -23,15 +23,7 @@ cd ..
 gitConfig ${GITHUB_USER}
 # Git clones docker repo with provided branch
 core_docker_path=/build/src/core/docker
-# Resolve which docker path to use (core or docker repo folder)
-resolved_docker_path=$(dockerPathWithFallback ${core_docker_path} docker)
-# Git clones docker repo with provided branch if
-if [[ "${resolved_docker_path}" == 'docker' ]]; then
-  fetchDocker docker ${DOCKER_BRANCH}
-  pushd docker/images/dotcms
-else
-  pushd ${core_docker_path}
-fi
+pushd ${core_docker_path}
 
 if [[ "${IS_RELEASE}" != 'true' ]]; then
   docker_image_name="${docker_image_name}-cicd-test"

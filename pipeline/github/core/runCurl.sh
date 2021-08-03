@@ -13,17 +13,17 @@ export IMAGE_NAME="dotcms/cicd-dotcms-curl:${GITHUB_RUN_NUMBER}"
 export DOCKER_SOURCE=${DOT_CICD_LIB}/docker
 export BUILD_ID
 docker_repo_path=${DOT_CICD_PATH}/docker
-docker_dotcms_path=${docker_repo_path}/images/dotcms
 docker_file_path="${DOCKER_SOURCE}/tests/curl"
 shared_folder=${DOCKER_SOURCE}/tests/shared
 
+# Cloning core
+repo_url=$(resolveRepoUrl ${CORE_GITHUB_REPO} ${GITHUB_USER_TOKEN} ${github_user})
+gitClone ${repo_url} ${BUILD_ID}
+
 # Resolve which docker path to use (core or docker repo folder)
-resolved_docker_path=$(dockerPathWithFallback ${DOT_CICD_TARGET}/dotcms ${docker_repo_path})
-# Git clones docker repo with provided branch when docker repo matches docker path
-[[ "${resolved_docker_path}" == "${docker_repo_path}" ]] \
-  && fetchDocker ${docker_repo_path} ${DOCKER_BRANCH}
+resolved_docker_path=${CORE_GITHUB_REPO}/docker/dotcms
 # Builds parametrized dotcms image for it to be extended later
-buildBase cicd-dotcms ${docker_dotcms_path}
+buildBase cicd-dotcms ${resolved_docker_path}
 # Copies folders with database volume and scripts to be included in the image
 setupDocker ${docker_file_path} ${resolved_docker_path}
 # Builds curl-tests image from parametrized image
