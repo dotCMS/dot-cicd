@@ -2,7 +2,6 @@
 
 function usage {
   echo "Required environment variables:
-    - DOCKER_BRANCH: (optional) docker repo branch to use when building images, defaults to empty
     - BUILD_ID: (optional) commit to use to build image, defaults to 'master'
     - DATABASE_TYPE: (optional) database type, defaults to 'postgres'
     - LICENSE_KEY: license key string
@@ -54,14 +53,11 @@ DEBUG_MODE: ${DEBUG_MODE}
 "
 
 # Cloning core
-repo_url=$(resolveRepoUrl ${CORE_GITHUB_REPO} ${GITHUB_USER_TOKEN} ${github_user})
+repo_url=$(resolveRepoUrl ${CORE_GITHUB_REPO})
 gitClone ${repo_url} ${BUILD_ID}
 
 # Resolve which docker path to use (core or docker repo folder)
 RESOLVED_DOCKER_PATH=${CORE_GITHUB_REPO}/docker/dotcms
-# Git clones docker repo with provided branch if
-[[ "${RESOLVED_DOCKER_PATH}" == "${DOT_CICD_DOCKER_PATH}" ]] \
-  && fetchDocker ${DOT_CICD_DOCKER_PATH} ${DOCKER_BRANCH}
 
 if [[ "${SKIP_IMAGE_BUILD}" == 'false' ]]; then
   buildBase cicd-dotcms ${DOCKER_DOTCMS_PATH}

@@ -74,15 +74,7 @@ export PLUGIN_SEEDS_GITHUB_REPO=plugin-seeds
 export TEST_RESULTS_GITHUB_REPO=test-results
 : ${DEBUG:="false"} && export DEBUG
 
-caller=$(basename ${0})
-if [[ "${caller}" == 'pipeline.sh' || "${caller}" == 'local.sh' ]]; then
-  export CONTAINERIZED=false
-else
-  export CONTAINERIZED=true
-fi
-
-[[ "${CONTAINERIZED}" == 'false' || "${DEBUG}" == 'true' ]] \
-  && echo "###########
+echo "###########
 Github vars
 ###########
 BUILD_ID: ${BUILD_ID}
@@ -117,9 +109,7 @@ function resolveCreds {
 
   if [[ -n "${token}" ]]; then
     local sep=
-    if [[ -n "${creds}" ]]; then
-      sep=':'
-    fi
+    [[ -n "${creds}" ]] && sep=':'
     creds="${creds}${sep}${token}"
   fi
 
@@ -149,8 +139,8 @@ function resolvePath {
 # Builds Github repo url
 #
 # $1: Github repo name
-# $1: token to use when building credentials part
-# $2: Github username to use in credentials part
+# $2: token to use when building credentials part
+# $3: Github username to use in credentials part
 function resolveRepoUrl {
   local path=$(resolvePath ${1})
   local site=$(resolveSite ${2} ${3})
@@ -245,8 +235,6 @@ function gitSubModules {
   [[ -z "${repo_url}" ]] && echo "No repo url provided, aborting" && exit 1
   local dest=${2}
   [[ -z "${dest}" ]] && echo "No git folder provided, aborting" && exit 1
-  local github_user=${3}
-  [[ -z "${github_user}" ]] && github_user=${GITHUB_USER}
 
   echo 'Getting submodules'
   pushd ${dest}
@@ -265,7 +253,7 @@ function gitSubModules {
   local module_path=$(cat .gitmodules| grep "path =" | cut -d'=' -f2 | tr -d '[:space:]')
   local module_branch=$(cat .gitmodules| grep "branch =" | cut -d'=' -f2 | tr -d '[:space:]')
   pushd ${module_path}
-  gitConfig ${github_user}
+  gitConfig ${GITHUB_USER}
   if [[ "${module_branch}" != 'master' ]]; then
     git checkout -b ${module_branch} --track origin/${module_branch}
   else
@@ -284,7 +272,7 @@ function gitSubModules {
 
 # Git clones with submodules support
 #
-# $@: same args as gitSubModules
+# $@: same args as gitClone
 function gitCloneSubModules {
   gitClone $@
   local clone_result=$?
@@ -293,10 +281,11 @@ function gitCloneSubModules {
   [[ "${DEBUG}" == 'true' ]] && pwd && ls -las .
 
   local repo_url=${1}
+  [[ "${DEBUG}" == 'true' ]] && echo "defaultLocation args: ${repo_url} ${3}"
   local dest=$(defaultLocation ${repo_url} ${3})
-  local github_user=${4}
+  [[ "${DEBUG}" == 'true' ]] && echo "submodules args: $(dirname ${repo_url}) ${dest}"
 
-  gitSubModules $(dirname ${repo_url}) ${dest} ${github_user}
+  gitSubModules $(dirname ${repo_url}) ${dest}
   local sub_result=$?
 
   return ${sub_result}
@@ -323,25 +312,6 @@ function gitRemoteLs {
   local repo_url=${1}
   local build_id=${2}
   return $(git ls-remote --heads ${repo_url} ${build_id} | wc -l | tr -d '[:space:]')
-}
-
-# Git clones the docker repository into a specific location with a specific branch
-#
-# $2: dest: destination to save repo
-# $3: branch: branch to check out
-function fetchDocker {
-  local dest=${1}
-  local branch=${2}
-
-  [[ -z "${dest}" ]] && dest=cicd/
-  [[ -z "${branch}" ]] && branch=master
-
-  simpleGitClone ${DOCKER_GITHUB_REPO} ${branch} ${dest}
-  local cloneResult=$?
-  if [[ ${cloneResult} != 0 ]]; then
-    echo "Error cloning repo '${repo}'"
-    exit 1
-  fi
 }
 
 # Copies resources to build a docker image with db volume
@@ -495,7 +465,7 @@ commitPath="$(resolveResultsPath ${BUILD_HASH})"
 export STORAGE_JOB_COMMIT_FOLDER="${commitPath}"
 export STORAGE_JOB_BRANCH_FOLDER="$(resolveResultsPath current)"
 
-[[ "${CONTAINERIZED}" == 'false' ]] && echo "############
+echo "############
 Storage vars
 ############
 BASE_STORAGE_URL: ${BASE_STORAGE_URL}

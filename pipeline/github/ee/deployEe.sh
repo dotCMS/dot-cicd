@@ -21,6 +21,6 @@ GITHUB_USER: ${GITHUB_USER}
 "
 
 # Fetch core and its submodules from github
-. ${EE_FOLDER}/getSource.sh ${GITHUB_USER} ${GITHUB_USER_TOKEN} ${BUILD_ID}
+. ${EE_FOLDER}/getSource.sh ${BUILD_ID}
 # Generate an upload EE jars
 . ${EE_FOLDER}/generateAndUploadJars.sh ${BUILD_ID} ${EE_BUILD_ID} ${REPO_USERNAME} ${REPO_PASSWORD} ${BUILD_HASH} ${IS_RELEASE}

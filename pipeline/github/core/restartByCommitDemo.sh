@@ -17,8 +17,8 @@ github_repo="${github_remote_repo}.git"
 github_token_repo="https://${github_user_token}@${github_host_path}.git"
 
 cd ..
-git config --global user.email "${github_user}@dotcms.com"
-git config --global user.name "${github_user}"
+git config --global user.email "${GITHUB_USER}@dotcms.com"
+git config --global user.name "${GITHUB_USER}"
 git clone ${github_repo}
 cd ${demo_repo}
 git pull

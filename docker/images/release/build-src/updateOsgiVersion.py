@@ -1,7 +1,7 @@
 import sys
 import re
 
-plugin_file = sys.argv[1]
+z = sys.argv[1]
 replacing_text = sys.argv[2]
 
 with open(plugin_file, 'r') as fr:

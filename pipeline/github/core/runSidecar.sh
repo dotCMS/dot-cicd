@@ -67,7 +67,7 @@ SIDECAR_ARGS: ${SIDECAR_ARGS}
 "
 
 # Cloning core
-repo_url=$(resolveRepoUrl ${CORE_GITHUB_REPO} ${GITHUB_USER_TOKEN} ${github_user})
+repo_url=$(resolveRepoUrl ${CORE_GITHUB_REPO} ${GITHUB_USER_TOKEN})
 gitClone ${repo_url} ${BUILD_ID}
 
 # Login to docker
