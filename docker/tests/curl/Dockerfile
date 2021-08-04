@@ -45,6 +45,9 @@ RUN chmod 500 /build/printBuildInfo.sh
 COPY setup/build-src/curlTests.sh /build/curlTests.sh
 RUN chmod 500 /build/curlTests.sh
 
+COPY setup/build-src/gitClone.sh /build/gitClone.sh
+RUN chmod 500 /build/gitClone.sh
+
 COPY setup/build-src/newmanTestResultsHeader.html /build/newmanTestResultsHeader.html
 RUN chmod 500 /build/newmanTestResultsHeader.html
 
@@ -57,20 +60,20 @@ COPY setup/build-src/stopDotcms.sh /srv/stopDotcms.sh
 
 COPY setup/build-src/entrypoint.sh /srv/customEntrypoint.sh
 
-RUN apk --no-cache add openssl gnupg grep sed tini nss s6-dns go libpq git gcc musl-dev curl nodejs=14.17.4-r0 npm=14.17.4-r0
+RUN apt update && apt upgrade -y && apt install -y openssl tini git gcc musl-dev
+RUN curl -fsSL https://deb.nodesource.com/setup_lts.x | bash -  && apt install -y nodejs
 RUN npm config set unsafe-perm true
 RUN npm install -g newman
 RUN npm uninstall -g har-validator
 RUN npm install -g newman-reporter-htmlextra
 RUN npm install -g highlight.js@10 --save-dev
 
-# Dockerize distributed under MIT license (https://github.com/jwilder/dockerize)
-ENV DOCKERIZE_VERSION v0.6.0
-RUN wget --quiet https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-alpine-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
-    && tar -xzf dockerize-alpine-linux-amd64-$DOCKERIZE_VERSION.tar.gz -C /usr/local/bin \
-    && rm dockerize-alpine-linux-amd64-$DOCKERIZE_VERSION.tar.gz
+RUN curl -Ls https://repo.dotcms.com/artifactory/ext-release-local/com/dotcms/dockerize/dockerize-linux-`uname -m` | install /dev/stdin /usr/local/bin/dockerize
 
-COPY ROOT/ /
+RUN apt purge --allow-remove-essential -y && \
+    apt autoremove -y && \
+    apt clean && \
+    rm -rf /var/lib/apt/lists/*
 
 RUN chmod -R 666 /srv && find /srv/ -type d -exec chmod a+x {} \;
 RUN find /srv/ -type f -name "*.sh" -exec chmod a+x {} \;
@@ -81,8 +84,7 @@ RUN find /build/ -type f -name "*.sh" -exec chmod a+x {} \;
 RUN mkdir -p /build/src \
     && echo "Pulling dotCMS src" \
     && cd /build/src \
-    && if [[ ${BUILD_ID} =~ master|HEAD ]]; then git clone --depth 1 https://github.com/dotCMS/core.git core; else git clone --depth 1 --single-branch --branch ${BUILD_ID} https://github.com/dotCMS/core.git core; fi \
-    && cd core/dotCMS
+    && /build/gitClone.sh https://github.com/dotCMS/core.git core ${BUILD_ID}
 
 ENTRYPOINT ["/srv/forkDotcms.sh"]
 CMD ["dotcms"]
