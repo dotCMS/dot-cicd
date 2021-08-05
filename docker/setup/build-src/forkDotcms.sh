@@ -45,6 +45,7 @@ if [[ "${1}" == "dotcms" || -z "${1}" ]]; then
 
   # Executing Tomcat and deploy DotCMS
   echo "Executing: . /srv/entrypoint.sh ${1} &"
+  export JVM_ENDPOINT_TEST_PASS=obfuscate_me
   . /srv/entrypoint.sh ${1} &
 
   if [[ $? != 0 ]]; then
