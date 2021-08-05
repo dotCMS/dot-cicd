@@ -33,7 +33,6 @@ fi
 releaseParam='-Prelease=true'
 if [[ "${is_release}" != 'true' ]]; then
   releaseParam=''
-  cp ./gradle.properties ./gradle.properties.bak
   release_version=${github_sha}
   sed -i "s,^dotcmsReleaseVersion=.*$,dotcmsReleaseVersion=${release_version},g" ./gradle.properties
   echo "Overriding dotcmsReleaseVersion to: ${release_version}"

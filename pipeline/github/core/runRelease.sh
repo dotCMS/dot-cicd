@@ -39,6 +39,7 @@ executeCmd "docker run --rm
   -e docker_username=${DOCKER_USERNAME}
   -e docker_password=${DOCKER_PASSWORD}
   -e is_release=${IS_RELEASE}
+  -e dotcms_version=${DOTCMS_VERSION}
   -e DEBUG=${DEBUG}
   ${IMAGE_NAME} $@"
 

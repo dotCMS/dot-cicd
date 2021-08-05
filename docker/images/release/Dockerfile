@@ -24,6 +24,5 @@ RUN apk update \
     && pip3 install s3cmd
 
 RUN mkdir -p /build/src
-RUN mkdir -p ~/.ssh
 
 ENTRYPOINT [ "/srv/entrypoint.sh" ]

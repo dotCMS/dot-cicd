@@ -1,6 +1,6 @@
 # OpenJDK distributed under GPLv2+Oracle Classpath Exception license (http://openjdk.java.net/legal/gplv2+ce.html)
 # Alpine Linux packages distributed under various licenses including GPL-3.0+ (https://pkgs.alpinelinux.org/packages)
-FROM dotcms/dotcms-seed:jdk11 as prepare-integration
+FROM dotcms/dotcms-seed:21.06 as prepare-integration
 
 LABEL com.dotcms.contact = "support@dotcms.com"
 LABEL com.dotcms.vendor = "dotCMS LLC"
@@ -27,7 +27,7 @@ ARG LICENSE_KEY
 
 WORKDIR /srv
 
-RUN apk update && apk --no-cache add curl
+RUN apt update && apt upgrade -y && apt install -y curl
 
 # dotCMS core distributed under GPLv3 license (https://github.com/dotCMS/core/blob/master/license.txt)
 COPY setup/build-src/checkout.sh /build/checkout.sh
