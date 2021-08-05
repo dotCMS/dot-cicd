@@ -30,6 +30,7 @@ echo "AWS Access Key Id: ${aws_access_key_id}"
 echo "AWS Secret Access Key: ${aws_secret_access_key}"
 echo "Docker username: ${docker_username}"
 echo "Docker password: ${docker_password}"
+echo "DotCMS version: ${dotcms_version}"
 echo "Debug: ${DEBUG}"
 echo
 
