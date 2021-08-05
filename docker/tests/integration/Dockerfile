@@ -27,7 +27,7 @@ ARG LICENSE_KEY
 
 WORKDIR /srv
 
-RUN apk update && apk --no-cache add curl
+RUN apt update && apt upgrade -y && apt install -y curl
 
 # dotCMS core distributed under GPLv3 license (https://github.com/dotCMS/core/blob/master/license.txt)
 COPY setup/build-src/checkout.sh /build/checkout.sh
