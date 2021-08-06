@@ -19,6 +19,7 @@ github_sha=$5
 is_release=$6
 
 pushd dotCMS
+cp ./gradle.properties ./gradle.properties.bak
 
 echo
 echo '######################################################################'
@@ -67,5 +68,7 @@ if [[ $? != 0 ]]; then
   echo "Error executing ./gradlew -b deploy.gradle uploadDotcms ${releaseParam} -Pusername=${repo_username} -Ppassword=${repo_password} -PincludeDependencies=true"
   exit 1
 fi
+
+mv ./gradle.properties.bak ./gradle.properties
 
 popd
