@@ -35,10 +35,11 @@ echo
 
 runScript getSource ${GITHUB_USER} ${GITHUB_USER_TOKEN} ${BUILD_ID}
 pushd ${CORE_GITHUB_REPO}
-runScript generateAndUploadJars ${BUILD_ID} ${EE_BUILD_ID} ${repo_username} ${repo_password} ${BUILD_HASH} ${is_release}
+runScript setVars
+#runScript generateAndUploadJars ${BUILD_ID} ${EE_BUILD_ID} ${repo_username} ${repo_password} ${BUILD_HASH} ${is_release}
 runScript buildDistro
 runScript generateJavadoc
 runScript pushToStaticBucket all ${is_release}
-runScript updateOsgiVersion ${GITHUB_USER} ${GITHUB_USER_TOKEN}
+#runScript updateOsgiVersion ${GITHUB_USER} ${GITHUB_USER_TOKEN}
 popd
-runScript publishGithubReleases ${is_release} ${EE_BUILD_ID} ${GITHUB_USER} ${GITHUB_USER_TOKEN}
+#runScript publishGithubReleases ${is_release} ${EE_BUILD_ID} ${GITHUB_USER} ${GITHUB_USER_TOKEN}
