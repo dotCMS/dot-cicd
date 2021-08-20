@@ -3,14 +3,7 @@
 ###############################
 # Script: updateOsgiVersions.sh
 # Updates with new version of DotCMS the dependencies in plugin-seeds repo
-#
-# $1: github_user: github user
-# $2: github_user_token: github user token
 
-github_user=${1}
-github_user_token=${2}
-
-cicd_branch="master"
 # Gets the current DotCMS version
 dotcms_current_version=$(curl https://api.github.com/repos/dotcms/core/releases/latest -s | jq .tag_name -r)
 # Removes the 'v' prefix
@@ -26,15 +19,14 @@ fi
 
 pushd ../
 # Configure github user
-gitConfig ${github_user}
-plugin_seeds_github_repo_url=$(resolveRepoUrl ${PLUGIN_SEEDS_GITHUB_REPO} ${github_user_token} ${github_user})
+gitConfig ${GITHUB_USER}
+plugin_seeds_github_repo_url=$(resolveRepoUrl ${PLUGIN_SEEDS_GITHUB_REPO} ${GITHUB_USER_TOKEN} ${GITHUB_USER})
 # Clones plugin_seeds repo
 gitClone ${plugin_seeds_github_repo_url}
 pushd ${PLUGIN_SEEDS_GITHUB_REPO}
 
 if [[ "${is_release}" != 'true' ]]; then
-  cicd_branch='cicd-test'
-  git checkout -b ${cicd_branch}
+  git checkout -b cicd-test
 fi
 
 # Hardcoded list of gradle files to replace its DotCMS version

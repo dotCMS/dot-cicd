@@ -7,13 +7,9 @@
 #
 # $1: is_release: release flag
 # $2: ee_build_id: enterprise branch/commit
-# $3: github_user: github user
-# $4: github_user_token: github user token
 
 is_release=${1}
 ee_build_id=${2}
-github_user=${3}
-github_user_token=${4}
 
 # Commits an empty commit and push to provided repo url
 #
@@ -37,7 +33,7 @@ function commitAndPush {
 function pushRelease {
   local repo=${1}
   local with_submodules=${2}
-  local repo_url=$(resolveRepoUrl ${repo} ${github_user_token} ${github_user})
+  local repo_url=$(resolveRepoUrl ${repo} ${GITHUB_USER_TOKEN} ${GITHUB_USER})
 
   # Verifies for branch to be remote, if it does not exist ignore this repo
   gitRemoteLs ${repo_url} ${RELEASE_BRANCH_NAME}
@@ -51,7 +47,7 @@ Releasing on ${repo}
 #############################"
   # Git clones the repo and depending on module_path it clones the submodules as well
   if [[ -n "${module_path}" ]]; then
-    gitCloneSubModules ${repo_url} ${RELEASE_BRANCH_NAME} ${repo} ${github_user}
+    gitCloneSubModules ${repo_url} ${RELEASE_BRANCH_NAME} ${repo}
   else
     gitClone ${repo_url} ${RELEASE_BRANCH_NAME} ${repo}
   fi

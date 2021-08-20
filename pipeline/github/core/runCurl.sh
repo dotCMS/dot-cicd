@@ -17,7 +17,7 @@ docker_file_path="${DOCKER_SOURCE}/tests/curl"
 shared_folder=${DOCKER_SOURCE}/tests/shared
 
 # Cloning core
-repo_url=$(resolveRepoUrl ${CORE_GITHUB_REPO} ${GITHUB_USER_TOKEN} ${github_user})
+repo_url=$(resolveRepoUrl ${CORE_GITHUB_REPO} ${GITHUB_USER_TOKEN} ${GITHUB_USER})
 gitClone ${repo_url} ${BUILD_ID}
 
 # Resolve which docker path to use (core or docker repo folder)
