@@ -31,9 +31,10 @@ mkdir -p /build/src && pushd /build/src
 runScript setVars
 runScript createBranches
 runScript publishCoreWeb
-runScript modEeDotcmsVersion
-runScript modDotcmsVersion
-runScript uploadEeJar
-runScript undoBranches
-runScript setGithubLabels
+#runScript preBuildCore
+#runScript modEeDotcmsVersion
+#runScript modDotcmsVersion
+#runScript uploadEeJar
+#runScript undoBranches
+#runScript setGithubLabels
 popd

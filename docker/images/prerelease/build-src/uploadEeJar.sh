@@ -14,6 +14,7 @@ executeCmd "./gradlew -b deploy.gradle uploadEnterprise
   ${release_param}
   -Pusername=${REPO_USERNAME}
   -Ppassword=${REPO_PASSWORD}"
+[[ ${cmdResult} != 0 ]] && echo "Error uploading enterprise jar" && exit 1
 
 replaceTextInFile ../.gitmodules 'branch = .*' "branch = ${branch}"
 executeCmd "git add ../.gitmodules"

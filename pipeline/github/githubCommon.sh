@@ -180,6 +180,7 @@ function gitConfig {
   fi
   git config --global user.email "${email}"
   git config --global user.name "${name}"
+  git config --global pager.branch false
 
   [[ "${DEBUG}" == 'true' ]] && git config --list
 }
@@ -213,9 +214,9 @@ function gitClone {
     branch: ${branch}
     location: ${dest}"
   if [[ "${branch}" == 'master' ]]; then
-    git clone --depth 1 ${repo_url} ${dest}
+    git clone ${repo_url} ${dest}
   else
-    git clone --depth 1 --single-branch --branch ${branch} ${repo_url} ${dest}
+    git clone --branch ${branch} ${repo_url} ${dest}
   fi
   local cloneResult=$?
 

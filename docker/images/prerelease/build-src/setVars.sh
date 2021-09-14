@@ -5,13 +5,9 @@
 # Set important env-vars to be used across the release process
 
 : ${FROM_BRANCH:="master"} && export FROM_BRANCH
-export ENTERPRISE_DIR=${CORE_GITHUB_REPO}/dotCMS/src/main/enterprise
+export ENTERPRISE_DIR=dotCMS/src/main/enterprise
 
-branch="release-${RELEASE_VERSION}"
+export branch="release-${RELEASE_VERSION}"
 master_branch=master
-if [[ "${DRY_RUN}" == 'true' ]]; then
-  master_branch="master-cicd"
-fi
-
-export branch
+[[ "${DRY_RUN}" == 'true' ]] && master_branch="${master_branch}-cicd"
 export master_branch
