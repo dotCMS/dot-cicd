@@ -36,6 +36,7 @@ executeCmd "npm install
   && rm -rf dist
   && npm run build:prod
   && cp package.json ./dist/apps/dotcms-ui/package.json"
+[[ ${cmdResult} != 0 ]] && echo "Error publishing ${branch} core-web version" && exit 1
 
 printf "\e[32m Publishing Release DotCMS-UI version.... \e[0m  \n"
 pushd dist/apps/dotcms-ui
@@ -53,8 +54,7 @@ popd
 printf "\e[32m Bumping version of ${master_branch} branch \e[0m  \n"
 pushd ${CORE_WEB_GITHUB_REPO}
 
-executeCmd "git checkout master
-  && git pull origin master"
+executeCmd "git checkout master && git pull origin master"
 
 [[ "${master_branch}" != 'master' ]] && git checkout -b ${master_branch}
 
@@ -82,6 +82,7 @@ executeCmd "rm -rf node_modules
   && rm -rf dist
   && npm run build:prod
   && cp package.json ./dist/apps/dotcms-ui/package.json"
+[[ ${cmdResult} != 0 ]] && echo "Error publishing master's core-web" && exit 1
 
 pushd dist/apps/dotcms-ui
 npmPublish next

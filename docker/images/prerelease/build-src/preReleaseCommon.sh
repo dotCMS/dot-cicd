@@ -12,11 +12,14 @@
 function createAndPush {
   local repo=${1}
   local branch=${2}
+  local clone_branch=${FROM_BRANCH}
+  [[ "${clone_branch}" == 'master' ]] && clone_branch=''
 
-  resolved_repo=$(resolveRepoUrl ${repo} ${GITHUB_USER_TOKEN} ${GITHUB_USER})
+  local resolved_repo=$(resolveRepoUrl ${repo} ${GITHUB_USER_TOKEN} ${GITHUB_USER})
   printf "\e[32m Creating and pushing Release Branch on ${repo} \e[0m  \n"
   if [[ "${repo}" == "${CORE_GITHUB_REPO}" ]]; then
-    executeCmd "gitCloneSubModules ${resolved_repo}"
+    ee_resolved_repo=$(resolveRepoUrl ${ENTERPRISE_GITHUB_REPO} ${GITHUB_USER_TOKEN} ${GITHUB_USER})
+    executeCmd "gitCloneSubModules ${resolved_repo} ${clone_branch}"
     pushd ${repo}
     git status
     [[ "${DEBUG}" == 'true' ]] && cat .gitmodules
@@ -24,29 +27,45 @@ function createAndPush {
     [[ "${DEBUG}" == 'true' ]] && cat .gitmodules
     popd
   else
-    executeCmd "gitClone ${resolved_repo}"
+    executeCmd "gitClone ${resolved_repo} ${clone_branch}"
   fi
 
   pushd ${repo}
-  executeCmd "git pull origin master"
-  [[ "${FROM_BRANCH}" != 'master' ]] && executeCmd "git checkout -b ${FROM_BRANCH} --track origin/${FROM_BRANCH}"
-
-  local checkoutCmd="git checkout -b ${branch}"
-  gitRemoteLs ${resolved_repo} ${branch}
-  local remote_branch=$?
-  if [[ ${remote_branch} == 1 ]]; then
-    if [[ "${DRY_RUN}" != 'true' ]]; then
-      checkoutCmd="${checkoutCmd} --track origin/${branch}"
-    else
-      undoPush ${repo} ${branch}
-    fi
-  fi
-
-  executeCmd "${checkoutCmd}"
+  checkoutBranch ${repo} ${branch}
   executeCmd "git push ${resolved_repo} ${branch}"
+  if [[ "${repo}" == "${CORE_GITHUB_REPO}" ]]; then
+    pushd ${ENTERPRISE_DIR}
+    checkoutBranch ${ENTERPRISE_GITHUB_REPO} ${branch}
+    executeCmd "git push ${ee_resolved_repo} ${branch}"
+    popd
+  fi
   popd
 
   printf "\e[32m Repo ${repo} created and pushed \e[0m  \n"
+}
+
+# Depending on if it exists, it checkouts an existing branch or create a new one.
+# If DRY_RUN mode is 'true' it removes the existent
+#
+# $1: repo: repo name
+# $2: branch: branch to create
+function checkoutBranch {
+  local repo=${1}
+  local branch=${2}
+  local resolved_repo=$(resolveRepoUrl ${repo} ${GITHUB_USER_TOKEN} ${GITHUB_USER})
+
+  gitRemoteLs ${resolved_repo} ${branch}
+  local remote_branch=$?
+  if [[ ${remote_branch} == 1 ]]; then
+    if [[ "${DRY_RUN}" == 'true' ]]; then
+      undoPush ${repo} ${branch}
+      remote_branch=0
+    fi
+  fi
+
+  local checkout_cmd="git checkout -b ${branch}"
+  [[ ${remote_branch} == 1 ]] && checkout_cmd="${checkout_cmd} --track origin/${branch}"
+  executeCmd "${checkout_cmd}"
 }
 
 # Remotely removes a given branch at given repo
@@ -62,6 +81,9 @@ function undoPush {
   if [[ "${repo}" == "${CORE_GITHUB_REPO}" ]]; then
     resolved_repo=$(resolveRepoUrl ${repo} ${GITHUB_USER_TOKEN} ${GITHUB_USER})
     executeCmd "git push ${resolved_repo} :${branch}"
+    pushd ${ENTERPRISE_DIR}
+    executeCmd "git push ${ee_resolved_repo} :${branch}"
+    popd
   else
     executeCmd "git push origin :${branch}"
   fi
@@ -101,7 +123,8 @@ function npmPublish {
   local tag=${1}
   local cmd="npm publish --tag ${tag}"
   [[ "${DRY_RUN}" == 'true' ]] && cmd="${cmd} --dry-run"
-  execute "${cmd}"
+  executeCmd "${cmd}"
+  [[ ${cmdResult} != 0 ]] && echo "Error running npm publish with tag ${tag}" && exit 1
 }
 
 # Calls python script to replace a given text by a provided one
