@@ -31,6 +31,7 @@ echo
 mkdir -p /build/src && pushd /build/src
 runScript setVars
 runScript createBranches
+runScript preBuildCore
 runScript publishCoreWeb
 runScript preBuildCore
 runScript modEeDotcmsVersion
