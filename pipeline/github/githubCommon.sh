@@ -10,14 +10,12 @@
 function executeCmd {
   local cmd=${1}
   cmd=$(echo ${cmd} | tr '\n' ' \ \n')
-  [[ "${DEBUG}" == 'true' ]] && echo "Executing:
+  echo "Executing:
 ==========
 ${cmd}
 "
   eval "${cmd}; export cmdResult=$?"
-  if [[ "${DEBUG}" == 'true' ]]; then
-    echo -e "cmdResult: ${cmdResult}\n"
-  fi
+  echo -e "cmdResult: ${cmdResult}\n"
 }
 
 # HTTP-Encodes a provided string
@@ -180,6 +178,8 @@ function gitConfig {
   fi
   git config --global user.email "${email}"
   git config --global user.name "${name}"
+  git config --global pager.branch false
+  git config pull.rebase false
 
   [[ "${DEBUG}" == 'true' ]] && git config --list
 }
@@ -212,18 +212,27 @@ function gitClone {
     repo: ${repo_url}
     branch: ${branch}
     location: ${dest}"
-  if [[ "${branch}" == 'master' ]]; then
-    git clone --depth 1 ${repo_url} ${dest}
-  else
-    git clone --depth 1 --single-branch --branch ${branch} ${repo_url} ${dest}
+
+  local git_clone_mode=
+  [[ "${GIT_CLONE_STRATEGY}" != 'full' ]] && git_clone_mode='--depth 1'
+
+  local git_branch_params=
+  if [[ "${branch}" != 'master' ]]; then
+    git_branch_params="--branch ${branch}"
+    if [[ "${GIT_CLONE_STRATEGY}" != 'full' ]]; then
+      git_clone_mode="${git_clone_mode} --single-branch"
+    fi
   fi
-  local cloneResult=$?
+
+  local git_clone_params="${git_clone_mode} ${git_branch_params}"
+  clone_cmd="git clone ${git_clone_params} ${repo_url} ${dest}"
+  executeCmd "${clone_cmd}"
 
   pushd ${dest}
   git clean -f -d
   popd
 
-  return ${cloneResult}
+  return ${cmdResult}
 }
 
 # Given a repo url use it to replace the url element in a .gitmodules file in provided location
@@ -427,9 +436,7 @@ function buildBase {
   "
   dcResult=$?
 
-  if [[ ${dcResult} != 0 ]]; then
-    exit 1
-  fi
+#  [[ ${dcResult} != 0 ]] && exit 1
 }
 
 # Creates a directory and file with provided license
