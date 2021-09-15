@@ -10,6 +10,7 @@ export IMAGE_NAME='dotcms/dotcms-pre-release-process'
 # Copy common collection of functions
 cp ${DOT_CICD_LIB}/pipeline/github/githubCommon.sh ${DOCKER_SOURCE}/images/prerelease/build-src
 cp ${DOCKER_SOURCE}/images/release/build-src/releaseCommon.sh ${DOCKER_SOURCE}/images/prerelease/build-src
+cp ${DOCKER_SOURCE}/images/release/build-src/changeEeDependency.py ${DOCKER_SOURCE}/images/prerelease/build-src
 pushd ${DOCKER_SOURCE}/images/prerelease
 
 executeCmd "docker build --no-cache -t ${IMAGE_NAME} ."
