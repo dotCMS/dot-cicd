@@ -14,10 +14,9 @@ function executeCmd {
 ==========
 ${cmd}
 "
-  eval "${cmd}; export cmdResult=$?"
-  if [[ "${DEBUG}" == 'true' ]]; then
-    echo -e "cmdResult: ${cmdResult}\n"
-  fi
+  eval "${cmd}"
+  export cmdResult=$?
+  [[ "${DEBUG}" == 'true' ]] && echo -e "cmdResult: ${cmdResult}\n"
 }
 
 # HTTP-Encodes a provided string
