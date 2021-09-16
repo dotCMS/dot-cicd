@@ -6,7 +6,7 @@
 # gradle.properties to set the release (RC) & Master versions
 
 npm set //registry.npmjs.org/:_authToken ${NPM_TOKEN}
-npm_counter_version=7
+npm_counter_version=20
 
 printf "\e[32m Publishing core-web version \e[0m  \n"
 pushd ${CORE_WEB_GITHUB_REPO}
@@ -64,7 +64,7 @@ executeCmd "git checkout master && git pull origin master"
 [[ "${master_branch}" != 'master' ]] && git checkout -b ${master_branch}
 
 echo "Updating package.json...."
-core_web_master_version="$(pumpUpVersion $(getValidNpmVersion $RELEASE_VERSION))-next.${npm_counter_version}"
+core_web_master_version="$(pumpUpVersion $(getValidNpmVersion ${RELEASE_VERSION}))-next.${npm_counter_version}"
 sed -i -E "s/\"version\": \".*\"/\"version\": \"${core_web_master_version}\"/g" package.json
 cat package.json | grep "version\":"
 

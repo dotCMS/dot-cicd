@@ -100,8 +100,9 @@ function undoPush {
 #
 # $1: version
 function getValidNpmVersion {
-  local major=$(echo $1 | cut -d. -f1)
-  local minor=$(echo $1 | cut -d. -f2)
+  local version=${1}
+  local major=$(echo ${version} | cut -d. -f1)
+  local minor=$(echo ${version} | cut -d. -f2)
 
   #Removes the '0' from the month if needed
   [[ "${minor::1}" == "0" ]] && minor=${minor:1:1}
