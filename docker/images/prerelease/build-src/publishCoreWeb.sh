@@ -6,6 +6,7 @@
 # gradle.properties to set the release (RC) & Master versions
 
 npm set //registry.npmjs.org/:_authToken ${NPM_TOKEN}
+npm_artifact_version='.5'
 
 printf "\e[32m Publishing core-web version \e[0m  \n"
 pushd ${CORE_WEB_GITHUB_REPO}
@@ -14,15 +15,13 @@ executeCmd "git branch"
 
 # Set RELEASE_VERSION in package.json and push it
 echo 'Updating package.json....'
-core_web_release_version="$(getValidNpmVersion ${RELEASE_VERSION})-rc.2"
+core_web_release_version="$(getValidNpmVersion ${RELEASE_VERSION})-rc${npm_artifact_version}"
 sed -i -E "s/\"version\": \".*\"/\"version\": \"${core_web_release_version}\"/g" package.json
 cat package.json | grep "version\":"
-#replaceTextInFile ./package.json '"version": ".*"' "\"version\": \"${core_web_release_version}\""
 
 pushd libs/dotcms-webcomponents
 sed -i -E "s/\"version\": \".*\"/\"version\": \"${core_web_release_version}\"/g" package.json
 cat package.json | grep "version\":"
-#replaceTextInFile ./package.json '"version": ".*"' "\"version\": \"${core_web_release_version}\""
 popd
 
 printf "\e[32m Committing changes to branch ${branch} \e[0m  \n"
@@ -65,15 +64,13 @@ executeCmd "git checkout master && git pull origin master"
 [[ "${master_branch}" != 'master' ]] && git checkout -b ${master_branch}
 
 echo "Updating package.json...."
-core_web_master_version="$(pumpUpVersion $(getValidNpmVersion $RELEASE_VERSION))-next.2"
+core_web_master_version="$(pumpUpVersion $(getValidNpmVersion $RELEASE_VERSION))-next${npm_artifact_version}"
 sed -i -E "s/\"version\": \".*\"/\"version\": \"${core_web_release_version}\"/g" package.json
 cat package.json | grep "version\":"
-#replaceTextInFile ./package.json '"version": ".*"' "\"version\": \"${core_web_release_version}\""
 
 pushd libs/dotcms-webcomponents
 sed -i -E "s/\"version\": \".*\"/\"version\": \"${core_web_release_version}\"/g" package.json
 cat package.json | grep "version\":"
-#replaceTextInFile ./package.json '"version": ".*"' "\"version\": \"${core_web_release_version}\""
 popd
 
 executeCmd "git status && git add package.json libs/dotcms-webcomponents/package.json"
