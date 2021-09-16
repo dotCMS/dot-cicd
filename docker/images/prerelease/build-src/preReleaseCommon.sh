@@ -31,7 +31,6 @@ function createAndPush {
   fi
 
   pushd ${repo}
-  executeCmd "git config pull.rebase false && git pull"
   checkoutBranch ${repo} ${branch}
   local exists=$?
   [[ ${exists} == 0 ]] && executeCmd "git push ${resolved_repo} ${branch}"

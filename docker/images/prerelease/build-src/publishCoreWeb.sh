@@ -5,6 +5,8 @@
 # Modify package.json on release and master branches, push and run npm run publish:dev and edit
 # gradle.properties to set the release (RC) & Master versions
 
+npm set //registry.npmjs.org/:_authToken ${NPM_TOKEN}
+
 printf "\e[32m Publishing core-web version \e[0m  \n"
 pushd ${CORE_WEB_GITHUB_REPO}
 gitConfig ${GITHUB_USER}

@@ -181,6 +181,7 @@ function gitConfig {
   git config --global user.email "${email}"
   git config --global user.name "${name}"
   git config --global pager.branch false
+  git config pull.rebase false
 
   [[ "${DEBUG}" == 'true' ]] && git config --list
 }
