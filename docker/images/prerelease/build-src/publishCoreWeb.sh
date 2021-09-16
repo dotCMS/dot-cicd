@@ -14,7 +14,7 @@ executeCmd "git branch"
 
 # Set RELEASE_VERSION in package.json and push it
 echo 'Updating package.json....'
-core_web_release_version="$(getValidNpmVersion ${RELEASE_VERSION})-rc.0"
+core_web_release_version="$(getValidNpmVersion ${RELEASE_VERSION})-rc.2"
 sed -i -E "s/\"version\": \".*\"/\"version\": \"${core_web_release_version}\"/g" package.json
 cat package.json | grep "version\":"
 #replaceTextInFile ./package.json '"version": ".*"' "\"version\": \"${core_web_release_version}\""
@@ -65,7 +65,7 @@ executeCmd "git checkout master && git pull origin master"
 [[ "${master_branch}" != 'master' ]] && git checkout -b ${master_branch}
 
 echo "Updating package.json...."
-core_web_master_version="$(pumpUpVersion $(getValidNpmVersion $RELEASE_VERSION))-next.0"
+core_web_master_version="$(pumpUpVersion $(getValidNpmVersion $RELEASE_VERSION))-next.2"
 sed -i -E "s/\"version\": \".*\"/\"version\": \"${core_web_release_version}\"/g" package.json
 cat package.json | grep "version\":"
 #replaceTextInFile ./package.json '"version": ".*"' "\"version\": \"${core_web_release_version}\""
