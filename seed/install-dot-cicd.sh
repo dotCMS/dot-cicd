@@ -82,7 +82,6 @@ gitCloneAndCheckout () {
       cd ${work_dir}
       echo 'Due to deprecation location of DOT_CICD_PATH, a symlink will be created to guarantee backwards compatibility'
       ln -s ${DOT_CICD_PATH} dotcicd
-      ls -las .
     fi
   fi
 }

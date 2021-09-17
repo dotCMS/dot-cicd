@@ -10,12 +10,12 @@
 function executeCmd {
   local cmd=${1}
   cmd=$(echo ${cmd} | tr '\n' ' \ \n')
-  echo "Executing:
+  [[ "${DEBUG}" == 'true' ]] && echo "Executing:
 ==========
 ${cmd}
 "
   eval "${cmd}; export cmdResult=$?"
-  echo -e "cmdResult: ${cmdResult}\n"
+  [[ "${DEBUG}" == 'true' ]] && echo -e "cmdResult: ${cmdResult}\n"
 }
 
 # HTTP-Encodes a provided string
@@ -226,16 +226,11 @@ function gitClone {
 
   local git_clone_params="${git_clone_mode} ${git_branch_params}"
   clone_cmd="git clone ${git_clone_params} ${repo_url} ${dest}"
-  echo "OJO:>> ${clone_cmd}"
   executeCmd "${clone_cmd}"
 
-echo "OJO:>>1"
   pushd ${dest}
-echo "OJO:>>2"
   git clean -f -d
-echo "OJO:>>3"
   popd
-echo "OJO:>>4"
 
   return ${cmdResult}
 }
@@ -261,7 +256,7 @@ function gitSubModules {
 
   git submodule update --init --recursive
   local sub_result=$?
-  [[ ${sub_result} != 0 ]] && echo 'Error updating submodule' && exit 1
+#  [[ ${sub_result} != 0 ]] && echo 'Error updating submodule' && exit 1
 
   # Try to checkout submodule branch and
   local module_path=$(cat .gitmodules| grep "path =" | cut -d'=' -f2 | tr -d '[:space:]')
@@ -289,9 +284,8 @@ function gitSubModules {
 # $@: same args as gitClone
 function gitCloneSubModules {
   gitClone $@
-  echo "OJO:>>5"
   local clone_result=$?
-  [[ ${clone_result} != 0 ]] && return ${clone_result}
+#  [[ ${clone_result} != 0 ]] && return ${clone_result}
 
   [[ "${DEBUG}" == 'true' ]] && pwd && ls -las .
 
@@ -301,7 +295,6 @@ function gitCloneSubModules {
   [[ "${DEBUG}" == 'true' ]] && echo "submodules args: $(dirname ${repo_url}) ${dest}"
 
   gitSubModules $(dirname ${repo_url}) ${dest}
-  echo "OJO:>>6"
   local sub_result=$?
 
   return ${sub_result}
@@ -443,9 +436,7 @@ function buildBase {
   "
   dcResult=$?
 
-  if [[ ${dcResult} != 0 ]]; then
-    exit 1
-  fi
+  [[ ${dcResult} != 0 ]] && exit 1
 }
 
 # Creates a directory and file with provided license
