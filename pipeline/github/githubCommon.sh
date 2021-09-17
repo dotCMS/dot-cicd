@@ -213,18 +213,27 @@ function gitClone {
     repo: ${repo_url}
     branch: ${branch}
     location: ${dest}"
-  if [[ "${branch}" == 'master' ]]; then
-    git clone ${repo_url} ${dest}
-  else
-    git clone --branch ${branch} ${repo_url} ${dest}
+
+  local git_clone_mode=
+  [[ "${GIT_CLONE_STRATEGY}" != 'full' ]] && git_clone_mode='--depth 1'
+
+  local git_branch_params=
+  if [[ "${branch}" != 'master' ]]; then
+    git_branch_params="--branch ${branch}"
+    if [[ "${GIT_CLONE_STRATEGY}" != 'full' ]]; then
+      git_clone_mode="${git_clone_mode} --single-branch"
+    fi
   fi
-  local cloneResult=$?
+
+  local git_clone_params="${git_clone_mode} ${git_branch_params}"
+  clone_cmd="git clone ${git_clone_params} ${repo_url} ${dest}"
+  executeCmd "${clone_cmd}"
 
   pushd ${dest}
   git clean -f -d
   popd
 
-  return ${cloneResult}
+  return ${cmdResult}
 }
 
 # Given a repo url use it to replace the url element in a .gitmodules file in provided location
