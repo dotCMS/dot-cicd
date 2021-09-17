@@ -6,7 +6,6 @@
 # gradle.properties to set the release (RC) & Master versions
 
 npm set //registry.npmjs.org/:_authToken ${NPM_TOKEN}
-npm_counter_version=20
 
 printf "\e[32m Publishing core-web version \e[0m  \n"
 pushd ${CORE_WEB_GITHUB_REPO}
@@ -15,12 +14,12 @@ executeCmd "git branch"
 
 # Set RELEASE_VERSION in package.json and push it
 echo 'Updating package.json....'
-core_web_release_version="$(getValidNpmVersion ${RELEASE_VERSION})-rc.1"
-sed -i -E "s/\"version\": \".*\"/\"version\": \"${core_web_release_version}\"/g" package.json
+core_web_release_version="$(getValidNpmVersion ${RELEASE_VERSION})"
+sed -i -E "s/\"version\": \".*\"/\"version\": \"${core_web_release_version}-rc.1\"/g" package.json
 cat package.json | grep "version\":"
 
 pushd libs/dotcms-webcomponents
-sed -i -E "s/\"version\": \".*\"/\"version\": \"${core_web_release_version}\"/g" package.json
+sed -i -E "s/\"version\": \".*\"/\"version\": \"${core_web_release_version}-rc.9\"/g" package.json
 cat package.json | grep "version\":"
 popd
 
@@ -33,8 +32,6 @@ echo "package.json files updated and pushed in Release branch"
 popd
 
 # Publish CORE-WEB & DotCMS-WebComponents & CORE-WEB Release version
-printf "\e[32m Publishing core-web version \e[0m  \n"
-
 pushd ${CORE_WEB_GITHUB_REPO}
 executeCmd "npm install
   && npm i -g @angular/cli
@@ -64,12 +61,12 @@ executeCmd "git checkout master && git pull origin master"
 [[ "${master_branch}" != 'master' ]] && git checkout -b ${master_branch}
 
 echo "Updating package.json...."
-core_web_master_version="$(pumpUpVersion $(getValidNpmVersion ${RELEASE_VERSION}))-next.4"
-sed -i -E "s/\"version\": \".*\"/\"version\": \"${core_web_master_version}\"/g" package.json
+core_web_master_version="$(pumpUpVersion $(getValidNpmVersion ${RELEASE_VERSION}))"
+sed -i -E "s/\"version\": \".*\"/\"version\": \"${core_web_master_version}-next.16\"/g" package.json
 cat package.json | grep "version\":"
 
 pushd libs/dotcms-webcomponents
-sed -i -E "s/\"version\": \".*\"/\"version\": \"${core_web_master_version}\"/g" package.json
+sed -i -E "s/\"version\": \".*\"/\"version\": \"${core_web_master_version}-next.4\"/g" package.json
 cat package.json | grep "version\":"
 popd
 
