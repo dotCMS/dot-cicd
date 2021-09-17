@@ -10,13 +10,13 @@
 function executeCmd {
   local cmd=${1}
   cmd=$(echo ${cmd} | tr '\n' ' \ \n')
-  [[ "${DEBUG}" == 'true' ]] && echo "Executing:
+  echo "Executing:
 ==========
 ${cmd}
 "
   eval "${cmd}; export cmdResult=$?"
 
-  [[ "${DEBUG}" == 'true' ]] && echo -e "cmdResult: ${cmdResult}\n"
+  echo -e "cmdResult: ${cmdResult}\n"
 }
 
 # HTTP-Encodes a provided string
