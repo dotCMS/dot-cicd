@@ -230,9 +230,14 @@ function gitClone {
   echo "OJO:>> ${clone_cmd}"
   executeCmd "${clone_cmd}"
 
+echo "OJO:>>1"
   pushd ${dest}
+echo "OJO:>>2"
   git clean -f -d
+echo "OJO:>>3"
   popd
+echo "OJO:>>4"
+
 
   return ${cmdResult}
 }
@@ -286,6 +291,7 @@ function gitSubModules {
 # $@: same args as gitClone
 function gitCloneSubModules {
   gitClone $@
+  echo "OJO:>>5"
   local clone_result=$?
   [[ ${clone_result} != 0 ]] && return ${clone_result}
 
@@ -297,6 +303,7 @@ function gitCloneSubModules {
   [[ "${DEBUG}" == 'true' ]] && echo "submodules args: $(dirname ${repo_url}) ${dest}"
 
   gitSubModules $(dirname ${repo_url}) ${dest}
+  echo "OJO:>>6"
   local sub_result=$?
 
   return ${sub_result}
