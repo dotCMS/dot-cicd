@@ -436,7 +436,7 @@ function buildBase {
   "
   dcResult=$?
 
-  [[ ${dcResult} != 0 ]] && exit 1
+#  [[ ${dcResult} != 0 ]] && exit 1
 }
 
 # Creates a directory and file with provided license
