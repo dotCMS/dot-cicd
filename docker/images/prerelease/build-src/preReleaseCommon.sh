@@ -125,6 +125,7 @@ function pumpUpVersion {
 #
 # $1: tag: provided tag
 function npmPublish {
+  executeCmd "npm set //registry.npmjs.org/:_authToken ${NPM_TOKEN}"
   local tag=${1}
   local cmd="npm publish --tag ${tag}"
   [[ "${DRY_RUN}" == 'true' ]] && cmd="${cmd} --dry-run"
