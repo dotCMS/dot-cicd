@@ -227,6 +227,7 @@ function gitClone {
 
   local git_clone_params="${git_clone_mode} ${git_branch_params}"
   clone_cmd="git clone ${git_clone_params} ${repo_url} ${dest}"
+  echo "OJO:>> ${clone_cmd}"
   executeCmd "${clone_cmd}"
 
   pushd ${dest}
