@@ -10,7 +10,7 @@
 function executeCmd {
   local cmd=${1}
   cmd=$(echo ${cmd} | tr '\n' ' \ \n')
-  [[ "${DEBUG}" == 'true' ]] && echo "Executing:
+  echo "Executing:
 ==========
 ${cmd}
 "
