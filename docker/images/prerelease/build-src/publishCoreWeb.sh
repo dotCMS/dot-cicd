@@ -5,8 +5,7 @@
 # Modify package.json on release and master branches, push and run npm run publish:dev and edit
 # gradle.properties to set the release (RC) & Master versions
 
-# This should be  1. May parametrized it by a env-var.
-npm_artifact_version=22
+: ${NPM_ARTIFACT_VERSION:=1}
 
 printf "\e[32m Publishing core-web version \e[0m  \n"
 pushd ${CORE_WEB_GITHUB_REPO}
@@ -16,11 +15,11 @@ executeCmd "git branch"
 # Set RELEASE_VERSION in package.json and push it
 echo 'Updating package.json....'
 core_web_release_version="$(getValidNpmVersion ${RELEASE_VERSION})"
-sed -i -E "s/\"version\": \".*\"/\"version\": \"${core_web_release_version}-rc.${npm_artifact_version}\"/g" package.json
+sed -i -E "s/\"version\": \".*\"/\"version\": \"${core_web_release_version}-rc.${NPM_ARTIFACT_VERSION}\"/g" package.json
 cat package.json | grep "version\":"
 
 pushd libs/dotcms-webcomponents
-sed -i -E "s/\"version\": \".*\"/\"version\": \"${core_web_release_version}-rc.${npm_artifact_version}\"/g" package.json
+sed -i -E "s/\"version\": \".*\"/\"version\": \"${core_web_release_version}-rc.${NPM_ARTIFACT_VERSION}\"/g" package.json
 cat package.json | grep "version\":"
 popd
 
@@ -63,11 +62,11 @@ executeCmd "git checkout master && git pull origin master"
 
 echo "Updating package.json...."
 core_web_master_version="$(pumpUpVersion $(getValidNpmVersion ${RELEASE_VERSION}))"
-sed -i -E "s/\"version\": \".*\"/\"version\": \"${core_web_master_version}-next.${npm_artifact_version}\"/g" package.json
+sed -i -E "s/\"version\": \".*\"/\"version\": \"${core_web_master_version}-next.${NPM_ARTIFACT_VERSION}\"/g" package.json
 cat package.json | grep "version\":"
 
 pushd libs/dotcms-webcomponents
-sed -i -E "s/\"version\": \".*\"/\"version\": \"${core_web_master_version}-next.${npm_artifact_version}\"/g" package.json
+sed -i -E "s/\"version\": \".*\"/\"version\": \"${core_web_master_version}-next.${NPM_ARTIFACT_VERSION}\"/g" package.json
 cat package.json | grep "version\":"
 popd
 
