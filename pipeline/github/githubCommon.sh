@@ -14,7 +14,9 @@ function executeCmd {
 ==========
 ${cmd}
 "
-  eval "${cmd}; export cmdResult=$?"
+  eval "${cmd}"
+  export cmdResult=$?
+  
   [[ "${DEBUG}" == 'true' ]] && echo -e "cmdResult: ${cmdResult}\n"
 }
 
