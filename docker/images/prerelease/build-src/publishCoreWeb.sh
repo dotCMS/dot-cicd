@@ -5,7 +5,7 @@
 # Modify package.json on release and master branches, push and run npm run publish:dev and edit
 # gradle.properties to set the release (RC) & Master versions
 
-: ${NPM_ARTIFACT_VERSION:=22}
+: ${NPM_ARTIFACT_VERSION:=1}
 
 printf "\e[32m Publishing core-web version \e[0m  \n"
 pushd ${CORE_WEB_GITHUB_REPO}
