@@ -258,7 +258,7 @@ function gitSubModules {
 
   git submodule update --init --recursive
   local sub_result=$?
-#  [[ ${sub_result} != 0 ]] && echo 'Error updating submodule' && exit 1
+  [[ ${sub_result} != 0 ]] && echo 'Error updating submodule' && exit 1
 
   # Try to checkout submodule branch and
   local module_path=$(cat .gitmodules| grep "path =" | cut -d'=' -f2 | tr -d '[:space:]')
@@ -287,7 +287,7 @@ function gitSubModules {
 function gitCloneSubModules {
   gitClone $@
   local clone_result=$?
-#  [[ ${clone_result} != 0 ]] && return ${clone_result}
+  [[ ${clone_result} != 0 ]] && return ${clone_result}
 
   [[ "${DEBUG}" == 'true' ]] && pwd && ls -las .
 
