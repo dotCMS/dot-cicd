@@ -14,9 +14,8 @@ function executeCmd {
 ==========
 ${cmd}
 "
-  eval "${cmd}"
-  export cmdResult=$?
-  [[ "${DEBUG}" == 'true' ]] && echo -e "cmdResult: ${cmdResult}\n"
+  eval "${cmd}; export cmdResult=$?"
+  echo -e "cmdResult: ${cmdResult}\n"
 }
 
 # HTTP-Encodes a provided string
@@ -237,7 +236,6 @@ echo "OJO:>>2"
 echo "OJO:>>3"
   popd
 echo "OJO:>>4"
-
 
   return ${cmdResult}
 }
