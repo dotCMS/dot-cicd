@@ -80,7 +80,6 @@ function undoPush {
   local repo=${1}
   local branch=${2}
 
-  pushd ${repo}
   printf "\e[32m Removing just created branch ${branch} for ${repo} \e[0m  \n"
   if [[ "${repo}" == "${CORE_GITHUB_REPO}" ]]; then
     resolved_repo=$(resolveRepoUrl ${repo} ${GITHUB_USER_TOKEN} ${GITHUB_USER})
@@ -92,8 +91,7 @@ function undoPush {
     executeCmd "git push origin :${branch}"
   fi
 
-  [[ ${cmdResult} != 0 ]] && echo "Error pushing ${branch}" && exit 1
-  popd
+  [[ ${cmdResult} != 0 ]] && echo "Error pushing ${branch}, ignoring this"
 }
 
 # Given a version gets valid npm version from it

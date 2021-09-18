@@ -14,7 +14,8 @@ function executeCmd {
 ==========
 ${cmd}
 "
-  eval "${cmd}; export cmdResult=$?"
+  eval "${cmd}"
+  export cmdResult=$?
   echo -e "cmdResult: ${cmdResult}\n"
 }
 
@@ -241,9 +242,9 @@ function gitClone {
 # $2: dest: destination to save the repo
 function gitSubModules {
   local repo_url=${1}
-  [[ -z "${repo_url}" ]] && echo "No repo url provided, aborting" && exit 1
+  [[ -z "${repo_url}" ]] && echo "No repo url provided, aborting" && return 1
   local dest=${2}
-  [[ -z "${dest}" ]] && echo "No git folder provided, aborting" && exit 1
+  [[ -z "${dest}" ]] && echo "No git folder provided, aborting" && return 2
 
   echo 'Getting submodules'
   pushd ${dest}
@@ -254,9 +255,8 @@ function gitSubModules {
   sed -i "s,git@github.com:dotCMS,${repo_url},g" .gitmodules
   [[ "${DEBUG}" == 'true' ]] && cat .gitmodules
 
-  git submodule update --init --recursive
-  local sub_result=$?
-  [[ ${sub_result} != 0 ]] && echo 'Error updating submodule' && exit 1
+  executeCmd "git submodule update --init --recursive"
+  [[ ${cmdResult} != 0 ]] && echo 'Error updating submodule' && popd && return 3
 
   # Try to checkout submodule branch and
   local module_path=$(cat .gitmodules| grep "path =" | cut -d'=' -f2 | tr -d '[:space:]')
@@ -264,19 +264,18 @@ function gitSubModules {
   pushd ${module_path}
   gitConfig ${GITHUB_USER}
   if [[ "${module_branch}" != 'master' ]]; then
-    git checkout -b ${module_branch} --track origin/${module_branch}
+    executeCmd "git checkout -b ${module_branch} --track origin/${module_branch}"
   else
-    git checkout master
+    executeCmd "git checkout master"
   fi
 
-  git pull origin ${module_branch}
-  sub_result=$?
-  [[ ${sub_result} != 0 ]] && echo 'Error pulling from submodule' && exit 1
+  executeCmd "git pull origin ${module_branch}"
+  [[ ${cmdResult} != 0 ]] && echo 'Error pulling from submodule' && popd && popd && return 4
 
   popd
   popd
 
-  return ${sub_result}
+  return 0
 }
 
 # Git clones with submodules support
@@ -434,9 +433,7 @@ function buildBase {
     ${build_extra_args}
     ${docker_file_path}
   "
-  dcResult=$?
-
-#  [[ ${dcResult} != 0 ]] && exit 1
+  return ${cmdResult}
 }
 
 # Creates a directory and file with provided license
