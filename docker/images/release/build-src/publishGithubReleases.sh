@@ -17,10 +17,10 @@ ee_build_id=${2}
 function commitAndPush {
   local repo_url=${1}
 
-  git commit --allow-empty -m "Publish Release"
+  executeCmd "git commit --allow-empty -m \"Publish Release\""
 
   if [[ "${is_release}" == 'true' ]]; then
-    git push ${repo_url}
+    executeCmd "git push ${repo_url}"
   else
     echo "Dry run detected, not pushing ${RELEASE_BRANCH_NAME} to ${repo_url}"
   fi
