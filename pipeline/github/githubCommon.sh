@@ -10,13 +10,17 @@
 function executeCmd {
   local cmd=${1}
   cmd=$(echo ${cmd} | tr '\n' ' \ \n')
-  echo "Executing:
-==========
-${cmd}
-"
+  echo "==============
+Executing cmd:
+==============
+${cmd}"
   eval "${cmd}"
   export cmdResult=$?
-  echo -e "cmdResult: ${cmdResult}\n"
+  echo "cmdResult: ${cmdResult}"
+  if [[ ${cmdResult} != 0 ]]; then
+    echo "Error executing: ${cmd}"
+  fi
+  echo
 }
 
 # HTTP-Encodes a provided string
@@ -228,12 +232,13 @@ function gitClone {
   local git_clone_params="${git_clone_mode} ${git_branch_params}"
   clone_cmd="git clone ${git_clone_params} ${repo_url} ${dest}"
   executeCmd "${clone_cmd}"
+  [[ ${cmdResult} != 0 ]] && return ${cmdResult}
 
   pushd ${dest}
-  git clean -f -d
+  executeCmd "git clean -f -d"
   popd
 
-  return ${cmdResult}
+  return 0
 }
 
 # Given a repo url use it to replace the url element in a .gitmodules file in provided location
