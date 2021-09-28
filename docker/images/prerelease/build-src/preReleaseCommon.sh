@@ -4,6 +4,29 @@
 # Script: preReleaseCommon.sh
 # Common functions script
 
+# Fallbacks into cloning the provided repo when the previous on fails
+#
+# $1: repo: repo name
+# $2: error_code: error code from previous clone
+function cloneFallback {
+  local repo=${1}
+  local error_code=${2}
+  local resolved_repo=$(resolveRepoUrl ${repo} ${GITHUB_USER_TOKEN} ${GITHUB_USER})
+
+  [[ ${cmdResult} == 0 ]] && return 0
+
+  if [[ "${DRY_RUN}" == 'true' && ${cmdResult} == 128 ]]; then
+    if [[ "${repo}" == "${CORE_GITHUB_REPO}" ]]; then
+      executeCmd "gitCloneSubModules ${resolved_repo}"
+    else
+      executeCmd "gitClone ${resolved_repo}"
+    fi
+    [[ ${cmdResult} != 0 ]] && exit 1
+  else
+    exit 1
+  fi
+}
+
 # Creates a new branch from a given repo.
 # Branch is also provided
 #
@@ -18,8 +41,8 @@ function createAndPush {
   local resolved_repo=$(resolveRepoUrl ${repo} ${GITHUB_USER_TOKEN} ${GITHUB_USER})
   printf "\e[32m Creating and pushing Release Branch on ${repo} \e[0m  \n"
   if [[ "${repo}" == "${CORE_GITHUB_REPO}" ]]; then
-    ee_resolved_repo=$(resolveRepoUrl ${ENTERPRISE_GITHUB_REPO} ${GITHUB_USER_TOKEN} ${GITHUB_USER})
     executeCmd "gitCloneSubModules ${resolved_repo} ${clone_branch}"
+    cloneFallback ${repo} ${cmdResult}
     pushd ${repo}
     git status
     [[ "${DEBUG}" == 'true' ]] && cat .gitmodules
@@ -28,15 +51,18 @@ function createAndPush {
     popd
   else
     executeCmd "gitClone ${resolved_repo} ${clone_branch}"
+    cloneFallback ${repo} ${cmdResult}
   fi
 
   pushd ${repo}
   checkoutBranch ${repo} ${branch}
-  executeCmd "git push ${resolved_repo} ${branch}"
+  [[ $? == 0 ]] && executeCmd "git push ${resolved_repo} ${branch}"
+
   if [[ "${repo}" == "${CORE_GITHUB_REPO}" ]]; then
+    local ee_resolved_repo=$(resolveRepoUrl ${ENTERPRISE_GITHUB_REPO} ${GITHUB_USER_TOKEN} ${GITHUB_USER})
     pushd ${ENTERPRISE_DIR}
     checkoutBranch ${ENTERPRISE_GITHUB_REPO} ${branch}
-    executeCmd "git push ${ee_resolved_repo} ${branch}"
+    [[ $? == 0 ]] && executeCmd "git push ${ee_resolved_repo} ${branch}"
     popd
   fi
   popd
@@ -56,16 +82,17 @@ function checkoutBranch {
 
   gitRemoteLs ${resolved_repo} ${branch}
   local remote_branch=$?
-  if [[ ${remote_branch} == 1 ]]; then
-    if [[ "${DRY_RUN}" == 'true' ]]; then
-      undoPush ${repo} ${branch}
-      remote_branch=0
-    fi
+  if [[ ${remote_branch} == 1 && "${DRY_RUN}" == 'true' ]]; then
+    undoPush ${repo} ${branch}
+    remote_branch=0
   fi
 
   local checkout_cmd="git checkout -b ${branch}"
-  [[ ${remote_branch} == 1 ]] && checkout_cmd="${checkout_cmd} --track origin/${branch}"
+  local result=0
+  [[ ${remote_branch} == 1 ]] && checkout_cmd="${checkout_cmd} --track origin/${branch}" && result=1
+  executeCmd "git branch"
   executeCmd "${checkout_cmd}"
+  return ${result}
 }
 
 # Remotely removes a given branch at given repo
@@ -76,10 +103,10 @@ function undoPush {
   local repo=${1}
   local branch=${2}
 
-  pushd ${repo}
-  printf "\e[32m Removing just created branch ${branch} for ${repo} \e[0m  \n"
+  printf "\e[32m Removing previously created branch ${branch} for ${repo} \e[0m  \n"
   if [[ "${repo}" == "${CORE_GITHUB_REPO}" ]]; then
-    resolved_repo=$(resolveRepoUrl ${repo} ${GITHUB_USER_TOKEN} ${GITHUB_USER})
+    local resolved_repo=$(resolveRepoUrl ${repo} ${GITHUB_USER_TOKEN} ${GITHUB_USER})
+    local ee_resolved_repo=$(resolveRepoUrl ${ENTERPRISE_GITHUB_REPO} ${GITHUB_USER_TOKEN} ${GITHUB_USER})
     executeCmd "git push ${resolved_repo} :${branch}"
     pushd ${ENTERPRISE_DIR}
     executeCmd "git push ${ee_resolved_repo} :${branch}"
@@ -88,16 +115,16 @@ function undoPush {
     executeCmd "git push origin :${branch}"
   fi
 
-  [[ ${cmdResult} != 0 ]] && echo "Error pushing ${branch}" && exit 1
-  popd
+  [[ ${cmdResult} != 0 ]] && echo "Error pushing ${branch}, ignoring this"
 }
 
 # Given a version gets valid npm version from it
 #
 # $1: version
 function getValidNpmVersion {
-  local major=$(echo $1 | cut -d. -f1)
-  local minor=$(echo $1 | cut -d. -f2)
+  local version=${1}
+  local major=$(echo ${version} | cut -d. -f1)
+  local minor=$(echo ${version} | cut -d. -f2)
 
   #Removes the '0' from the month if needed
   [[ "${minor::1}" == "0" ]] && minor=${minor:1:1}
@@ -120,6 +147,7 @@ function pumpUpVersion {
 #
 # $1: tag: provided tag
 function npmPublish {
+  executeCmd "npm set //registry.npmjs.org/:_authToken ${NPM_TOKEN}"
   local tag=${1}
   local cmd="npm publish --tag ${tag}"
   [[ "${DRY_RUN}" == 'true' ]] && cmd="${cmd} --dry-run"
@@ -138,5 +166,5 @@ function replaceTextInFile {
   local replacing_text=${3}
 
   executeCmd "python3 /build/replaceTextInFile.py ${file} \"${replace_text}\" \"${replacing_text}\""
-  [[ "${DEBUG}" == 'true' ]] && cat ${file} | grep "${replacing_text}"
+  [[ "${DEBUG}" == 'true' ]] && cat ${file}
 }

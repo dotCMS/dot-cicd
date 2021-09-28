@@ -63,7 +63,7 @@ files=('OSGi/com.dotcms.3rd.party/build.gradle'
 for file in "${files[@]}"
 do
   echo "Replacing version for ${file}"
-  python3 /build/updateOsgiVersion.py ${file} ${new_version}
+  executeCmd "python3 /build/updateOsgiVersion.py ${file} ${new_version}"
   cat ${file} | grep "${new_version}"
 done
 

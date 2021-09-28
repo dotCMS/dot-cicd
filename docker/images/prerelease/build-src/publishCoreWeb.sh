@@ -5,31 +5,38 @@
 # Modify package.json on release and master branches, push and run npm run publish:dev and edit
 # gradle.properties to set the release (RC) & Master versions
 
+: ${NPM_ARTIFACT_SUFFIX:=".1"}
+npm_release_version=${RELEASE_VERSION}
+if [[ "${DRY_RUN}" == 'true' ]]; then
+  npm_release_version=${RELEASE_VERSION%"-cicd"}
+  NPM_ARTIFACT_SUFFIX="-cicd${NPM_ARTIFACT_SUFFIX}"
+fi
+
 printf "\e[32m Publishing core-web version \e[0m  \n"
 pushd ${CORE_WEB_GITHUB_REPO}
 gitConfig ${GITHUB_USER}
+executeCmd "git branch"
 
 # Set RELEASE_VERSION in package.json and push it
 echo 'Updating package.json....'
-core_web_release_version="$(getValidNpmVersion ${RELEASE_VERSION})-rc.0"
-replaceTextInFile ./package.json '"version": ".*"' "\"version\": \"${core_web_release_version}\""
+core_web_release_version="$(getValidNpmVersion ${npm_release_version})"
+sed -i -E "s/\"version\": \".*\"/\"version\": \"${core_web_release_version}-rc${NPM_ARTIFACT_SUFFIX}\"/g" package.json
+cat package.json | grep "version\":"
 
 pushd libs/dotcms-webcomponents
-replaceTextInFile ./package.json '"version": ".*"' "\"version\": \"${core_web_release_version}\""
+sed -i -E "s/\"version\": \".*\"/\"version\": \"${core_web_release_version}-rc${NPM_ARTIFACT_SUFFIX}\"/g" package.json
+cat package.json | grep "version\":"
 popd
 
 printf "\e[32m Committing changes to branch ${branch} \e[0m  \n"
-executeCmd "git add package.json libs/dotcms-webcomponents/package.json
-  && git commit -m 'update release version for dotcms-ui & dotcms-webcomponents'"
-git status
-executeCmd "git push origin ${branch}"
-echo "package.json updated and pushed in Release branch"
+executeCmd "git status && git add package.json libs/dotcms-webcomponents/package.json"
+executeCmd "git status && git commit -m 'update release version for dotcms-ui & dotcms-webcomponents'"
+executeCmd "git status && git push origin ${branch}"
+echo "package.json files updated and pushed in Release branch"
 
 popd
 
 # Publish CORE-WEB & DotCMS-WebComponents & CORE-WEB Release version
-printf "\e[32m Publishing core-web version \e[0m  \n"
-
 pushd ${CORE_WEB_GITHUB_REPO}
 executeCmd "npm install
   && npm i -g @angular/cli
@@ -56,19 +63,27 @@ pushd ${CORE_WEB_GITHUB_REPO}
 
 executeCmd "git checkout master && git pull origin master"
 
-[[ "${master_branch}" != 'master' ]] && git checkout -b ${master_branch}
+if [[ "${master_branch}" != 'master' ]]; then
+  core_web_resolved_repo=$(resolveRepoUrl ${CORE_WEB_GITHUB_REPO} ${GITHUB_USER_TOKEN} ${GITHUB_USER})
+  gitRemoteLs ${core_web_resolved_repo} ${master_branch}
+  web_core_remote_branch=$?
+  [[ ${web_core_remote_branch} == 1 ]] && executeCmd "git push origin :${master_branch}"
+  executeCmd "git checkout -b ${master_branch}"
+fi
 
 echo "Updating package.json...."
-core_web_master_version="$(pumpUpVersion $(getValidNpmVersion $RELEASE_VERSION))-next.0"
-replaceTextInFile ./package.json '"version": ".*"' "\"version\": \"${core_web_release_version}\""
+core_web_master_version="$(pumpUpVersion $(getValidNpmVersion ${npm_release_version}))"
+sed -i -E "s/\"version\": \".*\"/\"version\": \"${core_web_master_version}-next${NPM_ARTIFACT_SUFFIX}\"/g" package.json
+cat package.json | grep "version\":"
 
 pushd libs/dotcms-webcomponents
-replaceTextInFile ./package.json '"version": ".*"' "\"version\": \"${core_web_release_version}\""
+sed -i -E "s/\"version\": \".*\"/\"version\": \"${core_web_master_version}-next${NPM_ARTIFACT_SUFFIX}\"/g" package.json
+cat package.json | grep "version\":"
 popd
 
-executeCmd "git add package.json libs/dotcms-webcomponents/package.json
-  && git commit -m 'update master bumped version for dotcms-ui & dotcms-webcomponents'
-  && git push origin ${master_branch}"
+executeCmd "git status && git add package.json libs/dotcms-webcomponents/package.json"
+executeCmd "git status && git commit -m 'update master bumped version for dotcms-ui & dotcms-webcomponents'"
+executeCmd "git status && git push origin ${master_branch}"
 echo "package.json updated and pushed in Master branch"
 
 popd

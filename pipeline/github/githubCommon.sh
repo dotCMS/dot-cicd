@@ -10,14 +10,17 @@
 function executeCmd {
   local cmd=${1}
   cmd=$(echo ${cmd} | tr '\n' ' \ \n')
-  [[ "${DEBUG}" == 'true' ]] && echo "Executing:
-==========
-${cmd}
-"
-  eval "${cmd}; export cmdResult=$?"
-  if [[ "${DEBUG}" == 'true' ]]; then
-    echo -e "cmdResult: ${cmdResult}\n"
+  echo "==============
+Executing cmd:
+==============
+${cmd}"
+  eval "${cmd}"
+  export cmdResult=$?
+  echo "cmdResult: ${cmdResult}"
+  if [[ ${cmdResult} != 0 ]]; then
+    echo "Error executing: ${cmd}"
   fi
+  echo
 }
 
 # HTTP-Encodes a provided string
@@ -180,6 +183,8 @@ function gitConfig {
   fi
   git config --global user.email "${email}"
   git config --global user.name "${name}"
+  git config --global pager.branch false
+  git config pull.rebase false
 
   [[ "${DEBUG}" == 'true' ]] && git config --list
 }
@@ -212,18 +217,28 @@ function gitClone {
     repo: ${repo_url}
     branch: ${branch}
     location: ${dest}"
-  if [[ "${branch}" == 'master' ]]; then
-    git clone --depth 1 ${repo_url} ${dest}
-  else
-    git clone --depth 1 --single-branch --branch ${branch} ${repo_url} ${dest}
+
+  local git_clone_mode=
+  [[ "${GIT_CLONE_STRATEGY}" != 'full' ]] && git_clone_mode='--depth 1'
+
+  local git_branch_params=
+  if [[ "${branch}" != 'master' ]]; then
+    git_branch_params="--branch ${branch}"
+    if [[ "${GIT_CLONE_STRATEGY}" != 'full' ]]; then
+      git_clone_mode="${git_clone_mode} --single-branch"
+    fi
   fi
-  local cloneResult=$?
+
+  local git_clone_params="${git_clone_mode} ${git_branch_params}"
+  clone_cmd="git clone ${git_clone_params} ${repo_url} ${dest}"
+  executeCmd "${clone_cmd}"
+  [[ ${cmdResult} != 0 ]] && return ${cmdResult}
 
   pushd ${dest}
-  git clean -f -d
+  executeCmd "git clean -f -d"
   popd
 
-  return ${cloneResult}
+  return 0
 }
 
 # Given a repo url use it to replace the url element in a .gitmodules file in provided location
@@ -232,9 +247,9 @@ function gitClone {
 # $2: dest: destination to save the repo
 function gitSubModules {
   local repo_url=${1}
-  [[ -z "${repo_url}" ]] && echo "No repo url provided, aborting" && exit 1
+  [[ -z "${repo_url}" ]] && echo "No repo url provided, aborting" && return 1
   local dest=${2}
-  [[ -z "${dest}" ]] && echo "No git folder provided, aborting" && exit 1
+  [[ -z "${dest}" ]] && echo "No git folder provided, aborting" && return 2
 
   echo 'Getting submodules'
   pushd ${dest}
@@ -245,9 +260,8 @@ function gitSubModules {
   sed -i "s,git@github.com:dotCMS,${repo_url},g" .gitmodules
   [[ "${DEBUG}" == 'true' ]] && cat .gitmodules
 
-  git submodule update --init --recursive
-  local sub_result=$?
-  [[ ${sub_result} != 0 ]] && echo 'Error updating submodule' && exit 1
+  executeCmd "git submodule update --init --recursive"
+  [[ ${cmdResult} != 0 ]] && echo 'Error updating submodule' && popd && return 3
 
   # Try to checkout submodule branch and
   local module_path=$(cat .gitmodules| grep "path =" | cut -d'=' -f2 | tr -d '[:space:]')
@@ -255,19 +269,18 @@ function gitSubModules {
   pushd ${module_path}
   gitConfig ${GITHUB_USER}
   if [[ "${module_branch}" != 'master' ]]; then
-    git checkout -b ${module_branch} --track origin/${module_branch}
+    executeCmd "git checkout -b ${module_branch} --track origin/${module_branch}"
   else
-    git checkout master
+    executeCmd "git checkout master"
   fi
 
-  git pull origin ${module_branch}
-  sub_result=$?
-  [[ ${sub_result} != 0 ]] && echo 'Error pulling from submodule' && exit 1
+  executeCmd "git pull origin ${module_branch}"
+  [[ ${cmdResult} != 0 ]] && echo 'Error pulling from submodule' && popd && popd && return 4
 
   popd
   popd
 
-  return ${sub_result}
+  return 0
 }
 
 # Git clones with submodules support
@@ -425,11 +438,7 @@ function buildBase {
     ${build_extra_args}
     ${docker_file_path}
   "
-  dcResult=$?
-
-  if [[ ${dcResult} != 0 ]]; then
-    exit 1
-  fi
+  return ${cmdResult}
 }
 
 # Creates a directory and file with provided license

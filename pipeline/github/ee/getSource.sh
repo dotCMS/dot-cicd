@@ -8,5 +8,12 @@
 
 build_id=${1}
 
+echo
+echo '######################'
+echo 'Executing getSource.sh'
+echo '######################'
+
 pushd ${DOT_CICD_PATH}
-gitCloneSubModules $(resolveRepoUrl ${CORE_GITHUB_REPO} ${GITHUB_USER_TOKEN} ${GITHUB_USER}) ${build_id}
+executeCmd "gitCloneSubModules $(resolveRepoUrl ${CORE_GITHUB_REPO} ${GITHUB_USER_TOKEN} ${GITHUB_USER}) ${build_id}"
+[[ ${cmdResult} != 0 ]] && exit 1
+echo "Source downloaded"

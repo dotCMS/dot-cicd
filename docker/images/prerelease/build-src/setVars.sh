@@ -11,3 +11,5 @@ export branch="release-${RELEASE_VERSION}"
 master_branch=master
 [[ "${DRY_RUN}" == 'true' ]] && master_branch="${master_branch}-cicd"
 export master_branch
+export GIT_CLONE_STRATEGY=full
+
