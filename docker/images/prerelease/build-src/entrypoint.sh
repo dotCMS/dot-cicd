@@ -39,5 +39,5 @@ runScript modEeDotcmsVersion
 runScript modDotcmsVersion
 runScript uploadEeJar
 runScript undoBranches
-runScript setGithubLabels
+#runScript setGithubLabels
 popd
