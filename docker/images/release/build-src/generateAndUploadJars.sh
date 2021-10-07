@@ -24,18 +24,19 @@ executeCmd "./gradlew java -PuseGradleNode=false"
 [[ ${cmdResult} != 0 ]] && exit 1
 
 releaseParam='-Prelease=true'
+
 if [[ "${is_release}" != 'true' ]]; then
   releaseParam=''
   release_version=${github_sha}
   changeDotcmsVersion ${release_version}
   executeCmd "python3 /build/changeEeDependency.py ${release_version}"
   cat dependencies.gradle | grep enterprise
-
-  pushd src/main/enterprise
-  changeDotcmsVersion ${release_version}
-  executeCmd "./gradlew clean jar"
-  popd
 fi
+
+pushd src/main/enterprise
+[[ "${is_release}" != 'true' ]] && changeDotcmsVersion ${release_version}
+executeCmd "./gradlew clean jar -PuseGradleNode=false"
+popd
 
 echo
 echo '################################'
@@ -47,7 +48,7 @@ executeCmd "./gradlew -b deploy.gradle uploadEnterprise
   -Ppassword=${repo_password}"
 [[ ${cmdResult} != 0 ]] && exit 1
 
-[[ "${is_release}" != 'true' ]] \
+[[ "${is_release}" != "true" ]] \
   && ls -las src/main/enterprise/build/libs \
   && executeCmd "./gradlew clean jar"
 

@@ -15,4 +15,5 @@ echo '######################'
 
 pushd ${DOT_CICD_PATH}
 executeCmd "gitCloneSubModules $(resolveRepoUrl ${CORE_GITHUB_REPO} ${GITHUB_USER_TOKEN} ${GITHUB_USER}) ${build_id}"
+[[ ${cmdResult} != 0 ]] && exit 1
 echo "Source downloaded"

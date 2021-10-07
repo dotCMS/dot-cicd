@@ -221,22 +221,31 @@ function gitClone {
   local git_clone_mode=
   [[ "${GIT_CLONE_STRATEGY}" != 'full' ]] && git_clone_mode='--depth 1'
 
-  local git_branch_params=
-  if [[ "${branch}" != 'master' ]]; then
-    git_branch_params="--branch ${branch}"
-    if [[ "${GIT_CLONE_STRATEGY}" != 'full' ]]; then
-      git_clone_mode="${git_clone_mode} --single-branch"
+  if [[ -z "${GIT_TAG}" ]]; then
+    local git_branch_params=
+    if [[ "${branch}" != 'master' ]]; then
+      git_branch_params="--branch ${branch}"
+      if [[ "${GIT_CLONE_STRATEGY}" != 'full' ]]; then
+        git_clone_mode="${git_clone_mode} --single-branch"
+      fi
     fi
   fi
 
   local git_clone_params="${git_clone_mode} ${git_branch_params}"
-  clone_cmd="git clone ${git_clone_params} ${repo_url} ${dest}"
+  local clone_cmd="git clone ${git_clone_params} ${repo_url} ${dest}"
   executeCmd "${clone_cmd}"
   [[ ${cmdResult} != 0 ]] && return ${cmdResult}
 
-  pushd ${dest}
-  executeCmd "git clean -f -d"
-  popd
+  if [[ -n "${GIT_TAG}" ]]; then\
+    pushd ${dest}
+    [[ "${GIT_CLONE_STRATEGY}" != 'full' ]] \
+      && executeCmd "git fetch --all --tags" \
+      && [[ ${cmdResult} != 0 ]] \
+      && return ${cmdResult}
+    executeCmd "git checkout tags/${GIT_TAG} -b ${GIT_TAG}"
+    [[ ${cmdResult} != 0 ]] && return ${cmdResult}
+    popd
+  fi
 
   return 0
 }

@@ -9,9 +9,10 @@
 build_id=${1}
 
 # Clone with submodules
-gitCloneSubModules $(resolveRepoUrl ${CORE_GITHUB_REPO} ${GITHUB_USER_TOKEN} ${GITHUB_USER}) ${build_id}
-result=$?
-[[ $result != 0 ]] && echo "Error cloning ${CORE_GITHUB_REPO} repo (error code: ${result}), exiting.." && exit 1
+export GIT_TAG=${build_id}
+executeCmd "gitCloneSubModules $(resolveRepoUrl ${CORE_GITHUB_REPO} ${GITHUB_USER_TOKEN} ${GITHUB_USER}) ${build_id}"
+export GIT_TAG=
+[[ ${cmdResult} != 0 ]] && exit 1
 
 pushd ${CORE_GITHUB_REPO}
 echo 'Git status:'

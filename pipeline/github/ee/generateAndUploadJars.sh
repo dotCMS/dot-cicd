@@ -50,6 +50,11 @@ echo
 echo '################################'
 echo 'Uploading Enterprise Edition jar'
 echo '################################'
+## Creating jar
+pushd src/main/enterprise
+executeCmd "./gradlew clean jar -PuseGradleNode=false"
+popd
+
 # Upload and deploy enterprise jars
 executeCmd "./gradlew -b deploy.gradle uploadEnterprise
   ${releaseParam}
