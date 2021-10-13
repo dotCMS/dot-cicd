@@ -3,6 +3,9 @@
 ###############################
 # Script: updateOsgiVersions.sh
 # Updates with new version of DotCMS the dependencies in plugin-seeds repo
+# $1: build_id: branch or commit
+
+build_id=${1}
 
 # Gets the current DotCMS version
 dotcms_current_version=$(curl https://api.github.com/repos/dotcms/core/releases/latest -s | jq .tag_name -r)
@@ -22,7 +25,9 @@ pushd ../
 gitConfig ${GITHUB_USER}
 plugin_seeds_github_repo_url=$(resolveRepoUrl ${PLUGIN_SEEDS_GITHUB_REPO} ${GITHUB_USER_TOKEN} ${GITHUB_USER})
 # Clones plugin_seeds repo
-gitClone ${plugin_seeds_github_repo_url}
+export GIT_TAG=${build_id}
+gitClone ${plugin_seeds_github_repo_url} ${build_id}
+export GIT_TAG=
 pushd ${PLUGIN_SEEDS_GITHUB_REPO}
 
 if [[ "${is_release}" != 'true' ]]; then
