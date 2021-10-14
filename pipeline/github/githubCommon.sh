@@ -270,23 +270,31 @@ function gitSubModules {
   [[ "${DEBUG}" == 'true' ]] && cat .gitmodules
 
   executeCmd "git submodule update --init --recursive"
-  [[ ${cmdResult} != 0 ]] && echo 'Error updating submodule' && popd && return 3
+  [[ ${cmdResult} != 0 ]] && popd && return 3
 
-  # Try to checkout submodule branch and
   local module_path=$(cat .gitmodules| grep "path =" | cut -d'=' -f2 | tr -d '[:space:]')
-  local module_branch=$(cat .gitmodules| grep "branch =" | cut -d'=' -f2 | tr -d '[:space:]')
   pushd ${module_path}
   gitConfig ${GITHUB_USER}
-  if [[ "${module_branch}" != 'master' ]]; then
-    executeCmd "git checkout -b ${module_branch} --track origin/${module_branch}"
-  else
-    executeCmd "git checkout master"
+  popd
+
+  if [[ "${SUBMODULE_CHECKOUT}" != 'detached' ]]; then
+    # Try to checkout submodule branch and
+    local module_branch=$(cat .gitmodules| grep "branch =" | cut -d'=' -f2 | tr -d '[:space:]')
+
+    pushd ${module_path}
+
+    if [[ "${module_branch}" != 'master' ]]; then
+      executeCmd "git checkout -b ${module_branch} --track origin/${module_branch}"
+    else
+      executeCmd "git checkout master"
+    fi
+
+    executeCmd "git pull origin ${module_branch}"
+    [[ ${cmdResult} != 0 ]] && echo 'Error pulling from submodule' && popd && popd && return 4
+
+    popd
   fi
 
-  executeCmd "git pull origin ${module_branch}"
-  [[ ${cmdResult} != 0 ]] && echo 'Error pulling from submodule' && popd && popd && return 4
-
-  popd
   popd
 
   return 0

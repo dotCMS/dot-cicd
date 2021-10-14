@@ -20,13 +20,15 @@ is_release=$6
 
 pushd dotCMS
 
-executeCmd "./gradlew java -PuseGradleNode=false"
-[[ ${cmdResult} != 0 ]] && exit 1
+if [[ "${is_release}" != 'true' ]]; then
+  executeCmd "./gradlew java -PuseGradleNode=false"
+  [[ ${cmdResult} != 0 ]] && exit 1
+fi
 
 releaseParam='-Prelease=true'
 
 if [[ "${is_release}" != 'true' ]]; then
-  releaseParam=''
+  releaseParam=
   release_version=${github_sha}
   changeDotcmsVersion ${release_version}
   executeCmd "python3 /build/changeEeDependency.py ${release_version}"

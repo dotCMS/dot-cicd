@@ -33,11 +33,10 @@ pushd /build/src
 runScript setVars
 runScript createBranches
 runScript preBuildCore
-runScript publishCoreWeb
-runScript preBuildCore
+#TODO: rollback this: runScript publishCoreWeb
 runScript modEeDotcmsVersion
 runScript modDotcmsVersion
 runScript uploadEeJar
 runScript undoBranches
-runScript setGithubLabels
+#TODO: rollback this: runScript setGithubLabels
 popd

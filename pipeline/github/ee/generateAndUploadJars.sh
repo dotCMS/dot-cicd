@@ -24,24 +24,21 @@ echo 'Executing generateAndUploadJars.sh'
 echo '##################################'
 
 pushd ${DOT_CICD_PATH}/core/dotCMS
-# Build project
-executeCmd "./gradlew java -PuseGradleNode=false"
-[[ ${cmdResult} != 0 ]] && exit 1
 
 # Mark this as release or dry-run
 releaseParam='-Prelease=true'
 if [[ "${is_release}" != 'true' ]]; then
   releaseParam=''
+
+  # Build project
+  executeCmd "./gradlew java -PuseGradleNode=false"
+  [[ ${cmdResult} != 0 ]] && exit 1
+
   #  This is for testing purposes, we should never seen a branch no other than master or a release one
   if [[ "${build_id}" != 'master' ]]; then
     changeDotcmsVersion ${github_sha}
     executeCmd "python3 ../../${DOT_CICD_LIB}/docker/images/release/build-src/changeEeDependency.py ${github_sha}"
     cat dependencies.gradle | grep enterprise
-
-    pushd src/main/enterprise
-    changeDotcmsVersion ${github_sha}
-    executeCmd "./gradlew clean jar"
-    popd
   fi
 fi
 
