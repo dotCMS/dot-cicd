@@ -13,10 +13,11 @@ if [[ "${DRY_RUN}" != 'true' ]]; then
   release_param='-Prelease=true'
 else
   release_param=
-  pushd ${ENTERPRISE_DIR}
-  executeCmd "./gradlew clean jar"
-  popd
 fi
+
+pushd ${ENTERPRISE_DIR}
+executeCmd "./gradlew clean jar -PuseGradleNode=false"
+popd
 
 pushd dotCMS
 executeCmd "./gradlew -b deploy.gradle uploadEnterprise
