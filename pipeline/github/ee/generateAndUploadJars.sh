@@ -41,7 +41,6 @@ if [[ "${is_release}" != 'true' ]]; then
     pushd src/main/enterprise
     changeDotcmsVersion ${github_sha}
     executeCmd "./gradlew clean jar"
-    echo hola
     popd
   fi
 fi
