@@ -15,9 +15,14 @@ function runScript {
   echo "Executing . /build/${script}.sh $2 $3 $4 $5 $6 $7 $8"
   echo '############################################################################################################################################'
   . /build/${script}.sh $2 $3 $4 $5 $6 $7 $8
+}
 
-  if [[ $? != 0 ]]; then
-    echo "Error executing: . /build/${script}.sh $2 $3 $4 $5 $6 $7 $8"
-    exit 1
-  fi
+# Changes dotcms version property at gradle.properties file
+#
+# $1: version to use as replacement
+function changeDotcmsVersion {
+  local version=${1}
+  sed -i "s,^dotcmsReleaseVersion=.*$,dotcmsReleaseVersion=${version},g" ./gradle.properties
+  echo "Overriding dotcmsReleaseVersion to: ${version}"
+  cat ./gradle.properties | grep dotcmsReleaseVersion
 }

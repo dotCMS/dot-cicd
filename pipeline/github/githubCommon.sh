@@ -10,13 +10,17 @@
 function executeCmd {
   local cmd=${1}
   cmd=$(echo ${cmd} | tr '\n' ' \ \n')
-  echo "Executing:
-==========
-${cmd}
-"
+  echo "==============
+Executing cmd:
+==============
+${cmd}"
   eval "${cmd}"
   export cmdResult=$?
-  echo -e "cmdResult: ${cmdResult}\n"
+  echo "cmdResult: ${cmdResult}"
+  if [[ ${cmdResult} != 0 ]]; then
+    echo "Error executing: ${cmd}"
+  fi
+  echo
 }
 
 # HTTP-Encodes a provided string
@@ -217,23 +221,33 @@ function gitClone {
   local git_clone_mode=
   [[ "${GIT_CLONE_STRATEGY}" != 'full' ]] && git_clone_mode='--depth 1'
 
-  local git_branch_params=
-  if [[ "${branch}" != 'master' ]]; then
-    git_branch_params="--branch ${branch}"
-    if [[ "${GIT_CLONE_STRATEGY}" != 'full' ]]; then
-      git_clone_mode="${git_clone_mode} --single-branch"
+  if [[ -z "${GIT_TAG}" ]]; then
+    local git_branch_params=
+    if [[ "${branch}" != 'master' ]]; then
+      git_branch_params="--branch ${branch}"
+      if [[ "${GIT_CLONE_STRATEGY}" != 'full' ]]; then
+        git_clone_mode="${git_clone_mode} --single-branch"
+      fi
     fi
   fi
 
   local git_clone_params="${git_clone_mode} ${git_branch_params}"
-  clone_cmd="git clone ${git_clone_params} ${repo_url} ${dest}"
+  local clone_cmd="git clone ${git_clone_params} ${repo_url} ${dest}"
   executeCmd "${clone_cmd}"
+  [[ ${cmdResult} != 0 ]] && return ${cmdResult}
 
-  pushd ${dest}
-  git clean -f -d
-  popd
+  if [[ -n "${GIT_TAG}" ]]; then\
+    pushd ${dest}
+    [[ "${GIT_CLONE_STRATEGY}" != 'full' ]] \
+      && executeCmd "git fetch --all --tags" \
+      && [[ ${cmdResult} != 0 ]] \
+      && return ${cmdResult}
+    executeCmd "git checkout tags/${GIT_TAG} -b ${GIT_TAG}"
+    [[ ${cmdResult} != 0 ]] && return ${cmdResult}
+    popd
+  fi
 
-  return ${cmdResult}
+  return 0
 }
 
 # Given a repo url use it to replace the url element in a .gitmodules file in provided location

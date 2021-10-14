@@ -1,7 +1,5 @@
 #!/bin/bash
 
-set -e
-
 #####################
 # Script: pipeline.sh
 # Main entrypoint for DotCMS pipeline.

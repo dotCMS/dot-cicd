@@ -20,6 +20,8 @@ GITHUB_USER: ${GITHUB_USER}
 ###########################################
 "
 
+source ${DOT_CICD_LIB}/docker/images/release/build-src/releaseCommon.sh
+
 # Fetch core and its submodules from github
 . ${EE_FOLDER}/getSource.sh ${BUILD_ID}
 # Generate an upload EE jars

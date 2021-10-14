@@ -18,41 +18,47 @@ repo_password=$4
 github_sha=$5
 is_release=$6
 
-pushd ${DOT_CICD_PATH}/core/dotCMS
 echo
-echo '######################################################################'
-echo 'Building DotCMS with: ./gradlew java -PuseGradleNode=false'
-echo '######################################################################'
+echo '##################################'
+echo 'Executing generateAndUploadJars.sh'
+echo '##################################'
+
+pushd ${DOT_CICD_PATH}/core/dotCMS
 # Build project
-./gradlew java -PuseGradleNode=false
-if [[ $? != 0 ]]; then
-  echo 'Error executing ./gradlew java -PuseGradleNode=false'
-  exit 1
-fi
+executeCmd "./gradlew java -PuseGradleNode=false"
+[[ ${cmdResult} != 0 ]] && exit 1
 
 # Mark this as release or dry-run
-if [[ "${is_release}" == 'true' ]]; then
-  releaseParam='-Prelease=true'
-else
+releaseParam='-Prelease=true'
+if [[ "${is_release}" != 'true' ]]; then
   releaseParam=''
   #  This is for testing purposes, we should never seen a branch no other than master or a release one
   if [[ "${build_id}" != 'master' ]]; then
-    sed -i "s,^dotcmsReleaseVersion=.*$,dotcmsReleaseVersion=${github_sha},g" ./gradle.properties
-    echo "Overriding dotcmsReleaseVersion to: ${github_sha}"
-    cat ./gradle.properties | grep dotcmsReleaseVersion
+    changeDotcmsVersion ${github_sha}
+    executeCmd "python3 ../../${DOT_CICD_LIB}/docker/images/release/build-src/changeEeDependency.py ${github_sha}"
+    cat dependencies.gradle | grep enterprise
+
+    pushd src/main/enterprise
+    changeDotcmsVersion ${github_sha}
+    executeCmd "./gradlew clean jar"
+    popd
   fi
 fi
 
 echo
-echo '####################################################################################################################'
+echo '################################'
 echo 'Uploading Enterprise Edition jar'
-echo "./gradlew -b deploy.gradle uploadEnterprise ${releaseParam} -Pusername=${repo_username} -Ppassword=${repo_password}"
-echo '####################################################################################################################'
+echo '################################'
+## Creating jar
+pushd src/main/enterprise
+executeCmd "./gradlew clean jar -PuseGradleNode=false"
+popd
+
 # Upload and deploy enterprise jars
-./gradlew -b deploy.gradle uploadEnterprise ${releaseParam} -Pusername=${repo_username} -Ppassword=${repo_password}
-if [[ $? != 0 ]]; then
-  echo "Error executing ./gradlew -b deploy.gradle uploadEnterprise ${releaseParam} -Pusername=${repo_username} -Ppassword=${repo_password}"
-  exit 1
-fi
+executeCmd "./gradlew -b deploy.gradle uploadEnterprise
+  ${releaseParam}
+  -Pusername=${repo_username}
+  -Ppassword=${repo_password}"
+[[ ${cmdResult} != 0 ]] && exit 1
 
 popd

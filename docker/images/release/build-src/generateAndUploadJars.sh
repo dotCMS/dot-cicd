@@ -19,56 +19,44 @@ github_sha=$5
 is_release=$6
 
 pushd dotCMS
-cp ./gradle.properties ./gradle.properties.bak
 
-echo
-echo '######################################################################'
-echo 'Building DotCMS with: ./gradlew java -PuseGradleNode=false'
-echo '######################################################################'
-./gradlew java -PuseGradleNode=false
-if [[ $? != 0 ]]; then
-  echo 'Error executing ./gradlew java -PuseGradleNode=false'
-  exit 1
-fi
+executeCmd "./gradlew java -PuseGradleNode=false"
+[[ ${cmdResult} != 0 ]] && exit 1
 
 releaseParam='-Prelease=true'
+
 if [[ "${is_release}" != 'true' ]]; then
   releaseParam=''
   release_version=${github_sha}
-  sed -i "s,^dotcmsReleaseVersion=.*$,dotcmsReleaseVersion=${release_version},g" ./gradle.properties
-  echo "Overriding dotcmsReleaseVersion to: ${release_version}"
-  cat ./gradle.properties | grep dotcmsReleaseVersion
+  changeDotcmsVersion ${release_version}
+  executeCmd "python3 /build/changeEeDependency.py ${release_version}"
+  cat dependencies.gradle | grep enterprise
 fi
 
+pushd src/main/enterprise
+[[ "${is_release}" != 'true' ]] && changeDotcmsVersion ${release_version}
+executeCmd "./gradlew clean jar -PuseGradleNode=false"
+popd
+
 echo
-echo '####################################################################################################################'
+echo '################################'
 echo 'Uploading Enterprise Edition jar'
-echo "./gradlew -b deploy.gradle uploadEnterprise ${releaseParam} -Pusername=${repo_username} -Ppassword=${repo_password}"
-echo '####################################################################################################################'
-./gradlew -b deploy.gradle uploadEnterprise ${releaseParam} -Pusername=${repo_username} -Ppassword=${repo_password}
-if [[ $? != 0 ]]; then
-  echo "Error executing ./gradlew -b deploy.gradle uploadEnterprise ${releaseParam} -Pusername=${repo_username} -Ppassword=${repo_password}"
-  exit 1
-fi
+echo '################################'
+executeCmd "./gradlew -b deploy.gradle uploadEnterprise
+  ${releaseParam}
+  -Pusername=${repo_username}
+  -Ppassword=${repo_password}"
+[[ ${cmdResult} != 0 ]] && exit 1
 
-if [[ "${is_release}" != 'true' ]]; then
-  release_version="${release_version}-SNAPSHOT"
-  sed -i "s,^dotcmsReleaseVersion=.*$,dotcmsReleaseVersion=${release_version},g" ./gradle.properties
-  echo "Overriding dotcmsReleaseVersion to: ${release_version}"
-  cat ./gradle.properties | grep dotcmsReleaseVersion
-fi
+[[ "${is_release}" != "true" ]] \
+  && ls -las src/main/enterprise/build/libs \
+  && executeCmd "./gradlew clean jar"
 
 echo
-echo '###########################################################################################################################################'
+echo '####################'
 echo 'Uploading DotCMS jar'
-echo "./gradlew -b deploy.gradle uploadDotcms ${releaseParam} -Pusername=${repo_username} -Ppassword=${repo_password} -PincludeDependencies=true"
-echo '###########################################################################################################################################'
-./gradlew -b deploy.gradle uploadDotcms ${releaseParam} -Pusername=${repo_username} -Ppassword=${repo_password} -PincludeDependencies=true
-if [[ $? != 0 ]]; then
-  echo "Error executing ./gradlew -b deploy.gradle uploadDotcms ${releaseParam} -Pusername=${repo_username} -Ppassword=${repo_password} -PincludeDependencies=true"
-  exit 1
-fi
-
-mv ./gradle.properties.bak ./gradle.properties
+echo '####################'
+executeCmd "./gradlew -b deploy.gradle uploadDotcms ${releaseParam} -Pusername=${repo_username} -Ppassword=${repo_password} -PincludeDependencies=true"
+[[ ${cmdResult} != 0 ]] && exit 1
 
 popd

@@ -12,7 +12,6 @@ if [[ "${DRY_RUN}" == 'true' ]]; then
   NPM_ARTIFACT_SUFFIX="-cicd${NPM_ARTIFACT_SUFFIX}"
 fi
 
-
 printf "\e[32m Publishing core-web version \e[0m  \n"
 pushd ${CORE_WEB_GITHUB_REPO}
 gitConfig ${GITHUB_USER}
@@ -64,7 +63,13 @@ pushd ${CORE_WEB_GITHUB_REPO}
 
 executeCmd "git checkout master && git pull origin master"
 
-[[ "${master_branch}" != 'master' ]] && git checkout -b ${master_branch}
+if [[ "${master_branch}" != 'master' ]]; then
+  core_web_resolved_repo=$(resolveRepoUrl ${CORE_WEB_GITHUB_REPO} ${GITHUB_USER_TOKEN} ${GITHUB_USER})
+  gitRemoteLs ${core_web_resolved_repo} ${master_branch}
+  web_core_remote_branch=$?
+  [[ ${web_core_remote_branch} == 1 ]] && executeCmd "git push origin :${master_branch}"
+  executeCmd "git checkout -b ${master_branch}"
+fi
 
 echo "Updating package.json...."
 core_web_master_version="$(pumpUpVersion $(getValidNpmVersion ${npm_release_version}))"

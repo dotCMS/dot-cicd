@@ -28,9 +28,11 @@ echo "Dry run: ${DRY_RUN}"
 echo "Debug: ${DEBUG}"
 echo
 
-mkdir -p /build/src && pushd /build/src
+mkdir -p /build/src
+pushd /build/src
 runScript setVars
 runScript createBranches
+runScript preBuildCore
 runScript publishCoreWeb
 runScript preBuildCore
 runScript modEeDotcmsVersion
