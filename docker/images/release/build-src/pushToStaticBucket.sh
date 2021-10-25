@@ -56,6 +56,8 @@ function pushDistro {
 # Uses s3Push function to push a javadoc file to S3 bucket
 function pushJavadoc {
   mv dotCMS/build/docs/javadoc dotCMS/build/docs/javadocs
+  ls -las dotCMS/build/docs
+  ls -las dotCMS/build/docs/javadocs
   s3Push ${javadoc_base_key}/ dotCMS/build/docs/javadocs
 }
 

@@ -42,7 +42,7 @@ runScript generateAndUploadJars ${BUILD_ID} ${EE_BUILD_ID} ${repo_username} ${re
 runScript buildDistro
 runScript generateJavadoc
 runScript pushToStaticBucket all ${is_release}
-runScript updateOsgiVersion ${BUILD_ID}
+#runScript updateOsgiVersion ${BUILD_ID}
 popd
-runScript publishGithubReleases ${is_release} ${EE_BUILD_ID}
+#runScript publishGithubReleases ${is_release} ${EE_BUILD_ID}
 popd
