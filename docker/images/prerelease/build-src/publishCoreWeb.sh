@@ -5,7 +5,7 @@
 # Modify package.json on release and master branches, push and run npm run publish:dev and edit
 # gradle.properties to set the release (RC) & Master versions
 
-: ${NPM_ARTIFACT_SUFFIX:=".3"}
+: ${NPM_ARTIFACT_SUFFIX:=".1"}
 npm_release_version=${RELEASE_VERSION}
 if [[ "${DRY_RUN}" == 'true' ]]; then
   npm_release_version=${RELEASE_VERSION%"-cicd"}
