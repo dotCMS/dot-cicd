@@ -20,7 +20,6 @@ services:
       DOT_CICD_TARGET:
       WAIT_DB_FOR:
       WAIT_DOTCMS_FOR:
-      BUNDLED_MODE:
       SIDECAR_ARGS:
       DEBUG:
     depends_on:

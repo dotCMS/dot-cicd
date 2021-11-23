@@ -84,12 +84,11 @@ Branch location: ${reports_branch_url}
 }
 
 # Wait for DotCMS instance in case is not execution is not bundled
-if [[ "${BUNDLED_MODE}" == 'false' ]]; then
-  : ${WAIT_DOTCMS_FOR:="3m"}
+if [[ -n "${WAIT_DOTCMS_FOR}" ]]; then
   echo "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-Requested sleep of [${WAIT_DOTCMS_FOR}], waiting for DotCMS?
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-"
+  Requested sleep of [${WAIT_DOTCMS_FOR}], waiting for DotCMS?
+  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  "
   sleep ${WAIT_DOTCMS_FOR}
 fi
 

@@ -32,6 +32,7 @@ services:
       ASYNC_REINDEX_COMMIT_LISTENERS: "false"
       ASYNC_COMMIT_LISTENERS: "false"
       CUSTOM_STARTER_URL:
+      WAIT_DB_FOR:
     depends_on:
       - database
       - elasticsearch

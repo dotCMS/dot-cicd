@@ -14,8 +14,8 @@
 : ${DATABASE_TYPE:="postgres"} && export DATABASE_TYPE
 : ${PROVIDER_DB_USERNAME:="postgres"} && export PROVIDER_DB_USERNAME
 : ${PROVIDER_DB_PASSWORD:="postgres"} && export PROVIDER_DB_PASSWORD
-: ${WAIT_DB_FOR:="30"} && export WAIT_DB_FOR
-: ${WAIT_DOTCMS_FOR:="3m"} && export WAIT_DOTCMS_FOR
+: ${WAIT_DB_FOR:="10"} && export WAIT_DB_FOR
+: ${WAIT_DOTCMS_FOR:="4m"} && export WAIT_DOTCMS_FOR
 docker_repo_path=${DOT_CICD_PATH}/docker
 # Gets the first argument to be considered the folder where the sidecar Docker files are
 sidecar_app=${1}
