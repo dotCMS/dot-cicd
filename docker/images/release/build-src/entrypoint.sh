@@ -37,6 +37,7 @@ mkdir -p /build/src && pushd /build/src
 runScript getSource ${BUILD_ID}
 pushd ${CORE_GITHUB_REPO}
 runScript setVars
+runScript updateWebVersions
 runScript generateAndUploadJars ${BUILD_ID} ${EE_BUILD_ID} ${repo_username} ${repo_password} ${BUILD_HASH} ${is_release}
 runScript buildDistro
 runScript generateJavadoc

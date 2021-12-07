@@ -7,6 +7,8 @@ LABEL com.dotcms.contact "info@dotcms.com"
 LABEL com.dotcms.vendor "dotCMS LLC"
 LABEL com.dotcms.description "dotCMS Content Management System"
 
+ARG NODE_VERSION=12
+
 WORKDIR /srv
 
 COPY build-src/ /build/
@@ -20,6 +22,8 @@ RUN apt update \
     && apt install -y bash openssh-server openssh-client openssl ca-certificates gnupg grep sed tini git curl python3 python3-pip jq musl-dev \
     && update-ca-certificates \
     && pip3 install --upgrade pip \
-    && pip3 install s3cmd
+    && pip3 install s3cmd \
+    && curl -sL https://deb.nodesource.com/setup_${NODE_VERSION}.x | bash - \
+    && apt -y install nodejs
 
 ENTRYPOINT [ "/srv/entrypoint.sh" ]

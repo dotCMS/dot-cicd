@@ -25,10 +25,10 @@ if [[ "${is_release}" != 'true' ]]; then
   [[ ${cmdResult} != 0 ]] && exit 1
 fi
 
-releaseParam='-Prelease=true'
+release_param='-Prelease=true'
 
 if [[ "${is_release}" != 'true' ]]; then
-  releaseParam=
+  release_param=
   release_version=${github_sha}
   changeDotcmsVersion ${release_version}
   executeCmd "python3 /build/changeEeDependency.py ${release_version}"
@@ -45,7 +45,7 @@ echo '################################'
 echo 'Uploading Enterprise Edition jar'
 echo '################################'
 executeCmd "./gradlew -b deploy.gradle uploadEnterprise
-  ${releaseParam}
+  ${release_param}
   -Pusername=${repo_username}
   -Ppassword=${repo_password}"
 [[ ${cmdResult} != 0 ]] && exit 1
@@ -58,7 +58,7 @@ echo
 echo '####################'
 echo 'Uploading DotCMS jar'
 echo '####################'
-executeCmd "./gradlew -b deploy.gradle uploadDotcms ${releaseParam} -Pusername=${repo_username} -Ppassword=${repo_password} -PincludeDependencies=true"
+executeCmd "./gradlew -b deploy.gradle uploadDotcms ${release_param} -Pusername=${repo_username} -Ppassword=${repo_password} -PincludeDependencies=true"
 [[ ${cmdResult} != 0 ]] && exit 1
 
 popd

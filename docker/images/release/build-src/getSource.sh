@@ -9,10 +9,10 @@
 build_id=${1}
 
 # Clone with submodules
-export GIT_TAG=${build_id}
+[[ "${is_release}" == 'true' ]] && export GIT_TAG=${build_id}
 executeCmd "gitCloneSubModules $(resolveRepoUrl ${CORE_GITHUB_REPO} ${GITHUB_USER_TOKEN} ${GITHUB_USER}) ${build_id}"
-export GIT_TAG=
 [[ ${cmdResult} != 0 ]] && exit 1
+[[ "${is_release}" == 'true' ]] && export GIT_TAG=
 
 pushd ${CORE_GITHUB_REPO}
 echo 'Git status:'
