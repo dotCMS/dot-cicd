@@ -20,10 +20,10 @@ is_release=$6
 
 pushd dotCMS
 
-if [[ "${is_release}" != 'true' ]]; then
+#if [[ "${is_release}" != 'true' ]]; then
   executeCmd "./gradlew java -PuseGradleNode=false"
-  [[ ${cmdResult} != 0 ]] && exit 1
-fi
+#  [[ ${cmdResult} != 0 ]] && exit 1
+#fi
 
 release_param='-Prelease=true'
 
