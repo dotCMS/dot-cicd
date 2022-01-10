@@ -1,5 +1,7 @@
 #!/bin/bash
 
+build_id=${1}
+
 pushd dotCMS
 
 # resolve dot-ui rc tag
@@ -26,7 +28,7 @@ if [[ -n "${ui_version}" || -n "${wc_version}" ]]; then
   if [[ "${is_release}" == 'true' ]]; then
     git add gradle.properties
     git commit -m "Updating core-web's dotcms-ui and dotcms-webcomponents versions"
-    git push
+    git push origin ${build_id}
   fi
 fi
 
