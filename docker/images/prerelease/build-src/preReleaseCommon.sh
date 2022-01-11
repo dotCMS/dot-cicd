@@ -137,9 +137,16 @@ function getValidNpmVersion {
 # $1: version
 function pumpUpVersion {
   local arr_in=(${1//./ })
+  local year=$arr_in
   local month=$((arr_in[1] + 1))
-  [[ $month -gt 12 ]] && month=1
-  echo ${arr_in[0]}.${month}.$((arr_in[2]))
+
+  if [ $month -gt 12 ]
+    then
+      month=1
+      year=$((year+1))
+    fi
+
+  echo ${year}.${month}.$((arr_in[2]))
 }
 
 # Runs a 'npm publish -tag' command with a provided tag
