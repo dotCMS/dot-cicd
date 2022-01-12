@@ -44,6 +44,7 @@ function createAndPush {
     executeCmd "gitCloneSubModules ${resolved_repo} ${clone_branch}"
     cloneFallback ${repo} ${cmdResult}
     pushd ${repo}
+    ./gradlew clean java
     git status
     [[ "${DEBUG}" == 'true' ]] && cat .gitmodules
     executeCmd "git checkout -- .gitmodules"
