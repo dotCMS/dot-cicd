@@ -4,6 +4,8 @@
 # Script: setVars.sh
 # Set important env-vars to be used across the release process
 
+uname -m; uname -r
+
 : ${FROM_BRANCH:="master"} && export FROM_BRANCH
 export ENTERPRISE_DIR=dotCMS/src/main/enterprise
 
@@ -12,4 +14,3 @@ master_branch=master
 [[ "${DRY_RUN}" == 'true' ]] && master_branch="${master_branch}-cicd"
 export master_branch
 export GIT_CLONE_STRATEGY=full
-
