@@ -7,18 +7,12 @@
 printf "\e[32m Uploading enterprise jar \e[0m  \n"
 
 pushd ${CORE_GITHUB_REPO}
-
-# Upload enterprise jar
-if [[ "${DRY_RUN}" != 'true' ]]; then
-  release_param='-Prelease=true'
-else
-  release_param=
-fi
-
 pushd ${ENTERPRISE_DIR}
 executeCmd "./gradlew clean jar -PuseGradleNode=false"
 popd
 
+# Upload enterprise jar
+[[ "${DRY_RUN}" != 'true' ]] && release_param='-Prelease=true'
 pushd dotCMS
 executeCmd "./gradlew -b deploy.gradle uploadEnterprise
   ${release_param}
