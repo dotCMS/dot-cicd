@@ -20,8 +20,9 @@ replaceTextInFile ../.github/workflows/release-process.yml 'DOT_CICD_BRANCH:.*$'
 
 # Commit gradle.properties with updated variables versions
 executeCmd "git add gradle.properties ../.github/workflows/release-process.yml"
-executeCmd "git commit -m 'Modify dotcmsReleaseVersion, coreWebReleaseVersion, webComponentsReleaseVersion and dot-cicd branch version'"
-core_repo=$(resolveRepoUrl ${CORE_GITHUB_REPO} ${GITHUB_USER_TOKEN} ${GITHUB_USER})
-executeCmd "git push ${core_repo} ${branch}"
+executeCmd "git commit -m 'Modify dotcmsReleaseVersion to ${RELEASE_VERSION}, coreWebReleaseVersion, webComponentsReleaseVersion to rc and dot-cicd branch version to ${branch}'"
+
+executeCmd "python3 /build/changeEeDependency.py obfuscated"
+cat dependencies.gradle | grep enterprise
 
 popd
