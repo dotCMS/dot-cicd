@@ -7,29 +7,35 @@
 printf "\e[32m Uploading enterprise jar \e[0m  \n"
 
 pushd ${CORE_GITHUB_REPO}
+#pushd ${ENTERPRISE_DIR}
+#executeCmd "./gradlew clean jar -PuseGradleNode=false"
+#popd
 
 # Upload enterprise jar
-if [[ "${DRY_RUN}" != 'true' ]]; then
-  release_param='-Prelease=true'
-else
-  release_param=
-fi
-
-pushd ${ENTERPRISE_DIR}
-executeCmd "./gradlew clean jar -PuseGradleNode=false"
-popd
-
 pushd dotCMS
+[[ "${DRY_RUN}" != 'true' ]] && release_param='-Prelease=true'
 executeCmd "./gradlew -b deploy.gradle uploadEnterprise
   ${release_param}
   -Pusername=${REPO_USERNAME}
   -Ppassword=${REPO_PASSWORD}"
 [[ ${cmdResult} != 0 ]] && exit 1
+
+executeCmd "git checkout -- dependencies.gradle"
+executeCmd "./gradlew clean java -PuseGradleNode=false"
+[[ ${cmdResult} != 0 ]] && exit 1
 popd
 
 replaceTextInFile .gitmodules 'branch = .*' "branch = ${branch}"
 executeCmd "git add .gitmodules"
-executeCmd "git commit -m 'update release version'"
+executeCmd "git commit -m 'Update branch in git submodule to ${branch}'"
+executeCmd "git status"
 core_repo=$(resolveRepoUrl ${CORE_GITHUB_REPO} ${GITHUB_USER_TOKEN} ${GITHUB_USER})
 executeCmd "git push ${core_repo} ${branch}"
+
+pushd ${ENTERPRISE_DIR}
+executeCmd "git status"
+enterprise_repo=$(resolveRepoUrl ${ENTERPRISE_GITHUB_REPO} ${GITHUB_USER_TOKEN} ${GITHUB_USER})
+executeCmd "git push ${enterprise_repo} ${branch}"
+popd
+
 popd
