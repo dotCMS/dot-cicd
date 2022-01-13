@@ -83,7 +83,7 @@ function checkoutBranch {
 
   gitRemoteLs ${resolved_repo} ${branch}
   local remote_branch=$?
-  if [[ ${remote_branch} == 1 && "${DRY_RUN}" == 'true' ]]; then
+  if [[ ${remote_branch} == 1 ]]; then
     undoPush ${repo} ${branch}
     remote_branch=0
   fi
