@@ -44,7 +44,6 @@ function createAndPush {
     executeCmd "gitCloneSubModules ${resolved_repo} ${clone_branch}"
     cloneFallback ${repo} ${cmdResult}
     pushd ${repo}
-    ./gradlew clean java
     git status
     [[ "${DEBUG}" == 'true' ]] && cat .gitmodules
     executeCmd "git checkout -- .gitmodules"
@@ -150,7 +149,7 @@ function pumpUpVersion {
   echo ${year}.${month}.$((arr_in[2]))
 }
 
-# Runs a 'npm publish -tag' command with a provided tag
+# Runs a 'npm publish -tag' command npm with a provided tag
 # Dry-run mode flag is passed to command
 #
 # $1: tag: provided tag
@@ -161,6 +160,44 @@ function npmPublish {
   [[ "${DRY_RUN}" == 'true' ]] && cmd="${cmd} --dry-run"
   executeCmd "${cmd}"
   [[ ${cmdResult} != 0 ]] && echo "Error running npm publish with tag ${tag}" && exit 1
+}
+
+# Given a npm project name, its tag and its release npm valid version, resolves the current version counter.
+#
+# $1: repo: npm repo
+# $2: tag provided tag
+# $3: release_version: release npm valid version
+function currentNpmRepoVersionCounter {
+  local repo=${1}
+  local tag=${2}
+  local release_version=${3}
+  [[ -z "${repo}" ]] && echo 'Missing repo' && return -1
+  [[ -z "${tag}" ]] && echo 'Missing tag' && return -2
+  [[ -z "${release_version}" ]] && echo 'Missing release_version' && return -3
+
+  npm dist-tag ls ${repo}
+  [[ $? != 0 ]] && echo "Invalid repo: ${repo}" && return -4
+  local full_version=$(npm dist-tag ls ${repo} | grep "${tag}: ")
+  [[ -z "${full_version}" ]] && return 0
+
+  local prefix="-${tag}."
+  local counter=${full_version#*"${prefix}"}
+  echo "Found the current npm repo version counter: ${counter}"
+  local counter_number=$((counter))
+  return ${counter_number}
+}
+
+# Given a npm project name, its tag and its release npm valid version, resolves the next version counter.
+#
+# $1: repo: npm repo
+# $2: tag provided tag
+# $3: release_version: release npm valid version
+function nextNpmRepoVersionCounter {
+  currentNpmRepoVersionCounter $@
+  local counter=$?
+  counter=$((counter + 1))
+  echo "Calculated a next npm repo version counter: ${counter}"
+  return ${counter}
 }
 
 # Calls python script to replace a given text by a provided one
