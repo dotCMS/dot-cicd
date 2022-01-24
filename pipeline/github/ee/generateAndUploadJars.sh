@@ -33,10 +33,12 @@ else
   rev=obfuscated
 fi
 
-executeCmd "python3 ../../${DOT_CICD_LIB}/docker/images/release/build-src/changeEeDependency.py ${rev}"
-cat dependencies.gradle | grep enterprise
-
 # Build project
+## Creating jar
+pushd src/main/enterprise
+executeCmd "./gradlew clean jar -PuseGradleNode=false"
+popd
+
 executeCmd "./gradlew java -PuseGradleNode=false"
 [[ ${cmdResult} != 0 ]] && exit 1
 
@@ -44,18 +46,11 @@ echo
 echo '################################'
 echo 'Uploading Enterprise Edition jar'
 echo '################################'
-## Creating jar
-pushd src/main/enterprise
-executeCmd "./gradlew clean jar -PuseGradleNode=false"
-popd
-
 # Upload and deploy enterprise jars
 executeCmd "./gradlew -b deploy.gradle uploadEnterprise
   ${releaseParam}
   -Pusername=${repo_username}
   -Ppassword=${repo_password}"
 [[ ${cmdResult} != 0 ]] && exit 1
-
-executeCmd "git checkout -- dependencies.gradle"
 
 popd
