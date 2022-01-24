@@ -25,22 +25,20 @@ echo '##################################'
 
 pushd ${DOT_CICD_PATH}/core/dotCMS
 
-# Mark this as release or dry-run
-releaseParam='-Prelease=true'
 if [[ "${is_release}" != 'true' ]]; then
   releaseParam=''
-
-  # Build project
-  executeCmd "./gradlew java -PuseGradleNode=false"
-  [[ ${cmdResult} != 0 ]] && exit 1
-
-  #  This is for testing purposes, we should never seen a branch no other than master or a release one
-  if [[ "${build_id}" != 'master' ]]; then
-    changeDotcmsVersion ${github_sha}
-    executeCmd "python3 ../../${DOT_CICD_LIB}/docker/images/release/build-src/changeEeDependency.py ${github_sha}"
-    cat dependencies.gradle | grep enterprise
-  fi
+  rev=${github_sha}
+else
+  releaseParam='-Prelease=true'
+  rev=obfuscated
 fi
+
+executeCmd "python3 ../../${DOT_CICD_LIB}/docker/images/release/build-src/changeEeDependency.py ${rev}"
+cat dependencies.gradle | grep enterprise
+
+# Build project
+executeCmd "./gradlew java -PuseGradleNode=false"
+[[ ${cmdResult} != 0 ]] && exit 1
 
 echo
 echo '################################'
@@ -57,5 +55,7 @@ executeCmd "./gradlew -b deploy.gradle uploadEnterprise
   -Pusername=${repo_username}
   -Ppassword=${repo_password}"
 [[ ${cmdResult} != 0 ]] && exit 1
+
+executeCmd "git checkout -- dependencies.gradle"
 
 popd
