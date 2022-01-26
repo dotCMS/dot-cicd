@@ -8,57 +8,38 @@
 # $2: ee_build_id: enterprise branch or commit
 # $3: repo_username: artifactory repo username
 # $4: repo_password: artifactory repo password
-# $5: github_sha: commit SHA
-# $6: is_release: release flag
+# $5: is_release: release flag
 
 build_id=$1
 ee_build_id=$2
 repo_username=$3
 repo_password=$4
-github_sha=$5
-is_release=$6
+is_release=$5
 
-pushd dotCMS
+if [[ "${is_release}" == 'true' ]]; then
+  pushd dotCMS
 
-#if [[ "${is_release}" != 'true' ]]; then
-  executeCmd "./gradlew java -PuseGradleNode=false"
-#  [[ ${cmdResult} != 0 ]] && exit 1
-#fi
+  pushd src/main/enterprise
+  executeCmd "./gradlew clean jar -PuseGradleNode=false"
+  popd
 
-release_param='-Prelease=true'
+  echo
+  echo '################################'
+  echo 'Uploading Enterprise Edition jar'
+  echo '################################'
+  [[ "${is_release}" == 'true' ]] && releaseParam='-Prelease=true'
+  executeCmd "./gradlew -b deploy.gradle uploadEnterprise
+    ${releaseParam}
+    -Pusername=${repo_username}
+    -Ppassword=${repo_password}"
+  [[ ${cmdResult} != 0 ]] && exit 1
 
-if [[ "${is_release}" != 'true' ]]; then
-  release_param=
-  release_version=${github_sha}
-  changeDotcmsVersion ${release_version}
-  executeCmd "python3 /build/changeEeDependency.py ${release_version}"
-  cat dependencies.gradle | grep enterprise
+  echo
+  echo '####################'
+  echo 'Uploading DotCMS jar'
+  echo '####################'
+  executeCmd "./gradlew -b deploy.gradle uploadDotcms ${releaseParam} -Pusername=${repo_username} -Ppassword=${repo_password} -PincludeDependencies=true"
+  [[ ${cmdResult} != 0 ]] && exit 1
+
+  popd
 fi
-
-pushd src/main/enterprise
-[[ "${is_release}" != 'true' ]] && changeDotcmsVersion ${release_version}
-executeCmd "./gradlew clean jar -PuseGradleNode=false"
-popd
-
-echo
-echo '################################'
-echo 'Uploading Enterprise Edition jar'
-echo '################################'
-executeCmd "./gradlew -b deploy.gradle uploadEnterprise
-  ${release_param}
-  -Pusername=${repo_username}
-  -Ppassword=${repo_password}"
-[[ ${cmdResult} != 0 ]] && exit 1
-
-[[ "${is_release}" != "true" ]] \
-  && ls -las src/main/enterprise/build/libs \
-  && executeCmd "./gradlew clean jar"
-
-echo
-echo '####################'
-echo 'Uploading DotCMS jar'
-echo '####################'
-executeCmd "./gradlew -b deploy.gradle uploadDotcms ${release_param} -Pusername=${repo_username} -Ppassword=${repo_password} -PincludeDependencies=true"
-[[ ${cmdResult} != 0 ]] && exit 1
-
-popd

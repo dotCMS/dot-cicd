@@ -36,3 +36,6 @@ executeCmd "docker run --rm
   ${IMAGE_NAME} $@"
 
 popd
+
+[[ ${cmdResult} != 0 ]] && exit ${cmdResult}
+exit 0
