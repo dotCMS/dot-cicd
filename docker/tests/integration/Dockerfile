@@ -1,18 +1,10 @@
 # OpenJDK distributed under GPLv2+Oracle Classpath Exception license (http://openjdk.java.net/legal/gplv2+ce.html)
 # Alpine Linux packages distributed under various licenses including GPL-3.0+ (https://pkgs.alpinelinux.org/packages)
-FROM dotcms/dotcms-seed:jdk11 as prepare-integration
+FROM dotcms/dotcms-seed:22.01 as prepare-integration
 
 LABEL com.dotcms.contact = "support@dotcms.com"
 LABEL com.dotcms.vendor = "dotCMS LLC"
 LABEL com.dotcms.description = "dotCMS Content Management System"
-
-# Location for assets, indexes and felix
-RUN mkdir -p /custom \
-    && mkdir -p /custom/assets \
-    && mkdir -p /custom/dotsecure \
-    && mkdir -p /custom/esdata \
-    && mkdir -p /custom/felix \
-    && mkdir -p /custom/output
 
 #  One of ["COMMIT", "TAG" ]
 ARG BUILD_FROM=COMMIT
@@ -21,13 +13,28 @@ ARG BUILD_ID=origin/master
 ENV BUILD_ID=${BUILD_ID}
 ARG BUILD_HASH
 ENV BUILD_HASH=${BUILD_HASH}
-
+ARG PG_VERSION=13
+ENV PG_VERSION=$PG_VERSION
 #  In order to run the integration test a license must be provided
 ARG LICENSE_KEY
 
 WORKDIR /srv
 
-RUN apk update && apk --no-cache add curl
+RUN apt-get update -y \
+  && apt-get install -y gnupg gnupg1 gnupg2 wget lsb-release curl \
+  && sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list' \
+  && wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - \
+  && apt-get update -y \
+  && apt-get upgrade -y \
+  && apt-get install -y postgresql-$PG_VERSION
+
+# Location for assets, indexes and felix
+RUN mkdir -p /custom \
+    && mkdir -p /custom/assets \
+    && mkdir -p /custom/dotsecure \
+    && mkdir -p /custom/esdata \
+    && mkdir -p /custom/felix \
+    && mkdir -p /custom/output
 
 # dotCMS core distributed under GPLv3 license (https://github.com/dotCMS/core/blob/master/license.txt)
 COPY setup/build-src/checkout.sh /build/checkout.sh
