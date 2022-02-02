@@ -162,10 +162,10 @@ function npmPublish {
   [[ ${cmdResult} != 0 ]] && echo "Error running npm publish with tag ${tag}" && exit 1
 }
 
-# Given a npm project name, its tag and its release npm valid version, resolves the current version counter.
+# Given a npm project name, a tag and its release npm valid version, resolves the current version counter.
 #
 # $1: repo: npm repo
-# $2: tag provided tag
+# $2: tag: provided tag
 # $3: release_version: release npm valid version
 function currentNpmRepoVersionCounter {
   local repo=${1}
@@ -187,10 +187,10 @@ function currentNpmRepoVersionCounter {
   return ${counter_number}
 }
 
-# Given a npm project name, its tag and its release npm valid version, resolves the next version counter.
+# Given a npm project name, a tag and its release npm valid version, resolves the next version counter.
 #
 # $1: repo: npm repo
-# $2: tag provided tag
+# $2: tag: provided tag
 # $3: release_version: release npm valid version
 function nextNpmRepoVersionCounter {
   currentNpmRepoVersionCounter $@
@@ -198,18 +198,4 @@ function nextNpmRepoVersionCounter {
   counter=$((counter + 1))
   echo "Calculated a next npm repo version counter: ${counter}"
   return ${counter}
-}
-
-# Calls python script to replace a given text by a provided one
-#
-# $1: file: file to do replacing
-# $2: replace_text: text to replace
-# $3: replacing_text: new text
-function replaceTextInFile {
-  local file=${1}
-  local replace_text=${2}
-  local replacing_text=${3}
-
-  executeCmd "python3 /build/replaceTextInFile.py ${file} \"${replace_text}\" \"${replacing_text}\""
-  [[ "${DEBUG}" == 'true' ]] && cat ${file}
 }
