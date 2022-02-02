@@ -24,6 +24,7 @@ echo "NPM Token: ${NPM_TOKEN}"
 echo "Docker username: ${docker_username}"
 echo "Docker password: ${docker_password}"
 echo "Release version: ${RELEASE_VERSION}"
+echo "Skip Core Web: ${SKIP_CORE_WEB}"
 echo "Dry run: ${DRY_RUN}"
 echo "Debug: ${DEBUG}"
 echo
@@ -37,6 +38,6 @@ runScript preBuildCore
 runScript modEeDotcmsVersion
 runScript modDotcmsVersion
 runScript uploadEeJar
-runScript undoBranches
+#runScript undoBranches
 runScript setGithubLabels
 popd

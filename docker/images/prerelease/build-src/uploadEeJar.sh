@@ -7,9 +7,9 @@
 printf "\e[32m Uploading enterprise jar \e[0m  \n"
 
 pushd ${CORE_GITHUB_REPO}
-#pushd ${ENTERPRISE_DIR}
-#executeCmd "./gradlew clean jar -PuseGradleNode=false"
-#popd
+pushd ${ENTERPRISE_DIR}
+executeCmd "./gradlew clean jar -PuseGradleNode=false"
+popd
 
 # Upload enterprise jar
 pushd dotCMS
@@ -21,8 +21,10 @@ executeCmd "./gradlew -b deploy.gradle uploadEnterprise
 [[ ${cmdResult} != 0 ]] && exit 1
 
 executeCmd "git checkout -- dependencies.gradle"
-executeCmd "./gradlew clean java -PuseGradleNode=false"
-[[ ${cmdResult} != 0 ]] && exit 1
+if [[ "${DRY_RUN}" != 'true' ]]; then
+  executeCmd "./gradlew clean java -PuseGradleNode=false"
+  [[ ${cmdResult} != 0 ]] && exit 1
+fi
 popd
 
 replaceTextInFile .gitmodules 'branch = .*' "branch = ${branch}"
