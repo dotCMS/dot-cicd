@@ -18,6 +18,7 @@ is_release=$5
 
 if [[ "${is_release}" == 'true' ]]; then
   pushd dotCMS
+  executeCmd "./gradlew clean java -PuseGradleNode=false"
 
   pushd src/main/enterprise
   executeCmd "./gradlew clean jar -PuseGradleNode=false"
