@@ -239,7 +239,7 @@ function gitClone {
   if [[ -n "${GIT_TAG}" ]]; then\
     pushd ${dest}
     [[ "${GIT_CLONE_STRATEGY}" != 'full' ]] \
-      && executeCmd "git fetch --all --tags" \
+      && executeCmd "git fetch --all" \
       && [[ ${cmdResult} != 0 ]] \
       && return ${cmdResult}
     executeCmd "git checkout tags/${GIT_TAG} -b ${GIT_TAG}"
