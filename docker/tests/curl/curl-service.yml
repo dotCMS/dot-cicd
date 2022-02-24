@@ -24,12 +24,15 @@ services:
       - 8000:8000
     environment:
       databaseType:
-      CATALINA_OPTS: "-XX:+PrintFlagsFinal"
-      DB_BASE_URL: "jdbc:postgresql://database/dotcms"
-      DB_USERNAME: "postgres"
-      DB_PASSWORD: "postgres"
-      DOT_ES_ENDPOINTS: 'https://elasticsearch:9200'
-      DB_MAX_TOTAL: 15
+      CMS_HEAP_SIZE: 1g
+      CMS_JAVA_OPTS: "-XX:+PrintFlagsFinal"
+      PROVIDER_DB_DRIVER: ${databaseType}
+      PROVIDER_DB_USERNAME:
+      PROVIDER_DB_PASSWORD:
+      PROVIDER_DB_DNSNAME: database
+      PROVIDER_DB_MAXCONNS: 15
+      PROVIDER_ELASTICSEARCH_DNSNAMES: elasticsearch
+      PROVIDER_ELASTICSEARCH_ENDPOINTS: "https://elasticsearch:9200"
       DOT_INDEX_POLICY_SINGLE_CONTENT: "FORCE"
       DOT_ASYNC_REINDEX_COMMIT_LISTENERS: "false"
       DOT_ASYNC_COMMIT_LISTENERS: "false"
