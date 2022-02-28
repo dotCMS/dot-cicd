@@ -34,10 +34,10 @@ echo "Debug: ${DEBUG}"
 echo
 
 mkdir -p /build/src && pushd /build/src
+runScript overrideVersions ${BUILD_ID} ${is_release}
 runScript getSource ${BUILD_ID} ${is_release}
 pushd ${CORE_GITHUB_REPO}
 runScript setVars
-runScript setVersions ${BUILD_HASH} ${is_release}
 runScript generateAndUploadJars ${BUILD_ID} ${EE_BUILD_ID} ${repo_username} ${repo_password} ${is_release}
 runScript buildDistro
 runScript generateJavadoc
