@@ -5,7 +5,7 @@
 # Updates with new version of DotCMS the dependencies in plugin-seeds repo
 
 # Gets the current DotCMS version
-dotcms_current_version=$(curl https://api.github.com/repos/dotcms/core/releases/latest -s | jq .tag_name -r)
+dotcms_current_version=${dotcms_version}
 # Removes the 'v' prefix
 new_version="${dotcms_current_version//v}"
 echo "New version: ${new_version}"
@@ -29,38 +29,8 @@ if [[ "${is_release}" != 'true' ]]; then
   git checkout -b cicd-test
 fi
 
-# Hardcoded list of gradle files to replace its DotCMS version
-files=('OSGi/com.dotcms.3rd.party/build.gradle'
-'OSGi/com.dotcms.actionlet/build.gradle'
-'OSGi/com.dotcms.aop/build.gradle'
-'OSGi/com.dotcms.custom.spring/build.gradle'
-'OSGi/com.dotcms.dynamic.skeleton/build.gradle'
-'OSGi/com.dotcms.fixasset/build.gradle'
-'OSGi/com.dotcms.hooks/build.gradle'
-'OSGi/com.dotcms.hooks.validations/build.gradle'
-'OSGi/com.dotcms.job/build.gradle'
-'OSGi/com.dotcms.override/build.gradle'
-'OSGi/com.dotcms.portlet/build.gradle'
-'OSGi/com.dotcms.pushpublish.listener/build.gradle'
-'OSGi/com.dotcms.rest/build.gradle'
-'OSGi/com.dotcms.ruleengine.velocityscriptingactionlet/build.gradle'
-'OSGi/com.dotcms.ruleengine.visitoripconditionlet/build.gradle'
-'OSGi/com.dotcms.simpleService/build.gradle'
-'OSGi/com.dotcms.spring/build.gradle'
-'OSGi/com.dotcms.staticpublish.listener/build.gradle'
-'OSGi/com.dotcms.tuckey/build.gradle'
-'OSGi/com.dotcms.viewtool/build.gradle'
-'OSGi/com.dotcms.webinterceptor/build.gradle'
-'OSGi/com.dotcms.app.example/build.gradle'
-'static/com.dotcms.hook/build.gradle'
-'static/com.dotcms.macro/build.gradle'
-'static/com.dotcms.portlet/build.gradle'
-'static/com.dotcms.servlet/build.gradle'
-'static/com.dotcms.skeleton/build.gradle'
-'static/com.dotcms.viewtool/build.gradle')
-
 # for every file replace dependencies to their new version
-for file in "${files[@]}"
+for file in $(find . -name build.gradle)
 do
   echo "Replacing version for ${file}"
   executeCmd "python3 /build/updateOsgiVersion.py ${file} ${new_version}"
