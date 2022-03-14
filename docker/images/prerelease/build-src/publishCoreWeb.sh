@@ -77,9 +77,9 @@ fi
 
 echo "Updating package.json...."
 core_web_master_version="$(pumpUpVersion $(getValidNpmVersion ${npm_release_version}))"
-nextNpmRepoVersionCounter dotcms-ui next ${core_web_release_version}
+nextNpmRepoVersionCounter dotcms-ui next ${core_web_master_version}
 ui_npm_artifact_suffix=$?
-nextNpmRepoVersionCounter dotcms-webcomponents next ${core_web_release_version}
+nextNpmRepoVersionCounter dotcms-webcomponents next ${core_web_master_version}
 wc_npm_artifact_suffix=$?
 if [[ "${DRY_RUN}" == 'true' ]]; then
   ui_npm_artifact_suffix="-cicd${ui_npm_artifact_suffix}"
