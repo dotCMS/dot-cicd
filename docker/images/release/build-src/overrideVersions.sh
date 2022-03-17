@@ -15,6 +15,7 @@ if [[ "${is_release}" == 'true' ]]; then
   justNumbers=
   release_build_id="release-${local_build_id#"v"}"
   . /build/getSource.sh ${release_build_id} false
+  is_release=true
 
   pushd ${CORE_GITHUB_REPO}
   pushd dotCMS

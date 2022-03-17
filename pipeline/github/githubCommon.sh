@@ -240,8 +240,7 @@ function gitClone {
     pushd ${dest}
     [[ "${GIT_CLONE_STRATEGY}" != 'full' ]] \
       && executeCmd "git fetch --all" \
-      && [[ ${cmdResult} != 0 ]] \
-      && return ${cmdResult}
+      && executeCmd "git fetch --tags"
     executeCmd "git checkout tags/${GIT_TAG} -b ${GIT_TAG}"
     [[ ${cmdResult} != 0 ]] && return ${cmdResult}
     popd
