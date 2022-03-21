@@ -6,7 +6,6 @@
 # gradle.properties to set the release (RC) & Master versions
 
 npm_release_version=${RELEASE_VERSION}
-[[ "${DRY_RUN}" == 'true' ]] && npm_release_version=${RELEASE_VERSION%"-cicd"}
 core_web_release_version="$(getValidNpmVersion ${npm_release_version})"
 nextNpmRepoVersionCounter dotcms-ui rc ${core_web_release_version}
 ui_npm_artifact_suffix=$?
@@ -77,19 +76,11 @@ fi
 
 echo "Updating package.json...."
 core_web_master_version="$(pumpUpVersion $(getValidNpmVersion ${npm_release_version}))"
-nextNpmRepoVersionCounter dotcms-ui next ${core_web_master_version}
-ui_npm_artifact_suffix=$?
-nextNpmRepoVersionCounter dotcms-webcomponents next ${core_web_master_version}
-wc_npm_artifact_suffix=$?
-if [[ "${DRY_RUN}" == 'true' ]]; then
-  ui_npm_artifact_suffix="-cicd${ui_npm_artifact_suffix}"
-  wc_npm_artifact_suffix="-cicd${wc_npm_artifact_suffix}"
-fi
-sed -i -E "s/\"version\": \".*\"/\"version\": \"${core_web_master_version}-next.${ui_npm_artifact_suffix}\"/g" package.json
+sed -i -E "s/\"version\": \".*\"/\"version\": \"${core_web_master_version}-next.1\"/g" package.json
 cat package.json | grep "version\":"
 
 pushd libs/dotcms-webcomponents
-sed -i -E "s/\"version\": \".*\"/\"version\": \"${core_web_master_version}-next.${wc_npm_artifact_suffix}\"/g" package.json
+sed -i -E "s/\"version\": \".*\"/\"version\": \"${core_web_master_version}-next.1\"/g" package.json
 cat package.json | grep "version\":"
 popd
 
