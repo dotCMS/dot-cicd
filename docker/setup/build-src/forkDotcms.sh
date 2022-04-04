@@ -43,6 +43,10 @@ if [[ "${1}" == "dotcms" || -z "${1}" ]]; then
   waitDbFor ${WAIT_DB_FOR}
   unset WAIT_DB_FOR
 
+  # Setting DEV mode to true at this instance
+  echo 'dotcms.dev.mode = true' >> ${TOMCAT_HOME}/webapps/ROOT/WEB-INF/classes/dotmarketing-config.properties
+  cat ${TOMCAT_HOME}/webapps/ROOT/WEB-INF/classes/dotmarketing-config.properties | grep 'dotcms.dev.mode'
+
   # Executing Tomcat and deploy DotCMS
   echo "Executing: . /srv/entrypoint.sh ${1} &"
   export JVM_ENDPOINT_TEST_PASS=obfuscate_me
