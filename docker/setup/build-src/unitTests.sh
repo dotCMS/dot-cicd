@@ -38,7 +38,7 @@ echo "  >>> Copying gradle reports to [/custom/output/reports/]"
 echo ""
 
 # Copying gradle report
-cp -R /build/src/core/dotCMS/build/test-results/unit-tests/html/ /custom/output/reports/
+cp -R /build/src/core/dotCMS/build/reports/tests/test/* /custom/output/reports/html/
 
 # Do we want to export the resulting reports to google storage?
 if [[ "${EXPORT_REPORTS}" == "true" ]]; then
