@@ -34,15 +34,15 @@ echo "Debug: ${DEBUG}"
 echo
 
 mkdir -p /build/src && pushd /build/src
-#runScript overrideVersions ${BUILD_ID} ${is_release}q
-#runScript getSource ${BUILD_ID} ${is_release}
-#pushd ${CORE_GITHUB_REPO}
-#runScript setVars
-#runScript generateAndUploadJars ${BUILD_ID} ${EE_BUILD_ID} ${repo_username} ${repo_password} ${is_release}
-#runScript buildDistro
-#runScript generateJavadoc
-#runScript pushToStaticBucket all true
-#runScript updateOsgiVersion
-#popd
+runScript overrideVersions ${BUILD_ID} ${is_release}
+runScript getSource ${BUILD_ID} ${is_release}
+pushd ${CORE_GITHUB_REPO}
+runScript setVars
+runScript generateAndUploadJars ${BUILD_ID} ${EE_BUILD_ID} ${repo_username} ${repo_password} ${is_release}
+runScript buildDistro
+runScript generateJavadoc
+runScript pushToStaticBucket all true
+runScript updateOsgiVersion
+popd
 runScript publishGithubReleases true ${BUILD_ID}
 popd

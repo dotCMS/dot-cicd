@@ -46,7 +46,6 @@ Releasing on ${repo}
   gitClone ${repo_url} ${RELEASE_BRANCH_NAME} ${repo}
 
   pushd ${repo}
-  gitConfig ${GITHUB_USER}
   # Commit and pushes "changes"
   commitAndPush ${repo_url}
   popd
@@ -62,8 +61,7 @@ echo '######################################################################'
 echo "RELEASE_BRANCH_NAME: " ${RELEASE_BRANCH_NAME}
 
 mkdir -p releases && pushd releases
-#release_repos=(${CORE_GITHUB_REPO} ${ENTERPRISE_GITHUB_REPO} ${CORE_WEB_GITHUB_REPO} ${PLUGIN_SEEDS_GITHUB_REPO} ${DOT_CICD_GITHUB_REPO} ${DOCKER_GITHUB_REPO})
-release_repos=(${ENTERPRISE_GITHUB_REPO} ${DOT_CICD_GITHUB_REPO})
+release_repos=(${CORE_GITHUB_REPO} ${ENTERPRISE_GITHUB_REPO} ${CORE_WEB_GITHUB_REPO} ${PLUGIN_SEEDS_GITHUB_REPO} ${DOT_CICD_GITHUB_REPO} ${DOCKER_GITHUB_REPO})
 for repo in "${release_repos[@]}"
 do
   pushRelease ${repo}
