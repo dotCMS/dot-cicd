@@ -22,7 +22,7 @@ pushd ../
 gitConfig ${GITHUB_USER}
 plugin_seeds_github_repo_url=$(resolveRepoUrl ${PLUGIN_SEEDS_GITHUB_REPO} ${GITHUB_USER_TOKEN} ${GITHUB_USER})
 # Clones plugin_seeds repo
-gitClone ${plugin_seeds_github_repo_url}
+gitClone ${plugin_seeds_github_repo_url} ${release_branch_name}
 pushd ${PLUGIN_SEEDS_GITHUB_REPO}
 
 if [[ "${is_release}" != 'true' ]]; then

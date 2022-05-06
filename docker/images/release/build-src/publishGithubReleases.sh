@@ -6,10 +6,10 @@
 # committing and pushing.
 #
 # $1: is_release: release flag
-# $2: ee_build_id: enterprise branch/commit
+# $2: build_id: enterprise branch/commit
 
 is_release=${1}
-ee_build_id=${2}
+build_id=${2}
 
 # Commits an empty commit and push to provided repo url
 #
@@ -29,10 +29,8 @@ function commitAndPush {
 # For provided repo, clone it, empty commit and push to trigger github release
 #
 # $1: repo: repo name
-# $2: module_path: when present it represents the path where submodule is targeted
 function pushRelease {
   local repo=${1}
-  local with_submodules=${2}
   local repo_url=$(resolveRepoUrl ${repo} ${GITHUB_USER_TOKEN} ${GITHUB_USER})
 
   # Verifies for branch to be remote, if it does not exist ignore this repo
@@ -45,12 +43,7 @@ function pushRelease {
   echo "#############################
 Releasing on ${repo}
 #############################"
-  # Git clones the repo and depending on module_path it clones the submodules as well
-  if [[ -n "${module_path}" ]]; then
-    gitCloneSubModules ${repo_url} ${RELEASE_BRANCH_NAME} ${repo}
-  else
-    gitClone ${repo_url} ${RELEASE_BRANCH_NAME} ${repo}
-  fi
+  gitClone ${repo_url} ${RELEASE_BRANCH_NAME} ${repo}
 
   pushd ${repo}
   # Commit and pushes "changes"
@@ -58,7 +51,7 @@ Releasing on ${repo}
   popd
 }
 
-RELEASE_BRANCH_NAME=${ee_build_id}
+RELEASE_BRANCH_NAME=${build_id}
 if [[ "${is_release}" == 'true' ]]; then
   RELEASE_PREFIX='release-'
   RELEASE_BRANCH_NAME=${RELEASE_BRANCH_NAME/v/$RELEASE_PREFIX}
@@ -68,10 +61,10 @@ echo '######################################################################'
 echo "RELEASE_BRANCH_NAME: " ${RELEASE_BRANCH_NAME}
 
 mkdir -p releases && pushd releases
-pushRelease ${CORE_GITHUB_REPO} ${CORE_GITHUB_REPO}/dotCMS/src/main/enterprise
-pushRelease ${CORE_WEB_GITHUB_REPO}
-pushRelease ${PLUGIN_SEEDS_GITHUB_REPO}
-pushRelease ${DOT_CICD_GITHUB_REPO}
-pushRelease ${DOCKER_GITHUB_REPO}
+release_repos=(${CORE_GITHUB_REPO} ${ENTERPRISE_GITHUB_REPO} ${CORE_WEB_GITHUB_REPO} ${PLUGIN_SEEDS_GITHUB_REPO} ${DOT_CICD_GITHUB_REPO} ${DOCKER_GITHUB_REPO})
+for repo in "${release_repos[@]}"
+do
+  pushRelease ${repo}
+done
 echo "Releases made" && ls -las
 popd

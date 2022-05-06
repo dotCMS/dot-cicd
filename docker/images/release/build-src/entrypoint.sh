@@ -44,5 +44,5 @@ runScript generateJavadoc
 runScript pushToStaticBucket all true
 runScript updateOsgiVersion
 popd
-runScript publishGithubReleases ${is_release} ${EE_BUILD_ID}
+runScript publishGithubReleases true ${BUILD_ID}
 popd
