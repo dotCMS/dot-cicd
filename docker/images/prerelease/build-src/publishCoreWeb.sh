@@ -76,11 +76,15 @@ fi
 
 echo "Updating package.json...."
 core_web_master_version="$(pumpUpVersion $(getValidNpmVersion ${npm_release_version}))"
-sed -i -E "s/\"version\": \".*\"/\"version\": \"${core_web_master_version}-next.1\"/g" package.json
+nextNpmRepoVersionCounter dotcms-ui next ${core_web_master_version}
+ui_npm_artifact_suffix=$?
+nextNpmRepoVersionCounter dotcms-webcomponents next ${core_web_master_version}
+wc_npm_artifact_suffix=$?
+sed -i -E "s/\"version\": \".*\"/\"version\": \"${core_web_master_version}-next.${ui_npm_artifact_suffix}\"/g" package.json
 cat package.json | grep "version\":"
 
 pushd libs/dotcms-webcomponents
-sed -i -E "s/\"version\": \".*\"/\"version\": \"${core_web_master_version}-next.1\"/g" package.json
+sed -i -E "s/\"version\": \".*\"/\"version\": \"${core_web_master_version}-next.${wc_npm_artifact_suffix}\"/g" package.json
 cat package.json | grep "version\":"
 popd
 
