@@ -37,7 +37,7 @@ runScript publishCoreWeb
 runScript preBuildCore
 runScript modEeDotcmsVersion
 runScript modDotcmsVersion
-runScript uploadEeJar
-#runScript undoBranches
+# TODO: uncomment when uploadEe jar works once again
+#runScript uploadEeJar
 runScript setGithubLabels
 popd
