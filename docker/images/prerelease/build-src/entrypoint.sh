@@ -37,7 +37,6 @@ runScript publishCoreWeb
 runScript preBuildCore
 runScript modEeDotcmsVersion
 runScript modDotcmsVersion
-# TODO: uncomment when uploadEe jar works once again
-#runScript uploadEeJar
+runScript uploadEeJar
 runScript setGithubLabels
 popd
