@@ -4,14 +4,16 @@
 # Script: setVersions.sh
 # Changes the values in the files that hold version information (like gradle.properties)
 #
-# $1: local_build_id: branch or commit
-# $2: is_release: is release flag
+# $1: $local_build_id: branch or commit
+# $2: $is_release: is release flag
+# $3: $local_is_lts: is LTS release flag
 
 local_build_id=${1}
 is_release=${2}
+local_is_lts=${3}
 
 # Override tag to use release branch instead
-if [[ "${is_release}" == 'true' ]]; then
+if [[ "${is_release}" == 'true' && "${local_is_lts}" != 'true' ]]; then
   justNumbers=
   release_build_id="release-${local_build_id#"v"}"
   . /build/getSource.sh ${release_build_id} false

@@ -34,7 +34,7 @@ echo "Debug: ${DEBUG}"
 echo
 
 mkdir -p /build/src && pushd /build/src
-runScript overrideVersions ${BUILD_ID} ${is_release}
+runScript overrideVersions ${BUILD_ID} ${is_release} ${is_lts}
 runScript getSource ${BUILD_ID} ${is_release}
 pushd ${CORE_GITHUB_REPO}
 runScript setVars
