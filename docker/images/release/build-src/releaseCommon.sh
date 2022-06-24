@@ -67,3 +67,10 @@ function currentNpmVersion {
 
   echo ${version#*"${tag}: "}
 }
+
+export GRADLE_HOME=/srv/gradle-4.10.2
+export PATH=${GRADLE_HOME}/bin:${PATH}
+echo "Gradle:
+GRADLE_HOME: ${GRADLE_HOME}
+"
+gradle -v

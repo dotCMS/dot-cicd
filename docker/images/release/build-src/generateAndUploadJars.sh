@@ -29,7 +29,7 @@ if [[ "${is_release}" == 'true' ]]; then
   echo 'Uploading Enterprise Edition jar'
   echo '################################'
   [[ "${is_release}" == 'true' ]] && releaseParam='-Prelease=true'
-  executeCmd "./gradlew -b deploy.gradle uploadEnterprise
+  executeCmd "gradle -b deploy.gradle uploadArchives
     ${releaseParam}
     -Pusername=${repo_username}
     -Ppassword=${repo_password}"
@@ -39,7 +39,11 @@ if [[ "${is_release}" == 'true' ]]; then
   echo '####################'
   echo 'Uploading DotCMS jar'
   echo '####################'
-  executeCmd "./gradlew -b deploy.gradle uploadDotcms ${releaseParam} -Pusername=${repo_username} -Ppassword=${repo_password} -PincludeDependencies=true"
+  executeCmd "gradle -b deploy.gradle uploadDotcms
+    ${releaseParam}
+    -Pusername=${repo_username}
+    -Ppassword=${repo_password}
+    -PincludeDependencies=true"
   [[ ${cmdResult} != 0 ]] && exit 1
 
   popd
