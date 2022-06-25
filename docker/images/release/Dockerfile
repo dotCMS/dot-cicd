@@ -7,7 +7,7 @@ LABEL com.dotcms.contact "info@dotcms.com"
 LABEL com.dotcms.vendor "dotCMS LLC"
 LABEL com.dotcms.description "dotCMS Content Management System"
 
-ARG NODE_VERSION=12
+ARG NODE_VERSION
 
 WORKDIR /srv
 
@@ -24,9 +24,8 @@ RUN apt update \
     && curl -sL https://deb.nodesource.com/setup_${NODE_VERSION}.x | bash - \
     && apt -y install nodejs \
     && pip3 install --upgrade pip \
-    && pip3 install s3cmd
-
-RUN wget -O gradle.zip https://services.gradle.org/distributions/gradle-4.10.2-bin.zip \
+    && pip3 install s3cmd \
+    && wget -O gradle.zip https://services.gradle.org/distributions/gradle-4.10.2-bin.zip \
     && unzip gradle.zip
 
 ENTRYPOINT [ "/srv/entrypoint.sh" ]

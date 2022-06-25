@@ -14,17 +14,15 @@ popd
 # Upload enterprise jar
 pushd dotCMS
 [[ "${DRY_RUN}" != 'true' ]] && release_param='-Prelease=true'
-executeCmd "./gradlew -b deploy.gradle uploadEnterprise
+executeCmd "gradle -b deploy.gradle uploadArchives
   ${release_param}
   -Pusername=${REPO_USERNAME}
   -Ppassword=${REPO_PASSWORD}"
 [[ ${cmdResult} != 0 ]] && exit 1
 
 executeCmd "git checkout -- dependencies.gradle"
-if [[ "${DRY_RUN}" != 'true' ]]; then
-  executeCmd "./gradlew clean java -PuseGradleNode=false"
-  [[ ${cmdResult} != 0 ]] && exit 1
-fi
+executeCmd "./gradlew clean java -PuseGradleNode=false"
+[[ ${cmdResult} != 0 ]] && exit 1
 popd
 
 replaceTextInFile .gitmodules 'branch = .*' "branch = ${branch}"

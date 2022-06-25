@@ -35,13 +35,10 @@ function cloneFallback {
 function createAndPush {
   local repo=${1}
   local branch=${2}
-  local clone_branch=${FROM_BRANCH}
-  [[ "${clone_branch}" == 'master' ]] && clone_branch=''
-
   local resolved_repo=$(resolveRepoUrl ${repo} ${GITHUB_USER_TOKEN} ${GITHUB_USER})
   printf "\e[32m Creating and pushing Release Branch on ${repo} \e[0m  \n"
   if [[ "${repo}" == "${CORE_GITHUB_REPO}" ]]; then
-    executeCmd "gitCloneSubModules ${resolved_repo} ${clone_branch}"
+    executeCmd "gitCloneSubModules ${resolved_repo}"
     cloneFallback ${repo} ${cmdResult}
     pushd ${repo}
     git status
@@ -50,7 +47,7 @@ function createAndPush {
     [[ "${DEBUG}" == 'true' ]] && cat .gitmodules
     popd
   else
-    executeCmd "gitClone ${resolved_repo} ${clone_branch}"
+    executeCmd "gitClone ${resolved_repo}"
     cloneFallback ${repo} ${cmdResult}
   fi
 

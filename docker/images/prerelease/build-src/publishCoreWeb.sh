@@ -4,115 +4,84 @@
 # Script: publishCoreWeb.sh
 # Modify package.json on release and master branches, push and run npm run publish:dev and edit
 # gradle.properties to set the release (RC) & Master versions
+# $1: ${type}: Type of operation (rc or next)
 
-npm_release_version=${RELEASE_VERSION}
-core_web_release_version="$(getValidNpmVersion ${npm_release_version})"
-nextNpmRepoVersionCounter dotcms-ui rc ${core_web_release_version}
-ui_npm_artifact_suffix=$?
-nextNpmRepoVersionCounter dotcms-webcomponents rc ${core_web_release_version}
-wc_npm_artifact_suffix=$?
-if [[ "${DRY_RUN}" == 'true' ]]; then
-  ui_npm_artifact_suffix="-cicd${ui_npm_artifact_suffix}"
-  wc_npm_artifact_suffix="-cicd${wc_npm_artifact_suffix}"
+type=${1}
+[[ "${type}" != 'rc' && "${type}" != 'next' ]] && echo "Invalid type ('${type}') provided" && exit 1
+
+pushd ${CORE_GITHUB_REPO}
+
+if [[ "${type}" == 'next' ]]; then
+  # Bump version of master in package.json
+  printf "\e[32m Bumping version of master branch \e[0m  \n"
+  executeCmd "git checkout master && git pull origin master"
+  core_web_version="$(pumpUpVersion $(getValidNpmVersion ${RELEASE_VERSION}))"
+else
+  core_web_version="$(getValidNpmVersion ${RELEASE_VERSION})"
 fi
 
-printf "\e[32m Publishing core-web version \e[0m  \n"
-pushd ${CORE_WEB_GITHUB_REPO}
-gitConfig ${GITHUB_USER}
 executeCmd "git branch"
+
+nextNpmRepoVersionCounter dotcms-ui ${type} ${core_web_version}
+ui_npm_artifact_suffix=$?
+nextNpmRepoVersionCounter dotcms-webcomponents ${type} ${core_web_version}
+wc_npm_artifact_suffix=$?
+
+pushd ${CORE_WEB_GITHUB_REPO}
 
 # Set RELEASE_VERSION in package.json and push it
 echo 'Updating package.json....'
-sed -i -E "s/\"version\": \".*\"/\"version\": \"${core_web_release_version}-rc.${ui_npm_artifact_suffix}\"/g" package.json
+sed -i -E "s/\"version\": \".*\"/\"version\": \"${core_web_version}-${type}.${ui_npm_artifact_suffix}\"/g" package.json
 cat package.json | grep "version\":"
 
 pushd libs/dotcms-webcomponents
-sed -i -E "s/\"version\": \".*\"/\"version\": \"${core_web_release_version}-rc.${wc_npm_artifact_suffix}\"/g" package.json
+sed -i -E "s/\"version\": \".*\"/\"version\": \"${core_web_version}-${type}.${wc_npm_artifact_suffix}\"/g" package.json
 cat package.json | grep "version\":"
 popd
 
-printf "\e[32m Committing changes to branch ${branch} \e[0m  \n"
+printf "\e[32m Committing changes to ${branch} branch \e[0m  \n"
 executeCmd "git status && git add package.json libs/dotcms-webcomponents/package.json"
-executeCmd "git commit -m 'update release version for dotcms-ui & dotcms-webcomponents'"
-executeCmd "git push origin ${branch}"
-echo "package.json files updated and pushed in Release branch"
 
-popd
+if [[ "${type}" == 'next' ]]; then
+  executeCmd "git commit -m 'update master bumped version for dotcms-ui & dotcms-webcomponents'"
+  publishMessg='Publishing Master core-web version'
+else
+  executeCmd "git commit -m 'update release version for dotcms-ui & dotcms-webcomponents'"
+  publishMessg='Publishing core-web version'
+fi
+
+echo "package.json files updated at ${branch} branch"
 
 # Publish CORE-WEB & DotCMS-WebComponents & CORE-WEB Release version
-pushd ${CORE_WEB_GITHUB_REPO}
-executeCmd "npm install
-  && npm i -g @angular/cli
-  && rm -rf dist
+printf "\e[32m ${publishMessg} \e[0m  \n"
+
+[[ "${type}" == 'next' ]] && executeCmd "rm -rf node_modules"
+
+executeCmd 'npm install'
+[[ ${cmdResult} != 0 ]] && echo "Error building ${branch} core-web version" && exit 1
+
+if [[ "${type}" == 'rc' ]]; then
+  executeCmd 'npm i -g @angular/cli'
+  [[ ${cmdResult} != 0 ]] && echo "Error building ${branch} core-web version" && exit 1
+fi
+
+executeCmd "rm -rf dist
   && npm run build:prod
   && cp package.json ./dist/apps/dotcms-ui/package.json"
 [[ ${cmdResult} != 0 ]] && echo "Error building ${branch} core-web version" && exit 1
 
 printf "\e[32m Publishing Release DotCMS-UI version.... \e[0m  \n"
 pushd dist/apps/dotcms-ui
-npmPublish rc
+npmPublish ${type}
 popd
 
 printf "\e[32m Publishing Release DotCMS-WebComponents version.... \e[0m  \n"
 pushd libs/dotcms-webcomponents
-npmPublish rc
+npmPublish ${type}
 popd
 
 popd
 
-# Bump version of master in package.json
-printf "\e[32m Bumping version of ${master_branch} branch \e[0m  \n"
-pushd ${CORE_WEB_GITHUB_REPO}
+[[ "${type}" == 'next' ]] && executeCmd "git push origin master"
 
-executeCmd "git checkout master && git pull origin master"
-
-if [[ "${master_branch}" != 'master' ]]; then
-  core_web_resolved_repo=$(resolveRepoUrl ${CORE_WEB_GITHUB_REPO} ${GITHUB_USER_TOKEN} ${GITHUB_USER})
-  gitRemoteLs ${core_web_resolved_repo} ${master_branch}
-  web_core_remote_branch=$?
-  [[ ${web_core_remote_branch} == 1 ]] && executeCmd "git push origin :${master_branch}"
-  executeCmd "git checkout -b ${master_branch}"
-fi
-
-echo "Updating package.json...."
-core_web_master_version="$(pumpUpVersion $(getValidNpmVersion ${npm_release_version}))"
-nextNpmRepoVersionCounter dotcms-ui next ${core_web_master_version}
-ui_npm_artifact_suffix=$?
-nextNpmRepoVersionCounter dotcms-webcomponents next ${core_web_master_version}
-wc_npm_artifact_suffix=$?
-sed -i -E "s/\"version\": \".*\"/\"version\": \"${core_web_master_version}-next.${ui_npm_artifact_suffix}\"/g" package.json
-cat package.json | grep "version\":"
-
-pushd libs/dotcms-webcomponents
-sed -i -E "s/\"version\": \".*\"/\"version\": \"${core_web_master_version}-next.${wc_npm_artifact_suffix}\"/g" package.json
-cat package.json | grep "version\":"
-popd
-
-executeCmd "git status && git add package.json libs/dotcms-webcomponents/package.json"
-executeCmd "git commit -m 'update master bumped version for dotcms-ui & dotcms-webcomponents'"
-executeCmd "git push origin ${master_branch}"
-echo "package.json updated and pushed in Master branch"
-
-popd
-
-# Publish CORE-WEB & DotCMS-WebComponents Master version
-printf "\e[32m Publishing Master CORE-WEB version.... \e[0m  \n"
-
-pushd ${CORE_WEB_GITHUB_REPO}
-executeCmd "rm -rf node_modules
-  && npm install
-  && rm -rf dist
-  && npm run build:prod
-  && cp package.json ./dist/apps/dotcms-ui/package.json"
-[[ ${cmdResult} != 0 ]] && echo "Error building master's core-web" && exit 1
-
-printf "\e[32m Publishing Master DotCMS-UI version..... \e[0m  \n"
-pushd dist/apps/dotcms-ui
-npmPublish next
-popd
-
-printf "\e[32m Publishing Master DotCMS-WebComponents version..... \e[0m  \n"
-pushd libs/dotcms-webcomponents
-npmPublish next
-popd
 popd

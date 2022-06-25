@@ -19,10 +19,12 @@ RUN find /build/ -type f -name "*.sh" -exec chmod a+x {} \;
 # Build env dependencies
 RUN apt update \
     && apt upgrade -y \
-    && apt install -y bash openssh-server openssh-client openssl ca-certificates gnupg grep sed tini curl git python3 \
+    && apt install -y bash openssh-server openssh-client openssl ca-certificates gnupg grep sed tini curl wget git python3 \
       musl-dev dirmngr apt-transport-https lsb-release \
     && update-ca-certificates \
     && curl -sL https://deb.nodesource.com/setup_${NODE_VERSION}.x | bash - \
-    && apt -y install nodejs
+    && apt -y install nodejs \
+    && wget -O gradle.zip https://services.gradle.org/distributions/gradle-4.10.2-bin.zip \
+    && unzip gradle.zip
 
 ENTRYPOINT [ "/srv/entrypoint.sh" ]
