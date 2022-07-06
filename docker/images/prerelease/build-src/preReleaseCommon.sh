@@ -132,7 +132,7 @@ function getValidNpmVersion {
 # Given a version pump up according to year-month rules
 #
 # $1: version
-function pumpUpVersion {
+function bumpUpVersion {
   local arr_in=(${1//./ })
   local year=$arr_in
   local month=$((arr_in[1] + 1))

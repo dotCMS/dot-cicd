@@ -15,7 +15,7 @@ if [[ "${type}" == 'next' ]]; then
   # Bump version of master in package.json
   printf "\e[32m Bumping version of master branch \e[0m  \n"
   executeCmd "git checkout master && git pull origin master"
-  core_web_version="$(pumpUpVersion $(getValidNpmVersion ${RELEASE_VERSION}))"
+  core_web_version="$(bumpUpVersion $(getValidNpmVersion ${RELEASE_VERSION}))"
 else
   core_web_version="$(getValidNpmVersion ${RELEASE_VERSION})"
 fi
@@ -43,10 +43,10 @@ printf "\e[32m Committing changes to ${branch} branch \e[0m  \n"
 executeCmd "git status && git add package.json libs/dotcms-webcomponents/package.json"
 
 if [[ "${type}" == 'next' ]]; then
-  executeCmd "git commit -m 'update master bumped version for dotcms-ui & dotcms-webcomponents'"
+  executeCmd "git commit -m 'Update master bumped version for dotcms-ui and dotcms-webcomponents'"
   publishMessg='Publishing Master core-web version'
 else
-  executeCmd "git commit -m 'update release version for dotcms-ui & dotcms-webcomponents'"
+  executeCmd "git commit -m 'Update release version for dotcms-ui and dotcms-webcomponents'"
   publishMessg='Publishing core-web version'
 fi
 
@@ -60,15 +60,16 @@ printf "\e[32m ${publishMessg} \e[0m  \n"
 executeCmd 'npm install'
 [[ ${cmdResult} != 0 ]] && echo "Error building ${branch} core-web version" && exit 1
 
-if [[ "${type}" == 'rc' ]]; then
-  executeCmd 'npm i -g @angular/cli'
-  [[ ${cmdResult} != 0 ]] && echo "Error building ${branch} core-web version" && exit 1
-fi
+#if [[ "${type}" == 'rc' ]]; then
+#  executeCmd 'npm i -g @angular/cli'
+#  [[ ${cmdResult} != 0 ]] && echo "Error building ${branch} core-web version" && exit 1
+#fi
 
-executeCmd "rm -rf dist
-  && npm run build:prod
-  && cp package.json ./dist/apps/dotcms-ui/package.json"
+executeCmd 'rm -rf dist'
+executeCmd 'npm run build:prod'
 [[ ${cmdResult} != 0 ]] && echo "Error building ${branch} core-web version" && exit 1
+executeCmd 'cp package.json ./dist/apps/dotcms-ui/package.json'
+
 
 printf "\e[32m Publishing Release DotCMS-UI version.... \e[0m  \n"
 pushd dist/apps/dotcms-ui
