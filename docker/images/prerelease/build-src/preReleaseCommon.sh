@@ -151,7 +151,7 @@ function bumpUpVersion {
 function npmPublish {
   executeCmd "npm set //registry.npmjs.org/:_authToken ${NPM_TOKEN}"
   local tag=${1}
-  local cmd="npm publish --tag ${tag}"
+  local cmd="CI=true npm publish --tag ${tag}"
   executeCmd "${cmd}"
   [[ ${cmdResult} != 0 ]] && echo "Error running npm publish with tag ${tag}" && exit 1
 }

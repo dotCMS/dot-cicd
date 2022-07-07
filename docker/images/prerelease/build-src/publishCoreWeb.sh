@@ -57,10 +57,8 @@ printf "\e[32m ${publishMessg} \e[0m  \n"
 
 [[ "${type}" == 'next' ]] && executeCmd "rm -rf node_modules"
 
-executeCmd 'npm install'
+executeCmd 'npm ci'
 [[ ${cmdResult} != 0 ]] && echo "Error building ${branch} core-web version" && exit 1
-
-executeCmd 'npm i -g is-ci'
 
 #if [[ "${type}" == 'rc' ]]; then
 #  executeCmd 'npm i -g @angular/cli'
@@ -70,8 +68,10 @@ executeCmd 'npm i -g is-ci'
 executeCmd 'rm -rf dist'
 executeCmd 'npm run build:prod'
 [[ ${cmdResult} != 0 ]] && echo "Error building ${branch} core-web version" && exit 1
-executeCmd 'cp package.json ./dist/apps/dotcms-ui/package.json'
-
+dist_folder=./dist/apps
+executeCmd "cp package.json ${dist_folder}/dotcms-ui/package.json"
+dist_coreweb_folder=${dist_folder}/core-web
+executeCmd "mkdir -p ${dist_coreweb_folder} && cp prepare.js ${dist_coreweb_folder}"
 
 printf "\e[32m Publishing Release DotCMS-UI version.... \e[0m  \n"
 pushd dist/apps/dotcms-ui

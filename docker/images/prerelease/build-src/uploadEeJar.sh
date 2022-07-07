@@ -8,19 +8,23 @@ printf "\e[32m Uploading enterprise jar \e[0m  \n"
 
 pushd ${CORE_GITHUB_REPO}
 pushd ${ENTERPRISE_DIR}
+enterprise_lib_dir=build/libs
+ee_jar=${enterprise_lib_dir}/ee_${RELEASE_VERSION}.jar
 executeCmd "./gradlew clean jar -PuseGradleNode=false"
+executeCmd "ls -las ${enterprise_lib_dir}"
+executeCmd "mv ${enterprise_lib_dir}/ee_obfuscated.jar ${ee_jar}"
+executeCmd "ls -las ${enterprise_lib_dir}"
 popd
 
 # Upload enterprise jar
 pushd dotCMS
-release_param='-Prelease=true'
 executeCmd "gradle -b deploy.gradle uploadArchives
-  ${release_param}
+  -Prelease=true
   -Pusername=${REPO_USERNAME}
-  -Ppassword=${REPO_PASSWORD}"
+  -Ppassword=${REPO_PASSWORD}
+  -Pfile=./src/main/enterprise/${ee_jar}"
 [[ ${cmdResult} != 0 ]] && exit 1
 
-executeCmd "git checkout -- dependencies.gradle"
 executeCmd "./gradlew clean java -PuseGradleNode=false"
 [[ ${cmdResult} != 0 ]] && exit 1
 popd

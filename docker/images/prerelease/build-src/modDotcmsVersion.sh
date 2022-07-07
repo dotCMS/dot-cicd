@@ -22,7 +22,4 @@ replaceTextInFile ../.github/workflows/release-process.yml 'DOT_CICD_BRANCH:.*$'
 executeCmd "git add gradle.properties ../.github/workflows/release-process.yml"
 executeCmd "git commit -m 'Modify dotcmsReleaseVersion to ${RELEASE_VERSION}, coreWebReleaseVersion, webComponentsReleaseVersion to rc and dot-cicd branch version to ${branch}'"
 
-executeCmd "python3 /build/changeEeDependency.py obfuscated"
-cat dependencies.gradle | grep enterprise
-
 popd
