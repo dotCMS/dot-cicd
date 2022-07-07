@@ -9,8 +9,6 @@
 . /build/releaseCommon.sh
 . /build/preReleaseCommon.sh
 
-: ${DRY_RUN:="true"} && export DRY_RUN
-
 echo
 echo '######################################################################'
 echo "Single CMD: ${single_cmd}"
@@ -24,7 +22,6 @@ echo "NPM Token: ${NPM_TOKEN}"
 echo "Docker username: ${docker_username}"
 echo "Docker password: ${docker_password}"
 echo "Release version: ${RELEASE_VERSION}"
-echo "Dry run: ${DRY_RUN}"
 echo "Debug: ${DEBUG}"
 echo
 

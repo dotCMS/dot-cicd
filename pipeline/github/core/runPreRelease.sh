@@ -34,7 +34,6 @@ executeCmd "docker run --rm
   -e RELEASE_VERSION=${RELEASE_VERSION}
   -e FROM_BRANCH=${FROM_BRANCH}
   -e NODE_VERSION=${NODE_VERSION}
-  -e DRY_RUN=${DRY_RUN}
   -e DEBUG=${DEBUG}
   ${IMAGE_NAME} $@"
 

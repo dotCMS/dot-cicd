@@ -2,7 +2,7 @@
 
 ############################
 # Script: setGithubLabels.sh
-# Use Github API to set new Github labels when it is not in dry-run mode
+# Use Github API to set new Github labels
 
 # Rename `Next Release` to `Release : X.Y.Z`
 curl -u ${GITHUB_USER}:${GITHUB_USER_TOKEN} \

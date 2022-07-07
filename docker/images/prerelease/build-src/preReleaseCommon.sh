@@ -13,9 +13,9 @@ function cloneFallback {
   local error_code=${2}
   local resolved_repo=$(resolveRepoUrl ${repo} ${GITHUB_USER_TOKEN} ${GITHUB_USER})
 
-  [[ ${cmdResult} == 0 ]] && return 0
+  [[ ${error_code} == 0 ]] && return 0
 
-  if [[ "${DRY_RUN}" == 'true' && ${cmdResult} == 128 ]]; then
+  if [[ ${error_code} == 128 ]]; then
     if [[ "${repo}" == "${CORE_GITHUB_REPO}" ]]; then
       executeCmd "gitCloneSubModules ${resolved_repo}"
     else
@@ -68,7 +68,6 @@ function createAndPush {
 }
 
 # Depending on if it exists, it checkouts an existing branch or create a new one.
-# If DRY_RUN mode is 'true' it removes the existent
 #
 # $1: repo: repo name
 # $2: branch: branch to create
@@ -147,14 +146,12 @@ function bumpUpVersion {
 }
 
 # Runs a 'npm publish -tag' command npm with a provided tag
-# Dry-run mode flag is passed to command
 #
 # $1: tag: provided tag
 function npmPublish {
   executeCmd "npm set //registry.npmjs.org/:_authToken ${NPM_TOKEN}"
   local tag=${1}
   local cmd="npm publish --tag ${tag}"
-  [[ "${DRY_RUN}" == 'true' ]] && cmd="${cmd} --dry-run"
   executeCmd "${cmd}"
   [[ ${cmdResult} != 0 ]] && echo "Error running npm publish with tag ${tag}" && exit 1
 }

@@ -13,7 +13,7 @@ popd
 
 # Upload enterprise jar
 pushd dotCMS
-[[ "${DRY_RUN}" != 'true' ]] && release_param='-Prelease=true'
+release_param='-Prelease=true'
 executeCmd "gradle -b deploy.gradle uploadArchives
   ${release_param}
   -Pusername=${REPO_USERNAME}
