@@ -7,7 +7,7 @@ LABEL com.dotcms.contact "info@dotcms.com"
 LABEL com.dotcms.vendor "dotCMS LLC"
 LABEL com.dotcms.description "dotCMS Content Management System"
 
-ARG NODE_VERSION=12
+ARG NODE_VERSION=16
 
 WORKDIR /srv
 

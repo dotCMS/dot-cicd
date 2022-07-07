@@ -14,7 +14,9 @@ cp ${DOCKER_SOURCE}/images/release/build-src/changeEeDependency.py ${DOCKER_SOUR
 cp ${DOCKER_SOURCE}/images/release/build-src/replaceTextInFile.py ${DOCKER_SOURCE}/images/prerelease/build-src
 pushd ${DOCKER_SOURCE}/images/prerelease
 
-executeCmd "docker build --no-cache -t ${IMAGE_NAME} ."
+executeCmd "docker build --no-cache
+  --build-arg NODE_VERSION=${NODE_VERSION}
+  -t ${IMAGE_NAME} ."
 [[ ${cmdResult} != 0 ]] && exit 1
 
 # Removes first argument
