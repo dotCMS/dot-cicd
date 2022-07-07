@@ -60,6 +60,8 @@ printf "\e[32m ${publishMessg} \e[0m  \n"
 executeCmd 'npm install'
 [[ ${cmdResult} != 0 ]] && echo "Error building ${branch} core-web version" && exit 1
 
+executeCmd 'npm i -g husky'
+
 #if [[ "${type}" == 'rc' ]]; then
 #  executeCmd 'npm i -g @angular/cli'
 #  [[ ${cmdResult} != 0 ]] && echo "Error building ${branch} core-web version" && exit 1
