@@ -68,9 +68,18 @@ function currentNpmVersion {
   echo ${version#*"${tag}: "}
 }
 
-export GRADLE_HOME=/srv/gradle-4.10.2
-export PATH=${GRADLE_HOME}/bin:${PATH}
-echo "Gradle:
-GRADLE_HOME: ${GRADLE_HOME}
-"
-gradle -v
+function installGradle {
+  : ${TOOLS_HOME:="${PWD}"} && export TOOLS_HOME
+  : ${LOCAL_GRADLE_VERSION:="4.10.2"} && export LOCAL_GRADLE_VERSION
+  wget -O ${TOOLS_HOME}/gradle.zip https://services.gradle.org/distributions/gradle-${LOCAL_GRADLE_VERSION}-bin.zip \
+    && unzip gradle.zip
+}
+
+function setGradle {
+  export GRADLE_HOME=${TOOLS_HOME}/gradle-${LOCAL_GRADLE_VERSION}
+  export PATH=${GRADLE_HOME}/bin:${PATH}
+  echo "Gradle:
+  GRADLE_HOME: ${GRADLE_HOME}
+  "
+  gradle -v
+}

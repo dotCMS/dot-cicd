@@ -25,6 +25,8 @@ echo "Release version: ${RELEASE_VERSION}"
 echo "Debug: ${DEBUG}"
 echo
 
+setGradle
+
 mkdir -p /build/src
 pushd /build/src
 runScript setVars

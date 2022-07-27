@@ -33,6 +33,8 @@ echo "Docker password: ${docker_password}"
 echo "Debug: ${DEBUG}"
 echo
 
+setGradle
+
 mkdir -p /build/src && pushd /build/src
 runScript overrideVersions ${BUILD_ID} ${is_release} ${is_lts}
 runScript getSource ${BUILD_ID} ${is_release}

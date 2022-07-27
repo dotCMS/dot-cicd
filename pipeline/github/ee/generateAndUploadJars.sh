@@ -18,16 +18,6 @@ repo_password=$4
 github_sha=$5
 is_release=$6
 
-wget -O gradle.zip https://services.gradle.org/distributions/gradle-4.10.2-bin.zip \
-unzip gradle.zip
-
-export GRADLE_HOME=$(pwd)/gradle-4.10.2
-export PATH=${GRADLE_HOME}/bin:${PATH}
-echo "Gradle:
-GRADLE_HOME: ${GRADLE_HOME}
-"
-gradle -v
-
 echo
 echo '##################################'
 echo 'Executing generateAndUploadJars.sh'
