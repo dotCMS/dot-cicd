@@ -20,7 +20,6 @@ echo '######################################################################'
 echo "Single CMD: ${single_cmd}"
 echo "Build id: ${BUILD_ID}"
 echo "Build hash: ${BUILD_HASH}"
-echo "EE Build id: ${EE_BUILD_ID}"
 echo "Is Release: ${is_release}"
 echo "Repo username: ${repo_username}"
 echo "Repo password: ${repo_password}"
@@ -38,7 +37,7 @@ runScript overrideVersions ${BUILD_ID} ${is_release} ${is_lts}
 runScript getSource ${BUILD_ID} ${is_release}
 pushd ${CORE_GITHUB_REPO}
 runScript setVars
-#runScript generateAndUploadJars ${BUILD_ID} ${EE_BUILD_ID} ${repo_username} ${repo_password} ${is_release}
+runScript generateAndUploadJars ${BUILD_ID} ${repo_username} ${repo_password} ${is_release}
 runScript buildDistro
 runScript generateJavadoc
 runScript pushToStaticBucket all true

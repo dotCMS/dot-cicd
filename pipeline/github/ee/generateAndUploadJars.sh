@@ -51,7 +51,7 @@ fi
 pushd src/main/enterprise
 enterprise_lib_dir=build/libs
 ee_jar=${enterprise_lib_dir}/ee_${dotcms_version}.jar
-executeCmd "./gradlew clean jar -PuseGradleNode=false"
+executeCmd "./gradlew clean jar"
 executeCmd "ls -las ${enterprise_lib_dir}"
 executeCmd "mv ${enterprise_lib_dir}/ee_obfuscated.jar ${ee_jar}"
 executeCmd "ls -las ${enterprise_lib_dir}"
@@ -69,7 +69,7 @@ executeCmd "gradle -b deploy.gradle uploadArchives
   -Pfile=./src/main/enterprise/${ee_jar}"
 [[ ${cmdResult} != 0 ]] && exit 1
 
-executeCmd "./gradlew java -PuseGradleNode=false"
+executeCmd "./gradlew java"
 [[ ${cmdResult} != 0 ]] && exit 1
 
 popd
