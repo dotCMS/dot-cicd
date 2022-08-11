@@ -7,7 +7,7 @@ LABEL com.dotcms.contact "info@dotcms.com"
 LABEL com.dotcms.vendor "dotCMS LLC"
 LABEL com.dotcms.description "dotCMS Content Management System"
 
-ARG NODE_VERSION
+ARG NODE_VERSION=16
 
 WORKDIR /srv
 
@@ -21,7 +21,7 @@ RUN apt update \
     && apt upgrade -y \
     && apt install -y bash openssh-server openssh-client openssl ca-certificates gnupg grep sed unzip tini git wget python3 python3-pip jq musl-dev \
     && update-ca-certificates \
-    && curl -sL https://deb.nodesource.com/setup_16.x | bash - \
+    && curl -sL https://deb.nodesource.com/setup_${NODE_VERSION}.x | bash - \
     && apt -y install nodejs \
     && pip3 install --upgrade pip \
     && pip3 install s3cmd \
