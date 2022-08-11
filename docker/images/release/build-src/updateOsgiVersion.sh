@@ -5,7 +5,7 @@
 # Updates with new version of DotCMS the dependencies in plugin-seeds repo
 
 # Gets the current DotCMS version
-dotcms_current_version=${dotcms_version}
+dotcms_current_version=${RELEASE_VERSION}
 # Removes the 'v' prefix
 new_version="${dotcms_current_version//v}"
 echo "New version: ${new_version}"

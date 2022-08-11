@@ -10,7 +10,7 @@
 bucket='s3://static.dotcms.com'
 type=$1
 is_release=$2
-version="${dotcms_version}"
+version="${RELEASE_VERSION}"
 keys_str="--access_key=${aws_access_key_id} --secret_key=${aws_secret_access_key}"
 test_prefix='cicd-test'
 distro_base_key='versions'

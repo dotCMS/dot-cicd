@@ -7,5 +7,5 @@
 printf "\e[32m Pre-builds core \e[0m  \n"
 
 pushd ${CORE_GITHUB_REPO}/dotCMS
-executeCmd "./gradlew java -PuseGradleNode=false"
+executeCmd "./gradlew java"
 popd
