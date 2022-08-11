@@ -32,6 +32,7 @@ executeCmd "docker run --rm
   -e docker_password=${DOCKER_PASSWORD}
   -e is_release=${IS_RELEASE}
   -e is_lts=${IS_LTS}
+  -e NODE_VERSION=${NODE_VERSION}
   -e DEBUG=${DEBUG}
   ${IMAGE_NAME} $@"
 
