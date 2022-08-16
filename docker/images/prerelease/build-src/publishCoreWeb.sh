@@ -85,6 +85,11 @@ popd
 
 popd
 
-[[ "${type}" == 'next' ]] && executeCmd "git push origin master"
+if [[ "${type}" == 'next' ]]; then
+  executeCmd "git status"
+  executeCmd "git add ."
+  executeCmd "git commit -m \"Adding next version\""
+  executeCmd "git push origin master"
+fi
 
 popd

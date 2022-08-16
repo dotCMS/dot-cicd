@@ -69,8 +69,6 @@ function currentNpmVersion {
 }
 
 function installGradle {
-  : ${TOOLS_HOME:="${PWD}"} && export TOOLS_HOME
-  : ${LOCAL_GRADLE_VERSION:="4.10.2"} && export LOCAL_GRADLE_VERSION
   wget -O ${TOOLS_HOME}/gradle.zip https://services.gradle.org/distributions/gradle-${LOCAL_GRADLE_VERSION}-bin.zip \
     && unzip gradle.zip
 }
@@ -83,3 +81,6 @@ function setGradle {
   "
   gradle -v
 }
+
+: ${TOOLS_HOME:="${PWD}"} && export TOOLS_HOME
+: ${LOCAL_GRADLE_VERSION:="4.10.2"} && export LOCAL_GRADLE_VERSION
