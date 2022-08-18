@@ -29,17 +29,17 @@ executeCmd "./gradlew clean java"
 [[ ${cmdResult} != 0 ]] && exit 1
 popd
 
-replaceTextInFile .gitmodules 'branch = .*' "branch = ${branch}"
+replaceTextInFile .gitmodules 'branch = .*' "branch = ${BRANCH}"
 executeCmd "git add .gitmodules"
-executeCmd "git commit -m 'Update branch in git submodule to ${branch}'"
+executeCmd "git commit -m 'Update branch in git submodule to ${BRANCH}'"
 executeCmd "git status"
 core_repo=$(resolveRepoUrl ${CORE_GITHUB_REPO} ${GITHUB_USER_TOKEN} ${GITHUB_USER})
-executeCmd "git push ${core_repo} ${branch}"
+executeCmd "git push ${core_repo} ${BRANCH}"
 
 pushd ${ENTERPRISE_DIR}
 executeCmd "git status"
 enterprise_repo=$(resolveRepoUrl ${ENTERPRISE_GITHUB_REPO} ${GITHUB_USER_TOKEN} ${GITHUB_USER})
-executeCmd "git push ${enterprise_repo} ${branch}"
+executeCmd "git push ${enterprise_repo} ${BRANCH}"
 popd
 
 popd

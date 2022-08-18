@@ -8,6 +8,7 @@ LABEL com.dotcms.vendor "dotCMS LLC"
 LABEL com.dotcms.description "dotCMS Content Management System"
 
 ARG NODE_VERSION=16
+ARG LOCAL_GRADLE_VERSION=4.10.2
 
 WORKDIR /srv
 
@@ -25,7 +26,7 @@ RUN apt update \
     && apt -y install nodejs \
     && pip3 install --upgrade pip \
     && pip3 install s3cmd \
-    && wget -O gradle.zip https://services.gradle.org/distributions/gradle-4.10.2-bin.zip \
-    && unzip gradle.zip
+    && wget -q -O gradle.zip https://services.gradle.org/distributions/gradle-${LOCAL_GRADLE_VERSION}-bin.zip \
+    && unzip -q gradle.zip
 
 ENTRYPOINT [ "/srv/entrypoint.sh" ]

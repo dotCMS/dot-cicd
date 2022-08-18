@@ -11,7 +11,6 @@
 
 echo
 echo '######################################################################'
-echo "Single CMD: ${single_cmd}"
 echo "Build id: ${BUILD_ID}"
 echo "Build hash: ${BUILD_HASH}"
 echo "Repo username: ${REPO_USERNAME}"
@@ -21,6 +20,7 @@ echo "Github Token: ${GITHUB_USER_TOKEN}"
 echo "NPM Token: ${NPM_TOKEN}"
 echo "Docker username: ${docker_username}"
 echo "Docker password: ${docker_password}"
+echo "From Branch: ${FROM_BRANCH}"
 echo "Release version: ${RELEASE_VERSION}"
 echo "Debug: ${DEBUG}"
 echo
@@ -37,5 +37,6 @@ runScript modEeDotcmsVersion
 runScript modDotcmsVersion
 runScript uploadEeJar
 runScript publishCoreWeb next
-runScript setGithubLabels
+#TODO: uncomment this
+#runScript setGithubLabels
 popd

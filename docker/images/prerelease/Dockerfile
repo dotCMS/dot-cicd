@@ -25,7 +25,7 @@ RUN apt update \
     && update-ca-certificates \
     && curl -sL https://deb.nodesource.com/setup_${NODE_VERSION}.x | bash - \
     && apt -y install nodejs \
-    && wget -O gradle.zip https://services.gradle.org/distributions/gradle-${LOCAL_GRADLE_VERSION}-bin.zip \
-    && unzip gradle.zip
+    && wget -q -O gradle.zip https://services.gradle.org/distributions/gradle-${LOCAL_GRADLE_VERSION}-bin.zip \
+    && unzip -q gradle.zip
 
 ENTRYPOINT [ "/srv/entrypoint.sh" ]

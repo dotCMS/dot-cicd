@@ -1,32 +1,5 @@
 #!/bin/bash
 
-#############################
-# Script: preReleaseCommon.sh
-# Common functions script
-
-# Fallbacks into cloning the provided repo when the previous on fails
-#
-# $1: repo: repo name
-# $2: error_code: error code from previous clone
-function cloneFallback {
-  local repo=${1}
-  local error_code=${2}
-  local resolved_repo=$(resolveRepoUrl ${repo} ${GITHUB_USER_TOKEN} ${GITHUB_USER})
-
-  [[ ${error_code} == 0 ]] && return 0
-
-  if [[ ${error_code} == 128 ]]; then
-    if [[ "${repo}" == "${CORE_GITHUB_REPO}" ]]; then
-      executeCmd "gitCloneSubModules ${resolved_repo}"
-    else
-      executeCmd "gitClone ${resolved_repo}"
-    fi
-    [[ ${cmdResult} != 0 ]] && exit 1
-  else
-    exit 1
-  fi
-}
-
 # Creates a new branch from a given repo.
 # Branch is also provided
 #
@@ -36,34 +9,53 @@ function createAndPush {
   local repo=${1}
   local branch=${2}
   local resolved_repo=$(resolveRepoUrl ${repo} ${GITHUB_USER_TOKEN} ${GITHUB_USER})
+
   printf "\e[32m Creating and pushing Release Branch on ${repo} \e[0m  \n"
   if [[ "${repo}" == "${CORE_GITHUB_REPO}" ]]; then
-    executeCmd "gitCloneSubModules ${resolved_repo}"
-    cloneFallback ${repo} ${cmdResult}
+    executeCmd "gitCloneSubModules ${resolved_repo} ${FROM_BRANCH}"
+    [[ ${cmdResult} == 128 ]] && executeCmd "gitCloneSubModules ${resolved_repo}"
+
     pushd ${repo}
     git status
-    [[ "${DEBUG}" == 'true' ]] && cat .gitmodules
+    cat .gitmodules
     executeCmd "git checkout -- .gitmodules"
-    [[ "${DEBUG}" == 'true' ]] && cat .gitmodules
+    cat .gitmodules
+
+    if [[ "${FROM_BRANCH}" != 'master' ]]; then
+      executeCmd "git pull"
+      executeCmd "git checkout master"
+      executeCmd "git checkout ${FROM_BRANCH}"
+    fi
+
     popd
   else
-    executeCmd "gitClone ${resolved_repo}"
-    cloneFallback ${repo} ${cmdResult}
+    executeCmd "gitClone ${resolved_repo} ${FROM_BRANCH}"
+    [[ ${cmdResult} == 128 ]] && executeCmd "gitClone ${resolved_repo}"
   fi
 
   pushd ${repo}
+  executeCmd "git branch && git status"
+
+  if [[ "${repo}" == "${CORE_GITHUB_REPO}" ]]; then
+    executeCmd "cat .gitmodules"
+    executeCmd "git submodule update --init --recursive"
+    pushd ${ENTERPRISE_DIR}
+    executeCmd "git branch && git status"
+    popd
+  fi
+
   checkoutBranch ${repo} ${branch}
   [[ $? == 0 ]] && executeCmd "git push ${resolved_repo} ${branch}"
 
   if [[ "${repo}" == "${CORE_GITHUB_REPO}" ]]; then
-    local ee_resolved_repo=$(resolveRepoUrl ${ENTERPRISE_GITHUB_REPO} ${GITHUB_USER_TOKEN} ${GITHUB_USER})
     pushd ${ENTERPRISE_DIR}
     checkoutBranch ${ENTERPRISE_GITHUB_REPO} ${branch}
+    local ee_resolved_repo=$(resolveRepoUrl ${ENTERPRISE_GITHUB_REPO} ${GITHUB_USER_TOKEN} ${GITHUB_USER})
     [[ $? == 0 ]] && executeCmd "git push ${ee_resolved_repo} ${branch}"
     popd
   fi
-  popd
 
+  popd
   printf "\e[32m Repo ${repo} created and pushed \e[0m  \n"
 }
 
@@ -74,13 +66,18 @@ function createAndPush {
 function checkoutBranch {
   local repo=${1}
   local branch=${2}
-  local resolved_repo=$(resolveRepoUrl ${repo} ${GITHUB_USER_TOKEN} ${GITHUB_USER})
 
+  local resolved_repo=$(resolveRepoUrl ${repo} ${GITHUB_USER_TOKEN} ${GITHUB_USER})
   gitRemoteLs ${resolved_repo} ${branch}
   local remote_branch=$?
   if [[ ${remote_branch} == 1 ]]; then
     undoPush ${repo} ${branch}
     remote_branch=0
+  fi
+
+  if [[ "${repo}" == "${ENTERPRISE_GITHUB_REPO}" ]]; then
+    local module_branch=$(cat ../../../../.gitmodules | grep "branch =" | cut -d'=' -f2 | tr -d '[:space:]')
+    executeCmd "git checkout ${module_branch}"
   fi
 
   local checkout_cmd="git checkout -b ${branch}"
@@ -102,11 +99,10 @@ function undoPush {
   printf "\e[32m Removing previously created branch ${branch} for ${repo} \e[0m  \n"
   if [[ "${repo}" == "${CORE_GITHUB_REPO}" ]]; then
     local resolved_repo=$(resolveRepoUrl ${repo} ${GITHUB_USER_TOKEN} ${GITHUB_USER})
-    local ee_resolved_repo=$(resolveRepoUrl ${ENTERPRISE_GITHUB_REPO} ${GITHUB_USER_TOKEN} ${GITHUB_USER})
     executeCmd "git push ${resolved_repo} :${branch}"
-    pushd ${ENTERPRISE_DIR}
+  elif [[ "${repo}" == "${ENTERPRISE_GITHUB_REPO}" ]]; then
+    local ee_resolved_repo=$(resolveRepoUrl ${ENTERPRISE_GITHUB_REPO} ${GITHUB_USER_TOKEN} ${GITHUB_USER})
     executeCmd "git push ${ee_resolved_repo} :${branch}"
-    popd
   else
     executeCmd "git push origin :${branch}"
   fi

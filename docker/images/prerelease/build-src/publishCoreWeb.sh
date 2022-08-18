@@ -39,7 +39,7 @@ sed -i -E "s/\"version\": \".*\"/\"version\": \"${core_web_version}-${type}.${wc
 cat package.json | grep "version\":"
 popd
 
-printf "\e[32m Committing changes to ${branch} branch \e[0m  \n"
+printf "\e[32m Committing changes to ${BRANCH} branch \e[0m  \n"
 executeCmd "git status && git add package.json libs/dotcms-webcomponents/package.json"
 
 if [[ "${type}" == 'next' ]]; then
@@ -50,7 +50,7 @@ else
   publishMessg='Publishing core-web version'
 fi
 
-echo "package.json files updated at ${branch} branch"
+echo "package.json files updated at ${BRANCH} branch"
 
 # Publish CORE-WEB & DotCMS-WebComponents & CORE-WEB Release version
 printf "\e[32m ${publishMessg} \e[0m  \n"
@@ -58,16 +58,11 @@ printf "\e[32m ${publishMessg} \e[0m  \n"
 [[ "${type}" == 'next' ]] && executeCmd "rm -rf node_modules"
 
 executeCmd 'npm ci'
-[[ ${cmdResult} != 0 ]] && echo "Error building ${branch} core-web version" && exit 1
-
-#if [[ "${type}" == 'rc' ]]; then
-#  executeCmd 'npm i -g @angular/cli'
-#  [[ ${cmdResult} != 0 ]] && echo "Error building ${branch} core-web version" && exit 1
-#fi
+[[ ${cmdResult} != 0 ]] && echo "Error building ${BRANCH} core-web version" && exit 1
 
 executeCmd 'rm -rf dist'
 executeCmd 'npm run build:prod'
-[[ ${cmdResult} != 0 ]] && echo "Error building ${branch} core-web version" && exit 1
+[[ ${cmdResult} != 0 ]] && echo "Error building ${BRANCH} core-web version" && exit 1
 dist_folder=./dist/apps
 executeCmd "cp package.json ${dist_folder}/dotcms-ui/package.json"
 dist_coreweb_folder=${dist_folder}/core-web
@@ -88,8 +83,9 @@ popd
 if [[ "${type}" == 'next' ]]; then
   executeCmd "git status"
   executeCmd "git add ."
+  executeCmd "git reset dotCMS/src/main/enterprise"
   executeCmd "git commit -m \"Adding next version\""
-  executeCmd "git push origin master"
+  executeCmd "git push origin ${FROM_BRANCH}"
 fi
 
 popd

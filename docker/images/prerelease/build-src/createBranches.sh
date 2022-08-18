@@ -10,5 +10,5 @@ printf "\e[32m Creating branches \e[0m  \n"
 
 for repo in "${repos[@]}"
 do
-  createAndPush ${repo} ${branch}
+  createAndPush ${repo} ${BRANCH}
 done

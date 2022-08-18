@@ -17,8 +17,9 @@ is_release=$4
 if [[ "${is_release}" == 'true' ]]; then
   pushd dotCMS
   executeCmd "./gradlew clean createDistPrep"
+  popd
 
-  pushd src/main/enterprise
+  pushd ${ENTERPRISE_DIR}
   enterprise_lib_dir=build/libs
   ee_jar=${enterprise_lib_dir}/ee_${RELEASE_VERSION}.jar
   executeCmd "./gradlew clean jar"
@@ -27,6 +28,7 @@ if [[ "${is_release}" == 'true' ]]; then
   executeCmd "ls -las ${enterprise_lib_dir}"
   popd
 
+  pushd dotCMS
   echo
   echo '################################'
   echo 'Uploading Enterprise Edition jar'
@@ -39,16 +41,16 @@ if [[ "${is_release}" == 'true' ]]; then
     -Ppassword=${repo_password}
     -Pfile=./src/main/enterprise/${ee_jar}"
   [[ ${cmdResult} != 0 ]] && exit 1
+  popd
 
-  pushd ../
   dotcms_lib_dir=dist/dotserver/tomcat-9.0.60/webapps/ROOT/WEB-INF/lib
   dotcms_jar=dotcms_${RELEASE_VERSION}
   dotcms_jar_path=${dotcms_lib_dir}/${dotcms_jar}
   executeCmd "ls -las ${dotcms_lib_dir}"
   executeCmd "mv ${dotcms_jar_path}_999999.jar ${dotcms_jar_path}.jar"
   executeCmd "ls -las ${dotcms_lib_dir}"
-  popd
 
+  pushd dotCMS
   echo
   echo '####################'
   echo 'Uploading DotCMS jar'
