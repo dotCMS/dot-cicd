@@ -12,9 +12,10 @@ type=${1}
 pushd ${CORE_GITHUB_REPO}
 
 if [[ "${type}" == 'next' ]]; then
-  # Bump version of master in package.json
+  # Bump version of whatever ${FROM_MASTER} holds in package.json
   printf "\e[32m Bumping version of master branch \e[0m  \n"
-  executeCmd "git checkout master && git pull origin master"
+  export BRANCH=${FROM_BRANCH}
+  executeCmd "git checkout ${BRANCH} && git pull origin ${BRANCH}"
   core_web_version="$(bumpUpVersion $(getValidNpmVersion ${RELEASE_VERSION}))"
 else
   core_web_version="$(getValidNpmVersion ${RELEASE_VERSION})"
@@ -40,7 +41,8 @@ cat package.json | grep "version\":"
 popd
 
 printf "\e[32m Committing changes to ${BRANCH} branch \e[0m  \n"
-executeCmd "git status && git add package.json libs/dotcms-webcomponents/package.json"
+executeCmd "git status"
+executeCmd "git add package.json libs/dotcms-webcomponents/package.json"
 
 if [[ "${type}" == 'next' ]]; then
   executeCmd "git commit -m 'Update master bumped version for dotcms-ui and dotcms-webcomponents'"
@@ -78,6 +80,10 @@ pushd libs/dotcms-webcomponents
 npmPublish ${type}
 popd
 
+if [[ "${FROM_BRANCH}" != 'master' ]]; then
+  echo "::warning::NPM publish was run from a branch (${FROM_BRANCH}) other than master. This might incur in an unexpected versions at npm registry. Luckily you can reestablish the version by running 'npm dist-tag add <package>@<version> <tag>'"
+fi
+
 popd
 
 if [[ "${type}" == 'next' ]]; then
@@ -85,7 +91,7 @@ if [[ "${type}" == 'next' ]]; then
   executeCmd "git add ."
   executeCmd "git reset dotCMS/src/main/enterprise"
   executeCmd "git commit -m \"Adding next version\""
-  executeCmd "git push origin ${FROM_BRANCH}"
+  executeCmd "git push origin ${BRANCH}"
 fi
 
 popd
