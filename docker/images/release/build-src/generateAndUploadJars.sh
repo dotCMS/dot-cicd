@@ -58,7 +58,7 @@ if [[ "${is_release}" == 'true' ]]; then
     -PgroupId=com.dotcms
     -Pusername=${repo_username}
     -Ppassword=${repo_password}
-    -Pfile=${dotcms_jar_path}.jar"
+    -Pfile=../${dotcms_jar_path}.jar"
   [[ ${cmdResult} != 0 ]] && exit 1
 
   popd
