@@ -37,6 +37,5 @@ runScript modEeDotcmsVersion
 runScript modDotcmsVersion
 runScript uploadEeJar
 runScript publishCoreWeb next
-#TODO: uncomment this
-#runScript setGithubLabels
+runScript setGithubLabels
 popd
