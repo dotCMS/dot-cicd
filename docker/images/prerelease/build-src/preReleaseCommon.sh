@@ -165,7 +165,6 @@ function currentNpmRepoVersionCounter {
   [[ -z "${tag}" ]] && echo 'Missing tag' && return -2
   [[ -z "${release_version}" ]] && echo 'Missing release_version' && return -3
 
-  [[ $? != 0 ]] && echo "Invalid repo: ${repo}" && return -4
   local full_version=$(npm dist-tag ls ${repo} | grep "${tag}: ")
   [[ -z "${full_version}" ]] && return 0
 
