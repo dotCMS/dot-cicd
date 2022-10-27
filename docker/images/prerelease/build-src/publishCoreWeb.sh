@@ -59,7 +59,7 @@ printf "\e[32m ${publishMessg} \e[0m  \n"
 
 [[ "${type}" == 'next' ]] && executeCmd "rm -rf node_modules"
 
-executeCmd 'npm ci'
+executeCmd 'npm install'
 [[ ${cmdResult} != 0 ]] && echo "Error building ${BRANCH} core-web version" && exit 1
 
 executeCmd 'rm -rf dist'
