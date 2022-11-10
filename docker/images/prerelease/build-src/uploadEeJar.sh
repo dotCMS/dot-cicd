@@ -19,6 +19,7 @@ popd
 # Upload enterprise jar
 pushd dotCMS
 executeCmd "gradle -b deploy.gradle uploadArchives
+  -PgroupId=com.dotcms.enterprise
   -Prelease=true
   -Pusername=${REPO_USERNAME}
   -Ppassword=${REPO_PASSWORD}
