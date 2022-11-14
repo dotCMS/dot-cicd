@@ -36,7 +36,7 @@ if [[ "${is_release}" == 'true' ]]; then
   [[ "${is_release}" == 'true' ]] && releaseParam='-Prelease=true'
   executeCmd "gradle -b deploy.gradle uploadArchives
     ${releaseParam}
-    -PgroupId=com.dotcms
+    -PgroupId=com.dotcms.enterprise
     -Pusername=${repo_username}
     -Ppassword=${repo_password}
     -Pfile=./src/main/enterprise/${ee_jar}"
