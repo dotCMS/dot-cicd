@@ -27,9 +27,8 @@ eval $(cat gradle.properties | grep dotcmsReleaseVersion)
 echo "export RELEASE_VERSION=\"${dotcmsReleaseVersion}\""
 export RELEASE_VERSION="${dotcmsReleaseVersion}"
 
-if [[ "${is_release}" != 'true' ]]; then
-  rev=${github_sha}
-else
+rev=${github_sha}
+if [[ "${is_release}" == 'true' ]]; then
   releaseParam='-Prelease=true'
   rev=obfuscated
 fi
@@ -52,6 +51,7 @@ echo '################################'
 # Upload and deploy enterprise jars
 executeCmd "gradle -b deploy.gradle uploadArchives
   ${releaseParam}
+  -PgroupId=com.dotcms.enterprise
   -Pusername=${repo_username}
   -Ppassword=${repo_password}
   -Pfile=./src/main/enterprise/${ee_jar}"
