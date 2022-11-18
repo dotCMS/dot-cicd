@@ -83,4 +83,4 @@ function setGradle {
 }
 
 : ${TOOLS_HOME:="${PWD}"} && export TOOLS_HOME
-: ${LOCAL_GRADLE_VERSION:="4.10.2"} && export LOCAL_GRADLE_VERSION
+: ${LOCAL_GRADLE_VERSION:="6.9.3"} && export LOCAL_GRADLE_VERSION

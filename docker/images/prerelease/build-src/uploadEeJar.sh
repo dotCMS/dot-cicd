@@ -23,7 +23,8 @@ executeCmd "gradle -b deploy.gradle uploadArchives
   -Prelease=true
   -Pusername=${REPO_USERNAME}
   -Ppassword=${REPO_PASSWORD}
-  -Pfile=./src/main/enterprise/${ee_jar}"
+  -Pfile=./src/main/enterprise/${ee_jar}
+  -PincludeDependencies=true"
 [[ ${cmdResult} != 0 ]] && exit 1
 
 executeCmd "./gradlew clean java"

@@ -39,7 +39,8 @@ if [[ "${is_release}" == 'true' ]]; then
     -PgroupId=com.dotcms.enterprise
     -Pusername=${repo_username}
     -Ppassword=${repo_password}
-    -Pfile=./src/main/enterprise/${ee_jar}"
+    -Pfile=./src/main/enterprise/${ee_jar}
+    -PincludeDependencies=true"
   [[ ${cmdResult} != 0 ]] && exit 1
   popd
 
@@ -60,7 +61,8 @@ if [[ "${is_release}" == 'true' ]]; then
     -PgroupId=com.dotcms
     -Pusername=${repo_username}
     -Ppassword=${repo_password}
-    -Pfile=../${dotcms_jar_path}.jar"
+    -Pfile=../${dotcms_jar_path}.jar
+    -PincludeDependencies=true"
   [[ ${cmdResult} != 0 ]] && exit 1
 
   popd
