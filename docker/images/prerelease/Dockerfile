@@ -8,7 +8,7 @@ LABEL com.dotcms.vendor "dotCMS LLC"
 LABEL com.dotcms.description "dotCMS Content Management System"
 
 ARG NODE_VERSION=16
-ARG LOCAL_GRADLE_VERSION=4.10.2
+ARG LOCAL_GRADLE_VERSION=6.9.3
 
 WORKDIR /srv
 
