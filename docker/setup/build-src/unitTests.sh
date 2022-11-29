@@ -21,7 +21,7 @@ echo "==========================================================================
 echo ""
 
 cd /build/src/core/dotCMS \
-  && ./gradlew test ${EXTRA_PARAMS}
+  && ./gradlew test --info${EXTRA_PARAMS}
 
 # Required code, without it gradle will exit 1 killing the docker container
 export CURRENT_JOB_BUILD_STATUS=$?
