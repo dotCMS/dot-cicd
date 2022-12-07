@@ -19,13 +19,11 @@ executeCmd "gitCloneSubModules $(resolveRepoUrl ${CORE_GITHUB_REPO} ${GITHUB_USE
 
 pushd ${CORE_GITHUB_REPO}
 
-executeCmd "gitConfig ${GITHUB_USER}"
 echo 'Git status:'
 executeCmd "git branch"
 executeCmd "git status"
 
 pushd ${ENTERPRISE_DIR}
-executeCmd "gitConfig ${GITHUB_USER}"
 echo 'Enterprise git status:'
 executeCmd "ls -las ."
 executeCmd "git branch"

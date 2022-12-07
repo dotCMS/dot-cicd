@@ -60,7 +60,8 @@ echo
 echo '######################################################################'
 echo "RELEASE_BRANCH_NAME: " ${RELEASE_BRANCH_NAME}
 
-mkdir -p releases && pushd releases
+mkdir -p releases
+pushd releases
 release_repos=(${CORE_GITHUB_REPO} ${ENTERPRISE_GITHUB_REPO} ${PLUGIN_SEEDS_GITHUB_REPO} ${DOT_CICD_GITHUB_REPO} ${DOCKER_GITHUB_REPO})
 for repo in "${release_repos[@]}"
 do
