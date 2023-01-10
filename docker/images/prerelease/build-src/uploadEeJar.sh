@@ -42,4 +42,6 @@ enterprise_repo=$(resolveRepoUrl ${ENTERPRISE_GITHUB_REPO} ${GITHUB_USER_TOKEN} 
 executeCmd "git push ${enterprise_repo} ${BRANCH}"
 popd
 
+executeCmd "git status"
+
 popd
