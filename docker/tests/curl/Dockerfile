@@ -62,7 +62,7 @@ COPY setup/build-src/entrypoint.sh /srv/customEntrypoint.sh
 
 RUN apt update && apt upgrade -y && apt install -y openssl tini git gcc musl-dev
 RUN curl -fsSL https://deb.nodesource.com/setup_lts.x | bash -  && apt install -y nodejs
-RUN npm config set unsafe-perm true
+#RUN npm config set unsafe-perm true
 RUN npm install -g newman
 RUN npm uninstall -g har-validator
 RUN npm install -g newman-reporter-htmlextra
