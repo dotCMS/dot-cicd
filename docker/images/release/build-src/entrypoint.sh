@@ -46,4 +46,3 @@ runScript pushToStaticBucket all true
 runScript updateOsgiVersion
 popd
 runScript publishGithubReleases true ${BUILD_ID}
-popd
