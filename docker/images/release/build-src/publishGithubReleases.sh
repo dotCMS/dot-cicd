@@ -44,11 +44,12 @@ function pushRelease {
 Releasing on ${repo}
 #############################"
   gitClone ${repo_url} ${RELEASE_BRANCH_NAME} ${repo}
+  [[ ! -d ./${repo} ]] && echo "Repo ${repo} could not be cloned, ignoring it"
 
-  pushd ${repo}
+  executeCmd "pushd ${repo}"
   # Commit and pushes "changes"
   commitAndPush ${repo_url}
-  popd
+  executeCmd "popd"
 }
 
 RELEASE_BRANCH_NAME=${build_id}
