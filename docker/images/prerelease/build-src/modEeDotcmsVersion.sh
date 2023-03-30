@@ -8,5 +8,6 @@ printf "\e[32m Modify and push release version in gradle.properties in ENTERPRIS
 
 pushd ${CORE_GITHUB_REPO}/${ENTERPRISE_DIR}
 replaceTextInFile ./gradle.properties 'dotcmsReleaseVersion=.*$' "dotcmsReleaseVersion=${RELEASE_VERSION}"
-executeCmd "git add gradle.properties && git commit -m 'Update release version to ${RELEASE_VERSION}'"
+executeCmd "git add gradle.properties"
+executeCmd "git commit -m 'Update release version to ${RELEASE_VERSION}'"
 popd
