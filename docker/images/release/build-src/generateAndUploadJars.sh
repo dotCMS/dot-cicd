@@ -19,13 +19,15 @@ if [[ "${is_release}" == 'true' ]]; then
   executeCmd "./gradlew clean createDistPrep"
   popd
 
+
   executeCmd "ls -las dist/dotserver/tomcat-9.0.60/webapps/ROOT/WEB-INF/lib/dotcms_*.jar"
   #dotcms_lib_dir=dist/dotserver/tomcat-9.0.60/webapps/ROOT/WEB-INF/lib
   dotcms_lib_dir=dotCMS/build/libs
   dotcms_jar=dotcms_${RELEASE_VERSION}
   dotcms_jar_path=${dotcms_lib_dir}/${dotcms_jar}
+  github_sha=$(git rev-parse HEAD)
   executeCmd "ls -las ${dotcms_lib_dir}/dotcms_*.jar"
-  executeCmd "mv ${dotcms_jar_path}_999999.jar ${dotcms_jar_path}.jar"
+  executeCmd "mv ${dotcms_jar_path}_${github_sha::7}.jar ${dotcms_jar_path}.jar"
   executeCmd "ls -las ${dotcms_lib_dir}/dotcms_*.jar"
 
   pushd dotCMS
