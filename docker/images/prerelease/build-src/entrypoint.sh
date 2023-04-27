@@ -22,6 +22,7 @@ echo "Docker username: ${docker_username}"
 echo "Docker password: ${docker_password}"
 echo "From Branch: ${FROM_BRANCH}"
 echo "Release version: ${RELEASE_VERSION}"
+echo "Dry-run: ${DRY_RUN}"
 echo "Debug: ${DEBUG}"
 echo
 
@@ -32,8 +33,7 @@ pushd /build/src
 runScript setVars
 runScript createBranches
 runScript preBuildCore
-runScript modEeDotcmsVersion
 runScript modDotcmsVersion
-runScript uploadEeJar
 runScript setGithubLabels
+runScript undoBranches
 popd

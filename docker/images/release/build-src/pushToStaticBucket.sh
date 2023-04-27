@@ -16,12 +16,6 @@ test_prefix='cicd-test'
 distro_base_key='versions'
 javadoc_base_key="docs/${version}"
 
-# Modify paths when is not a release
-if [[ "${is_release}" != 'true' ]]; then
-  distro_base_key="${test_prefix}/${distro_base_key}"
-  javadoc_base_key="${test_prefix}/${javadoc_base_key}"
-fi
-
 # Pushes to S3 an object identified by the key
 #
 # $1: key: key to identifies object in bucket
@@ -32,11 +26,19 @@ function s3Push {
 
   # Use 's3cmd' tool to push whether is a file or an entire folder
   if [[ -d ${object} ]]; then
-    echo "Executing: s3cmd put ${keys_str} --recursive --quiet ${object} ${bucket}/${key}"
-    s3cmd put ${keys_str} --recursive --quiet ${object} ${bucket}/${key}
+    if [[ "${is_release}" == 'true' ]]; then
+      echo "Executing: s3cmd put ${keys_str} --recursive --quiet ${object} ${bucket}/${key}"
+      s3cmd put ${keys_str} --recursive --quiet ${object} ${bucket}/${key}
+    else
+      echo "Dry running: s3cmd put ${keys_str} --recursive --quiet ${object} ${bucket}/${key}"
+    fi
   else
-    echo "Executing: s3cmd put ${keys_str} ${object} ${bucket}/${key}"
-    s3cmd put ${keys_str} ${object} ${bucket}/${key}
+    if [[ "${is_release}" == 'true' ]]; then
+      echo "Executing: s3cmd put ${keys_str} ${object} ${bucket}/${key}"
+      s3cmd put ${keys_str} ${object} ${bucket}/${key}
+    else
+      echo "Dry running: s3cmd put ${keys_str} ${object} ${bucket}/${key}"
+    fi
   fi
 
   # List contents in bucket for that particular key
@@ -66,7 +68,7 @@ case "${type}" in
     pushDistro 'zip'
     ;;
   javadoc)
-    pushJavadoc 
+    pushJavadoc
     ;;
   all)
     pushDistro 'tar.gz'

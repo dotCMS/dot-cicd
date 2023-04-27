@@ -46,26 +46,28 @@ Releasing on ${repo}
   gitClone ${repo_url} ${RELEASE_BRANCH_NAME} ${repo}
   [[ ! -d ./${repo} ]] && echo "Repo ${repo} could not be cloned, ignoring it"
 
-  executeCmd "pushd ${repo}"
+  pushd ${repo}
   # Commit and pushes "changes"
   commitAndPush ${repo_url}
-  executeCmd "popd"
+  popd
 }
 
 RELEASE_BRANCH_NAME=${build_id}
 if [[ "${is_release}" == 'true' ]]; then
   RELEASE_PREFIX='release-'
   RELEASE_BRANCH_NAME=${RELEASE_BRANCH_NAME/v/$RELEASE_PREFIX}
-fi
-echo
-echo '######################################################################'
-echo "RELEASE_BRANCH_NAME: " ${RELEASE_BRANCH_NAME}
 
-mkdir -p releases && pushd releases
-release_repos=(${CORE_GITHUB_REPO} ${ENTERPRISE_GITHUB_REPO} ${PLUGIN_SEEDS_GITHUB_REPO} ${DOT_CICD_GITHUB_REPO} ${DOCKER_GITHUB_REPO})
-for repo in "${release_repos[@]}"
-do
-  pushRelease ${repo}
-done
-echo "Releases made" && ls -las
-popd
+  echo
+  echo '######################################################################'
+  echo "RELEASE_BRANCH_NAME: " ${RELEASE_BRANCH_NAME}
+
+  mkdir -p releases
+  pushd releases
+  release_repos=(${CORE_GITHUB_REPO} ${PLUGIN_SEEDS_GITHUB_REPO} ${DOT_CICD_GITHUB_REPO} ${DOCKER_GITHUB_REPO})
+  for repo in "${release_repos[@]}"
+  do
+    pushRelease ${repo}
+  done
+  echo "Releases made:" && ls -las
+  popd
+fi

@@ -11,49 +11,20 @@ function createAndPush {
   local resolved_repo=$(resolveRepoUrl ${repo} ${GITHUB_USER_TOKEN} ${GITHUB_USER})
 
   printf "\e[32m Creating and pushing Release Branch on ${repo} \e[0m  \n"
-  if [[ "${repo}" == "${CORE_GITHUB_REPO}" ]]; then
-    executeCmd "gitCloneSubModules ${resolved_repo} ${FROM_BRANCH}"
-    [[ ${cmdResult} == 128 ]] && executeCmd "gitCloneSubModules ${resolved_repo}"
+  executeCmd "gitClone ${resolved_repo} ${FROM_BRANCH}"
+  [[ ${cmdResult} == 128 ]] && executeCmd "gitClone ${resolved_repo}"
 
-    pushd ${repo}
-    git status
-    cat .gitmodules
-    executeCmd "git checkout -- .gitmodules"
-    cat .gitmodules
-
-    if [[ "${FROM_BRANCH}" != 'master' ]]; then
-      executeCmd "git pull"
-      executeCmd "git checkout master"
-      executeCmd "git checkout ${FROM_BRANCH}"
-    fi
-
-    popd
-  else
-    executeCmd "gitClone ${resolved_repo} ${FROM_BRANCH}"
-    [[ ${cmdResult} == 128 ]] && executeCmd "gitClone ${resolved_repo}"
+  if [[ "${FROM_BRANCH}" != 'master' ]]; then
+    executeCmd "git pull"
+    executeCmd "git checkout master"
+    executeCmd "git checkout ${FROM_BRANCH}"
   fi
 
   pushd ${repo}
   executeCmd "git branch && git status"
 
-  if [[ "${repo}" == "${CORE_GITHUB_REPO}" ]]; then
-    executeCmd "cat .gitmodules"
-    executeCmd "git submodule update --init --recursive"
-    pushd ${ENTERPRISE_DIR}
-    executeCmd "git branch && git status"
-    popd
-  fi
-
   checkoutBranch ${repo} ${branch}
   [[ $? == 0 ]] && executeCmd "git push ${resolved_repo} ${branch}"
-
-  if [[ "${repo}" == "${CORE_GITHUB_REPO}" ]]; then
-    pushd ${ENTERPRISE_DIR}
-    checkoutBranch ${ENTERPRISE_GITHUB_REPO} ${branch}
-    local ee_resolved_repo=$(resolveRepoUrl ${ENTERPRISE_GITHUB_REPO} ${GITHUB_USER_TOKEN} ${GITHUB_USER})
-    [[ $? == 0 ]] && executeCmd "git push ${ee_resolved_repo} ${branch}"
-    popd
-  fi
 
   popd
   printf "\e[32m Repo ${repo} created and pushed \e[0m  \n"
@@ -73,11 +44,6 @@ function checkoutBranch {
   if [[ ${remote_branch} == 1 ]]; then
     undoPush ${repo} ${branch}
     remote_branch=0
-  fi
-
-  if [[ "${repo}" == "${ENTERPRISE_GITHUB_REPO}" ]]; then
-    local module_branch=$(cat ../../../../.gitmodules | grep "branch =" | cut -d'=' -f2 | tr -d '[:space:]')
-    executeCmd "git checkout ${module_branch}"
   fi
 
   local checkout_cmd="git checkout -b ${branch}"
@@ -100,9 +66,6 @@ function undoPush {
   if [[ "${repo}" == "${CORE_GITHUB_REPO}" ]]; then
     local resolved_repo=$(resolveRepoUrl ${repo} ${GITHUB_USER_TOKEN} ${GITHUB_USER})
     executeCmd "git push ${resolved_repo} :${branch}"
-  elif [[ "${repo}" == "${ENTERPRISE_GITHUB_REPO}" ]]; then
-    local ee_resolved_repo=$(resolveRepoUrl ${ENTERPRISE_GITHUB_REPO} ${GITHUB_USER_TOKEN} ${GITHUB_USER})
-    executeCmd "git push ${ee_resolved_repo} :${branch}"
   else
     executeCmd "git push origin :${branch}"
   fi

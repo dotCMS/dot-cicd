@@ -4,6 +4,7 @@
 # Script: setVars.sh
 # Set important env-vars to be used across the release process
 
-export ENTERPRISE_DIR=dotCMS/src/main/enterprise
-export BRANCH="release-${RELEASE_VERSION}"
+BRANCH="release-${RELEASE_VERSION}"
+[[ "${DRY_RUN}" == 'true' ]] && BRANCH="${BRANCH}-cicd"
+export BRANCH
 export GIT_CLONE_STRATEGY=full

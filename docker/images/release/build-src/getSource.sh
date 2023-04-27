@@ -13,7 +13,7 @@ is_release=${2}
 echo "Fetching ${build_id} branch/tag"
 # Clone with submodules
 [[ "${is_release}" == 'true' ]] && export GIT_TAG=${build_id}
-executeCmd "gitCloneSubModules $(resolveRepoUrl ${CORE_GITHUB_REPO} ${GITHUB_USER_TOKEN} ${GITHUB_USER}) ${build_id}"
+executeCmd "gitClone $(resolveRepoUrl ${CORE_GITHUB_REPO} ${GITHUB_USER_TOKEN} ${GITHUB_USER}) ${build_id}"
 [[ "${is_release}" == 'true' ]] && export GIT_TAG=
 [[ ${cmdResult} != 0 ]] && exit 1
 
@@ -24,13 +24,4 @@ echo 'Git status:'
 executeCmd "git branch"
 executeCmd "git status"
 
-pushd ${ENTERPRISE_DIR}
-executeCmd "gitConfig ${GITHUB_USER}"
-echo 'Enterprise git status:'
-executeCmd "ls -las ."
-executeCmd "git branch"
-executeCmd "git status"
 popd
-
-popd
-

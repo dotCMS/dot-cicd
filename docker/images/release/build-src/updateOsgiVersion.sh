@@ -25,10 +25,6 @@ plugin_seeds_github_repo_url=$(resolveRepoUrl ${PLUGIN_SEEDS_GITHUB_REPO} ${GITH
 gitClone ${plugin_seeds_github_repo_url} ${release_branch_name}
 pushd ${PLUGIN_SEEDS_GITHUB_REPO}
 
-if [[ "${is_release}" != 'true' ]]; then
-  git checkout -b cicd-test
-fi
-
 # for every file replace dependencies to their new version
 for file in $(find . -name build.gradle)
 do

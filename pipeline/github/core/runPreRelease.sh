@@ -10,7 +10,6 @@ export IMAGE_NAME='dotcms/dotcms-pre-release-process'
 # Copy common collection of functions
 cp ${DOT_CICD_LIB}/pipeline/github/githubCommon.sh ${DOCKER_SOURCE}/images/prerelease/build-src
 cp ${DOCKER_SOURCE}/images/release/build-src/releaseCommon.sh ${DOCKER_SOURCE}/images/prerelease/build-src
-cp ${DOCKER_SOURCE}/images/release/build-src/changeEeDependency.py ${DOCKER_SOURCE}/images/prerelease/build-src
 cp ${DOCKER_SOURCE}/images/release/build-src/replaceTextInFile.py ${DOCKER_SOURCE}/images/prerelease/build-src
 pushd ${DOCKER_SOURCE}/images/prerelease
 
@@ -34,6 +33,7 @@ executeCmd "docker run --rm
   -e RELEASE_VERSION=${RELEASE_VERSION}
   -e FROM_BRANCH=${FROM_BRANCH}
   -e NODE_VERSION=${NODE_VERSION}
+  -e DRY_RUN=${DRY_RUN}
   -e DEBUG=${DEBUG}
   ${IMAGE_NAME} $@"
 
