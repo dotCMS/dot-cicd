@@ -7,12 +7,11 @@
 # $1: type: type of resource to push to S3 bucket
 # $2: is_release: release flag
 
-bucket='s3://static.dotcms.com'
 type=$1
 is_release=$2
 version="${RELEASE_VERSION}"
+bucket='s3://static.dotcms.com'
 keys_str="--access_key=${aws_access_key_id} --secret_key=${aws_secret_access_key}"
-test_prefix='cicd-test'
 distro_base_key='versions'
 javadoc_base_key="docs/${version}"
 

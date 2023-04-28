@@ -15,6 +15,7 @@ replaceTextInFile ./gradle.properties 'dotcmsReleaseVersion=.*$' "dotcmsReleaseV
 replaceTextInFile ../.github/workflows/release-process.yml 'DOT_CICD_BRANCH:.*$' "DOT_CICD_BRANCH: ${BRANCH}"
 
 # Commit gradle.properties with updated variables versions
+gitConfig ${GITHUB_USER}
 executeCmd "git add gradle.properties ../.github/workflows/release-process.yml"
 executeCmd "git commit -m 'Modify dotcmsReleaseVersion to ${RELEASE_VERSION}, coreWebReleaseVersion, webComponentsReleaseVersion to rc and dot-cicd branch version to ${BRANCH}'"
 

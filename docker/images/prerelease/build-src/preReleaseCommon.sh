@@ -17,7 +17,9 @@ function createAndPush {
   if [[ "${FROM_BRANCH}" != 'master' ]]; then
     executeCmd "git pull"
     executeCmd "git checkout master"
-    executeCmd "git checkout ${FROM_BRANCH}"
+    gitRemoteLs ${resolved_repo} ${FROM_BRANCH}
+    local remote_branch=$?
+    [[ ${remote_branch} == 1 ]] && executeCmd "git checkout ${FROM_BRANCH}"
   fi
 
   pushd ${repo}
