@@ -11,16 +11,16 @@ function createAndPush {
   local resolved_repo=$(resolveRepoUrl ${repo} ${GITHUB_USER_TOKEN} ${GITHUB_USER})
 
   printf "\e[32m Creating and pushing Release Branch on ${repo} \e[0m  \n"
-  executeCmd "gitClone ${resolved_repo} ${FROM_BRANCH}"
-  [[ ${cmdResult} == 128 ]] && executeCmd "gitClone ${resolved_repo}"
+  gitClone ${resolved_repo} ${FROM_BRANCH}
+  [[ ${cmdResult} == 128 ]] && gitClone ${resolved_repo}
 
   pushd ${repo}
-  executeCmd "git branch && git status"
 
   checkoutBranch ${repo} ${branch}
   [[ $? == 0 ]] && executeCmd "git push ${resolved_repo} ${branch}"
 
   popd
+
   printf "\e[32m Repo ${repo} created and pushed \e[0m  \n"
 }
 
@@ -31,6 +31,8 @@ function createAndPush {
 function checkoutBranch {
   local repo=${1}
   local branch=${2}
+
+  executeCmd "git branch && git status"
 
   local resolved_repo=$(resolveRepoUrl ${repo} ${GITHUB_USER_TOKEN} ${GITHUB_USER})
   gitRemoteLs ${resolved_repo} ${branch}
@@ -45,6 +47,9 @@ function checkoutBranch {
   [[ ${remote_branch} == 1 ]] && checkout_cmd="${checkout_cmd} --track origin/${branch}" && result=1
   executeCmd "git branch"
   executeCmd "${checkout_cmd}"
+
+  executeCmd "git branch && git status"
+
   return ${result}
 }
 

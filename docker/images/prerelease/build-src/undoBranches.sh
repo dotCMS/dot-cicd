@@ -11,6 +11,8 @@ printf "\e[32m Creating branches \e[0m  \n"
 if [[ "${DRY_RUN}" == 'true' ]]; then
   for repo in "${repos[@]}"
   do
+    pushd ${repo}
     undoPush ${repo} ${BRANCH}
+    popd
   done
 fi
