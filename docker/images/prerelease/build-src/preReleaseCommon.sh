@@ -14,14 +14,6 @@ function createAndPush {
   executeCmd "gitClone ${resolved_repo} ${FROM_BRANCH}"
   [[ ${cmdResult} == 128 ]] && executeCmd "gitClone ${resolved_repo}"
 
-  if [[ "${FROM_BRANCH}" != 'master' ]]; then
-    executeCmd "git pull"
-    executeCmd "git checkout master"
-    gitRemoteLs ${resolved_repo} ${FROM_BRANCH}
-    local remote_branch=$?
-    [[ ${remote_branch} == 1 ]] && executeCmd "git checkout ${FROM_BRANCH}"
-  fi
-
   pushd ${repo}
   executeCmd "git branch && git status"
 
