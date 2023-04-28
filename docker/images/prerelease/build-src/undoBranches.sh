@@ -8,7 +8,9 @@ export repos=(${CORE_GITHUB_REPO} ${DOT_CICD_GITHUB_REPO} ${PLUGIN_SEEDS_GITHUB_
 
 printf "\e[32m Creating branches \e[0m  \n"
 
-for repo in "${repos[@]}"
-do
-  undoPush ${repo} ${BRANCH}
-done
+if [[ "${DRY_RUN}" == 'true' ]]; then
+  for repo in "${repos[@]}"
+  do
+    undoPush ${repo} ${BRANCH}
+  done
+fi
