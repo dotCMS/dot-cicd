@@ -19,7 +19,6 @@ if [[ "${is_release}" == 'true' ]]; then
   executeCmd "./gradlew clean createDistPrep"
   popd
 
-
   executeCmd "ls -las dist/dotserver/tomcat-9.0.60/webapps/ROOT/WEB-INF/lib/dotcms_*.jar"
   #dotcms_lib_dir=dist/dotserver/tomcat-9.0.60/webapps/ROOT/WEB-INF/lib
   dotcms_lib_dir=dotCMS/build/libs
@@ -41,6 +40,7 @@ if [[ "${is_release}" == 'true' ]]; then
     -PgroupId=com.dotcms
     -Pusername=${repo_username}
     -Ppassword=${repo_password}
+    -PincludeDependencies=true
     -Pfile=../${dotcms_jar_path}.jar"
   [[ ${cmdResult} != 0 ]] && exit 1
   popd
