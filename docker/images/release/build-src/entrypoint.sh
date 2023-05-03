@@ -39,9 +39,9 @@ runScript getSource ${BUILD_ID} ${is_release}
 pushd ${CORE_GITHUB_REPO}
 runScript resolveVars
 runScript generateAndUploadJars ${BUILD_ID} ${repo_username} ${repo_password} ${is_release}
-runScript buildDistro
-runScript generateJavadoc
-runScript pushToStaticBucket all true
-runScript updateOsgiVersion
+#runScript buildDistro
+#runScript generateJavadoc
+#runScript pushToStaticBucket all true
+#runScript updateOsgiVersion
 popd
-runScript publishGithubReleases true ${BUILD_ID}
+#runScript publishGithubReleases true ${BUILD_ID}
