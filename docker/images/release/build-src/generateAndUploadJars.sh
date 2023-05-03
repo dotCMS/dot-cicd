@@ -29,24 +29,27 @@ executeCmd "mv ${dotcms_jar_path}_${github_sha::7}.jar ${dotcms_jar_path}.jar"
 executeCmd "ls -las ${dotcms_lib_dir}/dotcms_*.jar"
 
 if [[ "${is_release}" == 'true' ]]; then
-  pushd dotCMS
+  pushd dotCMS/deploy
   echo
   echo '####################'
   echo 'Uploading DotCMS jar'
   echo '####################'
-  executeCmd "gradle -b deploy.gradle uploadArchives
+  executeCmd "./gradlew uploadArchives
     ${releaseParam}
     -PgroupId=com.dotcms
     -Pusername=${repo_username}
     -Ppassword=${repo_password}
+    -PincludeDependencies=true
     -Pfile=../${dotcms_jar_path}.jar"
   [[ ${cmdResult} != 0 ]] && exit 1
   popd
 else
   echo "Dry running:
-    ./gradlew -b deploy.gradle uploadArchives
+    ./gradlew uploadArchives
+      ${releaseParam}
       -PgroupId=com.dotcms
       -Pusername=${repo_username}
       -Ppassword=${repo_password}
+      -PincludeDependencies=true
       -Pfile=../${dotcms_jar_path}.jar"
 fi
