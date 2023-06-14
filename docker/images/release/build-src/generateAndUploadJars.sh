@@ -25,7 +25,7 @@ dotcms_jar_path=${dotcms_lib_dir}/${dotcms_jar}
 github_sha=$(git rev-parse HEAD)
  [[ "${is_release}" == 'true' ]] && releaseParam='-Prelease=true'
 executeCmd "ls -las ${dotcms_lib_dir}/dotcms_*.jar"
-if [[ -f ${dotcms_lib_dir}/dotcms_null.jar ]]; then
+if [[ -f ./${dotcms_lib_dir}/dotcms_null.jar ]]; then
   jar_file=${dotcms_lib_dir}/dotcms_null.jar
 else
   jar_file=${dotcms_jar_path}_${github_sha::7}.jar
