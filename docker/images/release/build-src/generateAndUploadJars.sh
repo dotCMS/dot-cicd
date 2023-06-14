@@ -4,15 +4,13 @@
 # Script: generateAndUploadJars.sh
 # Generates core and enterprise jays and upload them to artifactory
 #
-# $1: build_id: core branch or commit
-# $2: repo_username: artifactory repo username
-# $3: repo_password: artifactory repo password
-# $4: is_release: release flag
+# $1: repo_username: artifactory repo username
+# $2: repo_password: artifactory repo password
+# $3: is_release: release flag
 
-build_id=$1
-repo_username=$2
-repo_password=$3
-is_release=$4
+repo_username=$1
+repo_password=$2
+is_release=$3
 
 pushd dotCMS
 executeCmd "./gradlew clean createDistPrep"
