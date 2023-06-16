@@ -6,23 +6,14 @@
 
 pushd dotCMS
 echo
-echo '######################################################################'
-echo "Executing
-  ./gradlew clean
-  ./gradlew createDist"
-echo '######################################################################'
+echo '######################################################################
+Building Distro
+######################################################################'
 
-./gradlew clean
-if [[ $? != 0 ]]; then
-  echo 'Error executing ./gradlew clean'
-  exit 1
-fi
-
-./gradlew createDist
-if [[ $? != 0 ]]; then
-  echo 'Error executing ./gradlew createDist'
-  exit 1
-fi
+executeCmd "./gradlew createDist"
+[[ $? != 0 ]] \
+  && echo 'Error executing ./gradlew createDist' \
+  && exit 1
 
 popd
 ls -las dist-output

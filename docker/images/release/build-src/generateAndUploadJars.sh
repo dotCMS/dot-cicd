@@ -13,7 +13,10 @@ repo_password=$2
 is_release=$3
 
 pushd dotCMS
-executeCmd "./gradlew clean createDistPrep"
+executeCmd "rm -rf build ../dist ../core-web/node_modules"
+executeCmd "./gradlew clean"
+executeCmd "./gradlew generateDependenciesFromMaven"
+executeCmd "./gradlew createDistPrep"
 popd
 
 executeCmd "ls -las dist/dotserver/tomcat-9.0.60/webapps/ROOT/WEB-INF/lib/dotcms_*.jar"
