@@ -19,28 +19,27 @@ echo
 echo '######################################################################'
 echo "Build id: ${BUILD_ID}"
 echo "Build hash: ${BUILD_HASH}"
-echo "Is Release: ${is_release}"
-echo "Repo username: ${repo_username}"
-echo "Repo password: ${repo_password}"
+echo "Is Release: ${IS_RELEASE}"
+echo "Repo username: ${REPO_USERNAME}"
+echo "Repo password: ${REPO_PASSWORD}"
 echo "Github User: ${GITHUB_USER}"
 echo "Github Token: ${GITHUB_USER_TOKEN}"
-echo "AWS Access Key Id: ${aws_access_key_id}"
-echo "AWS Secret Access Key: ${aws_secret_access_key}"
-echo "Docker username: ${docker_username}"
+echo "AWS Access Key Id: ${AWS_ACCESS_KEY_ID}"
+echo "AWS Secret Access Key: ${AWS_SECRET_ACCESS_KEY}"
+echo "Docker username: ${DOCKER_USERNAME}"
 echo "Docker password: ${docker_password}"
-echo "Debug: ${DEBUG}"
 echo
 
 setGradle
 
 mkdir -p /build/src && pushd /build/src
-runScript getSource ${BUILD_ID} ${is_release}
+runScript getSource
 pushd ${CORE_GITHUB_REPO}
 runScript resolveVars
-runScript generateAndUploadJars ${repo_username} ${repo_password} ${is_release}
+runScript generateAndUploadJars
 runScript buildDistro
 runScript generateJavadoc
-runScript pushToStaticBucket all ${is_release}
+runScript pushToStaticBucket all
 runScript updateOsgiVersion
 popd
 runScript publishGithubReleases true ${BUILD_ID}

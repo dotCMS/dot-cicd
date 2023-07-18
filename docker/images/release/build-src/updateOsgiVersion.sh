@@ -40,7 +40,7 @@ git commit -m "Updating dotcms version to ${new_version}"
 git status
 
 # When is an actual release push the changes, otherwise don't do a thing
-if [[ "${is_release}" == 'true' ]]; then
+if [[ "${IS_RELEASE}" == 'true' ]]; then
   git push ${plugin_seeds_github_repo_url}
 else
   echo "Dry run detected, not pushing ${release_branch_name} to ${plugin_seeds_github_repo_url}"

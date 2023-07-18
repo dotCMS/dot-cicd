@@ -5,10 +5,10 @@
 # For every main repo (core, enterprise, core-web, plugin-seeds, dot-cicd, docker) triggers a publish workflow by
 # committing and pushing.
 #
-# $1: is_release: release flag
+# $1: IS_RELEASE: release flag
 # $2: build_id: enterprise branch/commit
 
-is_release=${1}
+IS_RELEASE=${1}
 build_id=${2}
 
 # Commits an empty commit and push to provided repo url
@@ -19,7 +19,7 @@ function commitAndPush {
 
   executeCmd "git commit --allow-empty -m \"Publish Release\""
 
-  if [[ "${is_release}" == 'true' ]]; then
+  if [[ "${IS_RELEASE}" == 'true' ]]; then
     executeCmd "git push ${repo_url}"
   else
     echo "Dry run detected, not pushing ${RELEASE_BRANCH_NAME} to ${repo_url}"
@@ -53,7 +53,7 @@ Releasing on ${repo}
 }
 
 RELEASE_BRANCH_NAME=${build_id}
-if [[ "${is_release}" == 'true' ]]; then
+if [[ "${IS_RELEASE}" == 'true' ]]; then
   RELEASE_PREFIX='release-'
   RELEASE_BRANCH_NAME=${RELEASE_BRANCH_NAME/v/$RELEASE_PREFIX}
 
