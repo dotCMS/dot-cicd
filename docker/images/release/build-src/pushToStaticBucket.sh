@@ -5,13 +5,11 @@
 # Pushes created distro and generated javadoc to S3 bucket
 #
 # $1: type: type of resource to push to S3 bucket
-# $2: is_release: release flag
 
 type=$1
-is_release=$2
 version="${RELEASE_VERSION}"
 bucket='s3://static.dotcms.com'
-keys_str="--access_key=${aws_access_key_id} --secret_key=${aws_secret_access_key}"
+keys_str="--access_key=${AWS_ACCESS_KEY_ID} --secret_key=${AWS_SECRET_ACCESS_KEY}"
 distro_base_key='versions'
 javadoc_base_key="docs/${version}"
 
@@ -25,14 +23,14 @@ function s3Push {
 
   # Use 's3cmd' tool to push whether is a file or an entire folder
   if [[ -d ${object} ]]; then
-    if [[ "${is_release}" == 'true' ]]; then
+    if [[ "${IS_RELEASE}" == 'true' ]]; then
       echo "Executing: s3cmd put ${keys_str} --recursive --quiet ${object} ${bucket}/${key}"
       s3cmd put ${keys_str} --recursive --quiet ${object} ${bucket}/${key}
     else
       echo "Dry running: s3cmd put ${keys_str} --recursive --quiet ${object} ${bucket}/${key}"
     fi
   else
-    if [[ "${is_release}" == 'true' ]]; then
+    if [[ "${IS_RELEASE}" == 'true' ]]; then
       echo "Executing: s3cmd put ${keys_str} ${object} ${bucket}/${key}"
       s3cmd put ${keys_str} ${object} ${bucket}/${key}
     else

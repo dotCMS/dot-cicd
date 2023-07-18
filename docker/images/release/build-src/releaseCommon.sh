@@ -28,7 +28,7 @@ function replaceTextInFile {
   local replacing_text=${3}
 
   executeCmd "python3 /build/replaceTextInFile.py ${file} \"${replace_text}\" \"${replacing_text}\""
-  [[ "${DEBUG}" == 'true' ]] && cat ${file} | grep "${replacing_text}"
+  cat ${file} | grep "${replacing_text}"
 }
 
 # Changes dotcms version property at gradle.properties file

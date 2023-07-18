@@ -20,20 +20,18 @@ set -- ${@:2}
 executeCmd "docker run --rm
   -e BUILD_ID=\"${BUILD_ID}\"
   -e BUILD_HASH=${BUILD_HASH}
-  -e EE_BUILD_ID=\"${EE_BUILD_ID}\"
-  -e repo_username=${REPO_USERNAME}
-  -e repo_password=${REPO_PASSWORD}
+  -e BRANCHING_MODEL=${BRANCHING_MODEL}
+  -e RELEASE_VERSION=${RELEASE_VERSION}
+  -e REPO_USERNAME=${REPO_USERNAME}
+  -e REPO_PASSWORD=${REPO_PASSWORD}
   -e GITHUB_USER=${GITHUB_USER}
   -e GITHUB_USER_EMAIL=${GITHUB_USER_EMAIL}
   -e GITHUB_USER_TOKEN=${GITHUB_USER_TOKEN}
-  -e aws_access_key_id=${AWS_ACCESS_KEY_ID}
-  -e aws_secret_access_key=${AWS_SECRET_ACCESS_KEY}
-  -e docker_username=${DOCKER_USERNAME}
-  -e docker_password=${DOCKER_PASSWORD}
-  -e is_release=${IS_RELEASE}
-  -e is_lts=${IS_LTS}
+  -e AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+  -e AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+  -e IS_RELEASE=${IS_RELEASE}
+  -e IS_LTS=${IS_LTS}
   -e NODE_VERSION=${NODE_VERSION}
-  -e DEBUG=${DEBUG}
   ${IMAGE_NAME} $@"
 
 popd
