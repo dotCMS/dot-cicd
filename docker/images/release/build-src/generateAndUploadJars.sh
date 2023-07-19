@@ -8,10 +8,6 @@ pushd dotCMS
 executeCmd "rm -rf build ../dist ../core-web/node_modules"
 executeCmd "./gradlew generateDependenciesFromMaven"
 executeCmd "./gradlew createDistPrep"
-popd
-
-executeCmd "ls -las dist/dotserver/tomcat-9.0.60/webapps/ROOT/WEB-INF/lib/dotcms_*.jar"
-
 dotcms_jar=dotcms_${RELEASE_VERSION}
 eval $(cat gradle.properties | grep dotcmsReleaseVersion)
 echo "release_version=${dotcmsReleaseVersion}"
@@ -19,18 +15,18 @@ release_version="${dotcmsReleaseVersion}"
 if [[ "${BRANCHING_MODEL}" == 'trunk-based' && "${RELEASE_VERSION}" != "${release_version}" ]]; then
   dotcms_jar=dotcms_${release_version}
 fi
+popd
+
+executeCmd "ls -las dist/dotserver/tomcat-9.0.60/webapps/ROOT/WEB-INF/lib/dotcms_*.jar"
 dotcms_lib_dir=dotCMS/build/libs
 dotcms_jar_path=${dotcms_lib_dir}/${dotcms_jar}
 jar_file=${dotcms_jar_path}_${github_sha::7}.jar
-github_sha=$(git rev-parse HEAD)
-
 executeCmd "ls -las ${dotcms_lib_dir}/dotcms_*.jar"
 executeCmd "mv ${jar_file} ${dotcms_jar_path}.jar"
 executeCmd "ls -las ${dotcms_lib_dir}/dotcms_*.jar"
 
-[[ "${IS_RELEASE}" == 'true' ]] && releaseParam='-Prelease=true'
-
 if [[ "${IS_RELEASE}" == 'true' ]]; then
+  releaseParam='-Prelease=true'
   pushd dotCMS/deploy
   echo
   echo '####################'
