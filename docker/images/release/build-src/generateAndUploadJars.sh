@@ -20,7 +20,7 @@ popd
 executeCmd "ls -las dist/dotserver/tomcat-9.0.60/webapps/ROOT/WEB-INF/lib/dotcms_*.jar"
 dotcms_lib_dir=dotCMS/build/libs
 dotcms_jar_path=${dotcms_lib_dir}/${dotcms_jar}
-jar_file=${dotcms_jar_path}_${BUILD_HASH}.jar
+jar_file=${dotcms_jar_path}_${BUILD_HASH::7}.jar
 executeCmd "ls -las ${dotcms_lib_dir}/dotcms_*.jar"
 executeCmd "mv ${jar_file} ${dotcms_jar_path}.jar"
 executeCmd "ls -las ${dotcms_lib_dir}/dotcms_*.jar"
