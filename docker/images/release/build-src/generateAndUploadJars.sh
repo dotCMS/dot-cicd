@@ -11,20 +11,18 @@ executeCmd "./gradlew createDistPrep"
 popd
 
 executeCmd "ls -las dist/dotserver/tomcat-9.0.60/webapps/ROOT/WEB-INF/lib/dotcms_*.jar"
+
 dotcms_lib_dir=dotCMS/build/libs
-if [[ "${BRANCHING_MODEL}" == 'trunk-based' ]]; then
-  dotcms_jar=dotcms_master
-else
-  dotcms_jar=dotcms_${RELEASE_VERSION}
-fi
+dotcms_jar=dotcms_${RELEASE_VERSION}
 dotcms_jar_path=${dotcms_lib_dir}/${dotcms_jar}
+jar_file=${dotcms_jar_path}_${github_sha::7}.jar
 github_sha=$(git rev-parse HEAD)
-[[ "${IS_RELEASE}" == 'true' ]] && releaseParam='-Prelease=true'
 
 executeCmd "ls -las ${dotcms_lib_dir}/dotcms_*.jar"
-jar_file=${dotcms_jar_path}_${github_sha::7}.jar
 executeCmd "mv ${jar_file} ${dotcms_jar_path}.jar"
 executeCmd "ls -las ${dotcms_lib_dir}/dotcms_*.jar"
+
+[[ "${IS_RELEASE}" == 'true' ]] && releaseParam='-Prelease=true'
 
 if [[ "${IS_RELEASE}" == 'true' ]]; then
   pushd dotCMS/deploy
