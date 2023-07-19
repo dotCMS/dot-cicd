@@ -12,8 +12,14 @@ popd
 
 executeCmd "ls -las dist/dotserver/tomcat-9.0.60/webapps/ROOT/WEB-INF/lib/dotcms_*.jar"
 
-dotcms_lib_dir=dotCMS/build/libs
 dotcms_jar=dotcms_${RELEASE_VERSION}
+eval $(cat gradle.properties | grep dotcmsReleaseVersion)
+echo "release_version=${dotcmsReleaseVersion}"
+release_version="${dotcmsReleaseVersion}"
+if [[ "${BRANCHING_MODEL}" == 'trunk-based' && "${RELEASE_VERSION}" != "${release_version}" ]]; then
+  dotcms_jar=dotcms_${release_version}
+fi
+dotcms_lib_dir=dotCMS/build/libs
 dotcms_jar_path=${dotcms_lib_dir}/${dotcms_jar}
 jar_file=${dotcms_jar_path}_${github_sha::7}.jar
 github_sha=$(git rev-parse HEAD)
